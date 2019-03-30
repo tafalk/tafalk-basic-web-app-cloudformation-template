@@ -1,0 +1,179 @@
+Description: 
+  This template deploys Cognito User and Identity Pools
+Parameters:
+  ProjectIdentifierName:
+    Description: An prefix that will be added to resource names (e.g. project name)
+    Type: String
+    MinLength: 3
+    MaxLength: 10
+    ConstraintDescription: must be between 3 and 10 characters.
+  EnvironmentName:
+    Description: An environment name that will be added to resource names
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - prod
+    Default: dev
+    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
+
+Resources:
+  # Creates a User Pool
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up"
+      MfaConfiguration: "OFF"
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+      AliasAttributes: 
+        - 'email'
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+      
+      # SMS
+      SmsVerificationMessage: Your verification code is {####}
+      SmsConfiguration:
+        ExternalId: !Sub "${ProjectIdentifierName}-external-id"
+        SnsCallerArn: 
+          Fn::ImportValue: 
+            !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
+
+      # Email
+      EmailVerificationMessage: Your verification code is {####}
+      EmailVerificationSubject: !Sub "${ProjectIdentifierName} verification code"
+  
+  # Creates a User Pool Client to be used by the identity pool
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-client"
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+  
+  # Creates a federeated Identity pool
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip"
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders: 
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt UserPool.ProviderName
+
+  # Assigns the roles to the Identity Pool
+  CognitoUnauthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                Resource: "*"
+  CognitoAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      Policies:
+        - PolicyName: "CognitoAuthorizedPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                  - "cognito-identity:*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoAuthorizedRole.Arn
+        unauthenticated: !GetAtt CognitoUnauthorizedRole.Arn
+
+  # Post Confirmation Trigger
+  Type: "AWS::Lambda::Function"
+    Properties: 
+      Code:
+        Code
+      DeadLetterConfig:
+        DeadLetterConfig
+      Description: String
+      Environment:
+        Environment
+      FunctionName: String
+      Handler: String
+      KmsKeyArn: String
+      Layers: 
+        - String
+      MemorySize: 128
+      ReservedConcurrentExecutions: Integer
+      Role: String
+      Runtime: python3.7
+      Timeout: 3
+      TracingConfig:
+        TracingConfig
+      VpcConfig:
+        VPCConfig
+      Tags: 
+        Resource Tag
+
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+    Export:
+      Name: "UserPool::Id"
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+    Export:
+      Name: "UserPoolClient::Id"
+  IdentityPoolId:
+    Value: !Ref IdentityPool
+    Export:
+      Name: "IdentityPool::Id"
