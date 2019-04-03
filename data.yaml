@@ -331,6 +331,8 @@ Outputs:
   UserTable:
     Description: A reference to the created UserTable
     Value: !Ref UserTable
+    Export:
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-user-table"
   StreamTable:
     Description: A reference to the created StreamTable
     Value: !Ref StreamTable

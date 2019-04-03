@@ -286,7 +286,17 @@ Resources:
     DependsOn: InternetGatewayAttachment
     Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", NatInstanceAMI]
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      InstanceType: t2.micro
       KeyName: !Ref KeyName
+      SourceDestCheck: false
+      Tenancy: default
+      NetworkInterfaces:
+        - SubnetId: !Ref PublicSubnet1
+          GroupSet:
+            - !Ref NATSecurityGroup
+          AssociatePublicIpAddress: true
+          DeviceIndex: "0"
       Tags:
         - Key: Name
           Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-nat-az1"
@@ -294,21 +304,24 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-      NetworkInterfaces:
-        - SubnetId: !Ref PublicSubnet1
-          GroupSet:
-            - !Ref NATSecurityGroup
-          AssociatePublicIpAddress: true
-          DeviceIndex: "0"
-      SourceDestCheck: false
+      
   # NAT instances 2 (only if wanted high available)
   NatInstance2:
     Type: AWS::EC2::Instance
     DependsOn: InternetGatewayAttachment
     Condition: CreateMultiAzResources
     Properties:
-      SourceDestCheck: false
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", NatInstanceAMI]
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      InstanceType: t2.micro
+      SourceDestCheck: false
+      Tenancy: default
+      NetworkInterfaces:
+      - SubnetId: !Ref PublicSubnet2
+        GroupSet:
+          - !Ref NATSecurityGroup
+        AssociatePublicIpAddress: true
+        DeviceIndex: "0"
       Tags:
         - Key: Name
           Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-nat-az2"
@@ -316,12 +329,6 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-      NetworkInterfaces:
-      - SubnetId: !Ref PublicSubnet2
-        GroupSet:
-          - !Ref NATSecurityGroup
-        AssociatePublicIpAddress: true
-        DeviceIndex: "0"
 
   # Route Tables
   PublicRouteTable:
@@ -392,10 +399,14 @@ Resources:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable1
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref NatInstance1
   DefaultSupportPrivateRoute2:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable2
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref NatInstance1
   DefaultComputePrivateRoute1:
     Type: AWS::EC2::Route
     Properties:

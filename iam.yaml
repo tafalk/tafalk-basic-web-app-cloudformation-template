@@ -42,11 +42,110 @@ Resources:
               - Effect: "Allow"
                 Action: "sns:publish"
                 Resource: "*"
+  
+  CodePipelineRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: AWS-CodePipeline-Service-3
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'codecommit:CancelUploadArchive'
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:GetCommit'
+                  - 'codecommit:GetUploadArchiveStatus'
+                  - 'codecommit:UploadArchive'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codedeploy:CreateDeployment'
+                  - 'codedeploy:GetApplicationRevision'
+                  - 'codedeploy:GetDeployment'
+                  - 'codedeploy:GetDeploymentConfig'
+                  - 'codedeploy:RegisterApplicationRevision'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'devicefarm:ListProjects'
+                  - 'devicefarm:ListDevicePools'
+                  - 'devicefarm:GetRun'
+                  - 'devicefarm:GetUpload'
+                  - 'devicefarm:CreateUpload'
+                  - 'devicefarm:ScheduleRun'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:ListFunctions'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'iam:PassRole'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'elasticbeanstalk:*'
+                  - 'ec2:*'
+                  - 'elasticloadbalancing:*'
+                  - 'autoscaling:*'
+                  - 'cloudwatch:*'
+                  - 's3:*'
+                  - 'sns:*'
+                  - 'cloudformation:*'
+                  - 'rds:*'
+                  - 'sqs:*'
+                  - 'ecs:*'
+                Resource: '*'
+  
   CognitoTriggeredLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-policy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action: 
+                  - "cognito-idp:*"
+                  - "cognito-identity:*"
+                  - "logs:*"
+                  - "dynamodb:*"
+                Resource: "*"
+
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
     Value: !Ref SNSRole
+  CodePipelineRole:
+    Description: A reference to the created Code Pipeline Role
+    Value: !Ref CodePipelineRole
   CognitoTriggeredLambdaRole:
     Description: A reference to the created Cognito Triggered Lambda Role
     Value: !Ref CognitoTriggeredLambdaRole
@@ -55,6 +154,11 @@ Outputs:
     Value: !GetAtt SNSRole.Arn
     Export:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
+  CodePipelineRoleArn:
+    Description: A reference to the created Code Pipeline Role ARN
+    Value: !GetAtt CodePipelineRole.Arn
+    Export:
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-code-pipeline-role-arn"
   CognitoTriggeredLambdaRoleArn:
     Description: A reference to the created Cognito Triggered Lambda Role ARN
     Value: !GetAtt CognitoTriggeredLambdaRole.Arn

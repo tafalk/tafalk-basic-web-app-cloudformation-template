@@ -1,0 +1,54 @@
+Description: 
+  This template deploys S3 buckets
+Parameters:
+  ProjectIdentifierName:
+    Description: An prefix that will be added to resource names (e.g. project name)
+    Type: String
+    MinLength: 3
+    MaxLength: 10
+    ConstraintDescription: must be between 3 and 10 characters.
+  EnvironmentName:
+    Description: An environment name that will be added to resource names
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - prod
+    Default: dev
+    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
+Resources:
+  # The bucket for lambda function zips
+  FunctionDeploymentsBucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: BucketOwnerFullControl
+      BucketName: !Sub "${ProjectIdentifierName}-lambda-zips-2019"
+      Tags: 
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+      VersioningConfiguration:
+        Status: Enabled
+  FunctionDeploymentsBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref FunctionDeploymentsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: DenyInsecureConnections
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource: !Join [ "", [ !GetAtt FunctionDeploymentsBucket.Arn, "/*" ] ]
+            Condition:
+              Bool:
+                "aws:SecureTransport": false
+
+Outputs:
+  FunctionDeploymentsBucket:
+    Description: A reference to the created FunctionDeploymentsBucket
+    Value: !Ref FunctionDeploymentsBucket
+    Export:
+      Name: !Sub "${ProjectIdentifierName}-function-deployments-bucket"
