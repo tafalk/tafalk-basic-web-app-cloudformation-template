@@ -1,3 +1,5 @@
+Description:
+  This template creates build projects
 Parameters:
   ProjectIdentifierName:
     Description: An prefix that will be added to resource names (e.g. project name)
@@ -22,56 +24,104 @@ Parameters:
     Description: GitHub repository name
     Type: String
     Default: test
-  GitHubOwner:
-    Type: String
-  GitHubSecret:
-    Type: String
-    NoEcho: true
-  GitHubOAuthToken:
-    Type: String
-    NoEcho: true
 Resources:
-  AppPipelineWebhook:
-    Type: 'AWS::CodePipeline::Webhook'
+  PostConfirmUserImportFunctionBuildProject:
+    Type: "AWS::CodeBuild::Project"
     Properties:
-      Authentication: GITHUB_HMAC
-      AuthenticationConfiguration:
-        SecretToken: !Ref GitHubSecret
-      Filters:
-        - JsonPath: $.ref
-          MatchEquals: 'refs/heads/{Branch}'
-      TargetPipeline: !Ref AppPipeline
-      TargetAction: SourceAction
-      Name: AppPipelineWebhook
-      TargetPipelineVersion: !GetAtt AppPipeline.Version
-      RegisterWithThirdParty: true
-  AppPipeline:
-    Type: 'AWS::CodePipeline::Pipeline'
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-build-project"
+      Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
+      TimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: "aws/codebuild/python:3.7.1"
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: FUNCTION_NAME
+            Value: !Sub "${ProjectIdentifierName}-post-confirm-user-importer-func"
+          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
+            Value:
+              Fn::ImportValue:
+                !Sub "${ProjectIdentifierName}-function-deployments-bucket"
+          - Name: USER_TABLE_NAME
+            Value:
+              Fn::ImportValue:
+                !Sub "${ProjectIdentifierName}-${EnvironmentName}-user-table"
+          - Name: COGNITO_USER_GROUP_NAME
+            Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
+          - Name: COGNITO_USER_POOL_ID
+            Value:
+              Fn::ImportValue:
+                !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-id"
+          - NAME: FUNCTION_ROLE_ARN
+            Value:
+              Fn::ImportValue:
+                !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-role-arn"
+          - Name: ENVIRONMENT_TAG
+            Value: !Ref EnvironmentName
+          - Name: APPLICATION_TAG
+            Value: !Ref ProjectIdentifierName
+      ServiceRole:
+        Fn::ImportValue:
+          !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-role-arn"
+
+  PostConfirmUserImportFunctionPipeline:
+    Type: "AWS::CodePipeline::Pipeline"
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-github-events-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-pipeline"
       RoleArn:
-        Fn::ImportValue: 
-          !Sub "${ProjectIdentifierName}-${EnvironmentName}-code-pipeline-role-arn"
+        Fn::ImportValue:
+          !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-role-arn"
+      RestartExecutionOnUpdate: true
       Stages:
         - Name: Source
           Actions:
-            - Name: SourceAction
+            - Name: FetchSource
               ActionTypeId:
                 Category: Source
-                Owner: ThirdParty
-                Version: "1"
-                Provider: GitHub
+                Owner: AWS
+                Version: 1
+                Provider: CodeCommit
               OutputArtifacts:
                 - Name: SourceOutput
               Configuration:
-                Owner: !Ref GitHubOwner
-                Repo: !Ref RepositoryName
-                Branch: !Ref BranchName
-                OAuthToken: !Ref GitHubOAuthToken
+                RepositoryName: !Ref RepositoryName
+                BranchName: !Ref BranchName
                 PollForSourceChanges: false
               RunOrder: 1
-      ArtifactStore:
-        Type: S3
-        Location:
-          Fn::ImportValue: 
-            !Sub "${ProjectIdentifierName}-${EnvironmentName}-function-deployments-bucket"
+        - Name: Build
+          Actions:
+            - Name: BuildFunction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref PostConfirmUserImportFunctionBuildProject
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: App
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: 1
+              Configuration:
+                StackName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirm-user-importer-function-pipeline-stack"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM
+                TemplatePath: "BuildArtifact::postconfirm-user-importer-output-template.yaml"
+                RoleArn:
+                  Fn::ImportValue:
+                    !Sub "${ProjectIdentifierName}-${EnvironmentName}-lambda-mgmt-cfn-role-arn"
+                ParameterOverrides: !Sub '{"RepositoryName": "${RepositoryName}", "BranchName": "${BranchName}"}'
+              InputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1

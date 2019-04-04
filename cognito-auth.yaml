@@ -1,4 +1,4 @@
-Description: 
+Description:
   This template deploys Cognito User and Identity Pools
 Parameters:
   ProjectIdentifierName:
@@ -29,7 +29,7 @@ Resources:
           AttributeDataType: String
           Mutable: true
           Required: true
-      AliasAttributes: 
+      AliasAttributes:
         - 'email'
       AutoVerifiedAttributes:
         - email
@@ -40,13 +40,13 @@ Resources:
           RequireNumbers: true
           RequireSymbols: true
           RequireUppercase: true
-      
+
       # SMS
       SmsVerificationMessage: Your verification code is {####}
       SmsConfiguration:
         ExternalId: !Sub "${ProjectIdentifierName}-external-id"
-        SnsCallerArn: 
-          Fn::ImportValue: 
+        SnsCallerArn:
+          Fn::ImportValue:
             !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
 
       # Email
@@ -56,7 +56,7 @@ Resources:
       # Triggered Lambda
       LambdaConfig:
         PostConfirmation: !GetAtt CognitoPostConfirmationFunction.Arn
-  
+
   # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
     Type: "AWS::Cognito::UserPoolClient"
@@ -64,14 +64,14 @@ Resources:
       ClientName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-client"
       GenerateSecret: false
       UserPoolId: !Ref UserPool
-  
+
   # Creates a federeated Identity pool
   IdentityPool:
     Type: "AWS::Cognito::IdentityPool"
     Properties:
       IdentityPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip"
       AllowUnauthenticatedIdentities: true
-      CognitoIdentityProviders: 
+      CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
           ProviderName: !GetAtt UserPool.ProviderName
 
@@ -79,24 +79,24 @@ Resources:
   CognitoUnauthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
+            Principal:
               Federated: "cognito-identity.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
-              StringEquals: 
+              StringEquals:
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": unauthenticated
       Policies:
         - PolicyName: "CognitoUnauthorizedPolicy"
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "mobileanalytics:PutEvents"
@@ -105,24 +105,24 @@ Resources:
   CognitoAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
+            Principal:
               Federated: "cognito-identity.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
-              StringEquals: 
+              StringEquals:
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": authenticated
       Policies:
         - PolicyName: "CognitoAuthorizedPolicy"
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "mobileanalytics:PutEvents"
@@ -144,7 +144,7 @@ Resources:
   # Post Confirmation Trigger
   CognitoPostConfirmationFunction:
     Type: "AWS::Lambda::Function"
-    Properties: 
+    Properties:
       Code:
         S3Bucket:
         S3Key:
@@ -156,13 +156,13 @@ Resources:
             Fn::ImportValue: !Ref UserPool
               !Sub "${ProjectIdentifierName}-${EnvironmentName}-user-table"
           COGNITO_USER_GROUP_NAME: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
-          COGNITO_USER_POOL_ID: 
-            
+          COGNITO_USER_POOL_ID:
+
       FunctionName: "${ProjectIdentifierName}-post-confirm-user-importer"
       Handler: "lambda_function.lambda_handler"
       MemorySize: 128
       Role:
-        Fn::ImportValue: 
+        Fn::ImportValue:
             !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-role-arn"
       Runtime: python3.7
       Timeout: 3
@@ -184,12 +184,12 @@ Outputs:
   UserPoolId:
     Value: !Ref UserPool
     Export:
-      Name: "UserPool::Id"
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-id"
   UserPoolClientId:
     Value: !Ref UserPoolClient
     Export:
-      Name: "UserPoolClient::Id"
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-upc-id"
   IdentityPoolId:
     Value: !Ref IdentityPool
     Export:
-      Name: "IdentityPool::Id"
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip-id"

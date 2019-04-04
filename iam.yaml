@@ -1,4 +1,4 @@
-Description: 
+Description:
   This template deploys IAM roles for the application
 
 Parameters:
@@ -19,30 +19,45 @@ Parameters:
     ConstraintDescription: must specify 'dev', 'test' or 'prod'.
 
 Resources:
-  # ROLES 
+  # ROLES
   # Creates a role that allows Cognito to send SNS messages
   SNSRole:
-    # Specifying a RoleName, you cannot perform updates that require replacement of this resource. You can perform updates that require no or some interruption. If you must replace the resource, specify a new name. 
+    # Specifying a RoleName, you cannot perform updates that require replacement of this resource. You can perform updates that require no or some interruption. If you must replace the resource, specify a new name.
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
-              Service: 
+            Principal:
+              Service:
                 - "cognito-idp.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRole"
       Policies:
         - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-sns-policy"
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action: "sns:publish"
                 Resource: "*"
-  
+
+  LambdaManagerCloudFormationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - 'cloudformation.amazonaws.com'
+          Action:
+          - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AWSLambdaExecute'
+
   CodePipelineRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -56,7 +71,7 @@ Resources:
             Action: 'sts:AssumeRole'
       Path: /
       Policies:
-        - PolicyName: AWS-CodePipeline-Service-3
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-policy"
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -67,40 +82,22 @@ Resources:
                   - 'codecommit:GetCommit'
                   - 'codecommit:GetUploadArchiveStatus'
                   - 'codecommit:UploadArchive'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'codedeploy:CreateDeployment'
                   - 'codedeploy:GetApplicationRevision'
                   - 'codedeploy:GetDeployment'
                   - 'codedeploy:GetDeploymentConfig'
                   - 'codedeploy:RegisterApplicationRevision'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'codebuild:BatchGetBuilds'
                   - 'codebuild:StartBuild'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'devicefarm:ListProjects'
                   - 'devicefarm:ListDevicePools'
                   - 'devicefarm:GetRun'
                   - 'devicefarm:GetUpload'
                   - 'devicefarm:CreateUpload'
                   - 'devicefarm:ScheduleRun'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'lambda:InvokeFunction'
                   - 'lambda:ListFunctions'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'iam:PassRole'
-                Resource: '*'
-              - Effect: Allow
-                Action:
                   - 'elasticbeanstalk:*'
                   - 'ec2:*'
                   - 'elasticloadbalancing:*'
@@ -113,7 +110,42 @@ Resources:
                   - 'sqs:*'
                   - 'ecs:*'
                 Resource: '*'
-  
+
+  CodeBuildRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - 'codebuild.amazonaws.com'
+          Action:
+          - 'sts:AssumeRole'
+      Policies:
+      - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-policy"
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - 'logs:CreateLogGroup'
+            - 'logs:CreateLogStream'
+            - 'logs:PutLogEvents'
+            Resource: '*'
+          - Effect: Allow
+            Action: 'codecommit:GitPull'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+            - 's3:GetObject'
+            - 's3:GetObjectVersion'
+            Resource: '*'
+          - Effect: 'Allow'
+            Action: 's3:PutObject'
+            Resource: '*'
+
   CognitoTriggeredLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -128,11 +160,11 @@ Resources:
                 - lambda.amazonaws.com
       Policies:
         - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-policy"
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
-                Action: 
+                Action:
                   - "cognito-idp:*"
                   - "cognito-identity:*"
                   - "logs:*"
@@ -143,9 +175,15 @@ Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
     Value: !Ref SNSRole
+  LambdaManagerCloudFormationRole:
+    Description: A reference to the created Lambda Managing CloudFormation Role
+    Value: !Ref LambdaManagerCloudFormationRole
   CodePipelineRole:
     Description: A reference to the created Code Pipeline Role
     Value: !Ref CodePipelineRole
+  CodeBuildRole:
+    Description: A reference to the created Code Build Role
+    Value: !Ref CodeBuildRole
   CognitoTriggeredLambdaRole:
     Description: A reference to the created Cognito Triggered Lambda Role
     Value: !Ref CognitoTriggeredLambdaRole
@@ -154,11 +192,21 @@ Outputs:
     Value: !GetAtt SNSRole.Arn
     Export:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
+  LambdaManagerCloudFormationRoleArn:
+    Description: A reference to the created Lambda managing CloudFormation Role ARN
+    Value: !GetAtt LambdaManagerCloudFormationRole.Arn
+    Export:
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-lambda-mgmt-cfn-role-arn"
   CodePipelineRoleArn:
     Description: A reference to the created Code Pipeline Role ARN
     Value: !GetAtt CodePipelineRole.Arn
     Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-code-pipeline-role-arn"
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-role-arn"
+  CodeBuildRoleArn:
+    Description: A reference to the created Code Build Role ARN
+    Value: !GetAtt CodeBuildRole.Arn
+    Export:
+      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-role-arn"
   CognitoTriggeredLambdaRoleArn:
     Description: A reference to the created Cognito Triggered Lambda Role ARN
     Value: !GetAtt CognitoTriggeredLambdaRole.Arn

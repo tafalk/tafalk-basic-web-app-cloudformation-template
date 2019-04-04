@@ -30,3 +30,5 @@ aws cloudformation create-stack --stack-name ${networkStackName} \
 
 # See also
 - [CloudFormation editing on VSCode](https://hodgkins.io/up-your-cloudformation-game-with-vscode)
+- [Building a Continuous Delivery Pipeline for a Lambda Application with AWS CodePipeline](https://docs.aws.amazon.com/lambda/latest/dg/build-pipeline.html)
+- [Lambda Build Pipeline sample](https://github.com/widdix/aws-velocity/blob/master/deploy/pipeline.yml)
