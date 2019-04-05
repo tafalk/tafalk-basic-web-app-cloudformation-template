@@ -3,20 +3,9 @@ Description:
 
 Parameters:
   ProjectIdentifierName:
-    Description: An prefix that will be added to resource names (e.g. project name)
     Type: String
-    MinLength: 3
-    MaxLength: 10
-    ConstraintDescription: must be between 3 and 10 characters.
   EnvironmentName:
-    Description: An environment name that will be added to resource names
     Type: String
-    AllowedValues:
-      - dev
-      - test
-      - prod
-    Default: dev
-    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
 
 Resources:
   # ROLES

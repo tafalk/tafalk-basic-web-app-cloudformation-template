@@ -1,22 +1,11 @@
-Description: 
+Description:
   This template deploys Datasources for the app
 
 Parameters:
   ProjectIdentifierName:
-    Description: An prefix that will be added to resource names (e.g. project name)
     Type: String
-    MinLength: 3
-    MaxLength: 10
-    ConstraintDescription: must be between 3 and 10 characters.
   EnvironmentName:
-    Description: An environment name that will be added to resource names
     Type: String
-    AllowedValues:
-      - dev
-      - test
-      - prod
-    Default: dev
-    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
 
 Resources:
   # DynamoDb
@@ -40,7 +29,7 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -50,7 +39,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-  
+
   StreamTable:
     DependsOn: UserTable
     Type: "AWS::DynamoDB::Table"
@@ -94,7 +83,7 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -134,7 +123,7 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -144,7 +133,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-  
+
   StreamCommentTable:
     DependsOn: UserInteractionTable
     Type: "AWS::DynamoDB::Table"
@@ -180,7 +169,7 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -226,7 +215,7 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -282,7 +271,7 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -314,7 +303,7 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-      ProvisionedThroughput: 
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       Tags:
@@ -326,7 +315,7 @@ Resources:
           Value: !Ref ProjectIdentifierName
 
   # Lambda
-  
+
 Outputs:
   UserTable:
     Description: A reference to the created UserTable

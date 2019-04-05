@@ -2,20 +2,15 @@ Description:
   This template deploys Cognito User and Identity Pools
 Parameters:
   ProjectIdentifierName:
-    Description: An prefix that will be added to resource names (e.g. project name)
     Type: String
-    MinLength: 3
-    MaxLength: 10
-    ConstraintDescription: must be between 3 and 10 characters.
   EnvironmentName:
-    Description: An environment name that will be added to resource names
     Type: String
-    AllowedValues:
-      - dev
-      - test
-      - prod
-    Default: dev
-    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
+  SnsRoleArn:
+    Type: String
+  UserTableName:
+    Type: String
+  CognitoTriggeredLambdaRoleArn:
+    Type: String
 
 Resources:
   # Creates a User Pool
@@ -45,9 +40,7 @@ Resources:
       SmsVerificationMessage: Your verification code is {####}
       SmsConfiguration:
         ExternalId: !Sub "${ProjectIdentifierName}-external-id"
-        SnsCallerArn:
-          Fn::ImportValue:
-            !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
+        SnsCallerArn: !Ref SnsRoleArn
 
       # Email
       EmailVerificationMessage: Your verification code is {####}
@@ -152,18 +145,14 @@ Resources:
       Description: Moves user to DynamoDB UserTable upon conformation
       Environment:
         Variables:
-          DB_USER_TABLE_NAME:
-            Fn::ImportValue: !Ref UserPool
-              !Sub "${ProjectIdentifierName}-${EnvironmentName}-user-table"
+          DB_USER_TABLE_NAME: !Ref UserTableName
           COGNITO_USER_GROUP_NAME: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
-          COGNITO_USER_POOL_ID:
+          COGNITO_USER_POOL_ID: !Ref UserPool
 
       FunctionName: "${ProjectIdentifierName}-post-confirm-user-importer"
       Handler: "lambda_function.lambda_handler"
       MemorySize: 128
-      Role:
-        Fn::ImportValue:
-            !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-role-arn"
+      Role: !Ref CognitoTriggeredLambdaRoleArn
       Runtime: python3.7
       Timeout: 3
       Tags:

@@ -1,0 +1,174 @@
+Description:
+  Root level stack
+Parameters:
+  ProjectIdentifierName:
+    Description: An prefix that will be added to resource names (e.g. project name)
+    Type: String
+    MinLength: 3
+    MaxLength: 10
+    ConstraintDescription: must be between 3 and 10 characters.
+  EnvironmentName:
+    Description: An environment name that will be added to resource names
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - prod
+    Default: dev
+    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
+  KeyName:
+    Description: Name of an existing EC2 KeyPair
+    Type: "AWS::EC2::KeyPair::KeyName"
+  VpcCIDR:
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    Type: String
+    Default: 10.0.0.0/16
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PublicSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    Type: String
+    Default: 10.0.1.0/28
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PublicSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+    Type: String
+    Default: 10.0.1.128/28
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PrivateSupportSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the support private subnet (DB, cache etc.) in the first Availability Zone
+    Type: String
+    Default: 10.0.2.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PrivateSupportSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the support private subnet (DB, cache etc.) in the second Availability Zone
+    Type: String
+    Default: 10.0.3.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PrivateComputeSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the compute private subnet (Lambda, EC2 etc.) in the first Availability Zone
+    Type: String
+    Default: 10.0.4.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  PrivateComputeSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the compute private subnet (Lambda, EC2 etc.) in the second Availability Zone
+    Type: String
+    Default: 10.0.5.0/24
+    MinLength: 9
+    MaxLength: 18
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+  IsHighAvailable:
+    Description: Should the resources (i.e. NAT instance) created multi-AZ?
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: false
+    ConstraintDescription: must specify true or false.
+  PostConfirmUserImportFunctionRepositoryName:
+    Description: CodeCommit repository for post-confirm user importer function
+    Type: String
+  RepositoryBranchName:
+    Description: CodeCommit branch name for having builds
+    Type: String
+    Default: master
+Resources:
+
+  IAM:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: iam.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+
+  Network:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: network.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        KeyName: !Ref KeyName
+        VpcCIDR: !Ref VpcCIDR
+        PublicSubnet1CIDR: !Ref PublicSubnet1CIDR
+        PublicSubnet2CIDR: !Ref PublicSubnet2CIDR
+        PrivateSupportSubnet1CIDR: !Ref PrivateSupportSubnet1CIDR
+        PrivateSupportSubnet2CIDR: !Ref PrivateSupportSubnet2CIDR
+        PrivateComputeSubnet1CIDR: !Ref PrivateComputeSubnet1CIDR
+        PrivateComputeSubnet2CIDR: !Ref PrivateComputeSubnet2CIDR
+        IsHighAvailable: !Ref IsHighAvailable
+
+  Data:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: data.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+
+  Storage:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: storage.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+
+  CognitoAuth:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: cognito-auth.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        SNSRoleArn:
+          Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
+        UserTableName:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+        CognitoTriggeredLambdaRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CognitoTriggeredLambdaRoleArn]
+
+  Build:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: build.yaml
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        BranchName: !Ref RepositoryBranchName
+        PostConfirmUserImportFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
+        LambdaArtifactStoreBucket:
+          Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
+        UserTable:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+        CognitoUserPoolId:
+          Fn::GetAtt: [CognitoAuth, Outputs.UserPoolId]
+        CognitoTriggeredLambdaRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CognitoTriggeredLambdaRoleArn]
+        CodeCommitRepoCodeBuildRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
+        CodeCommitRepoCodePipelineRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
+        LambdaManagerCloudFormationRoleArn:
+          Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
+
+

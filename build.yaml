@@ -2,28 +2,25 @@ Description:
   This template creates build projects
 Parameters:
   ProjectIdentifierName:
-    Description: An prefix that will be added to resource names (e.g. project name)
     Type: String
-    MinLength: 3
-    MaxLength: 10
-    ConstraintDescription: must be between 3 and 10 characters.
   EnvironmentName:
-    Description: An environment name that will be added to resource names
     Type: String
-    AllowedValues:
-      - dev
-      - test
-      - prod
-    Default: dev
-    ConstraintDescription: must specify 'dev', 'test' or 'prod'.
   BranchName:
-    Description: GitHub branch name
     Type: String
-    Default: master
-  RepositoryName:
-    Description: GitHub repository name
+  PostConfirmUserImportFunctionRepositoryName:
     Type: String
-    Default: test
+  LambdaArtifactStoreBucket:
+    Type: String
+  UserTable:
+    Type: String
+  CognitoUserPoolId:
+    Type: String
+  CodeCommitRepoCodeBuildRoleArn:
+    Type: String
+  CodeCommitRepoCodePipelineRoleArn:
+    Type: String
+  LambdaManagerCloudFormationRoleArn:
+    Type: String
 Resources:
   PostConfirmUserImportFunctionBuildProject:
     Type: "AWS::CodeBuild::Project"
@@ -41,38 +38,26 @@ Resources:
           - Name: FUNCTION_NAME
             Value: !Sub "${ProjectIdentifierName}-post-confirm-user-importer-func"
           - Name: LAMBDA_ARTIFACT_STORE_BUCKET
-            Value:
-              Fn::ImportValue:
-                !Sub "${ProjectIdentifierName}-function-deployments-bucket"
+            Value: !Ref LambdaArtifactStoreBucket
           - Name: USER_TABLE_NAME
-            Value:
-              Fn::ImportValue:
-                !Sub "${ProjectIdentifierName}-${EnvironmentName}-user-table"
+            Value: !Ref UserTable
           - Name: COGNITO_USER_GROUP_NAME
             Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
           - Name: COGNITO_USER_POOL_ID
-            Value:
-              Fn::ImportValue:
-                !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-id"
+            Value: !Ref CognitoUserPoolId
           - NAME: FUNCTION_ROLE_ARN
-            Value:
-              Fn::ImportValue:
-                !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-role-arn"
+            Value: !Ref CognitoTriggeredLambdaRoleArn
           - Name: ENVIRONMENT_TAG
             Value: !Ref EnvironmentName
           - Name: APPLICATION_TAG
             Value: !Ref ProjectIdentifierName
-      ServiceRole:
-        Fn::ImportValue:
-          !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-role-arn"
+      ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
 
   PostConfirmUserImportFunctionPipeline:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-pipeline"
-      RoleArn:
-        Fn::ImportValue:
-          !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-role-arn"
+      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
       RestartExecutionOnUpdate: true
       Stages:
         - Name: Source
@@ -86,7 +71,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOutput
               Configuration:
-                RepositoryName: !Ref RepositoryName
+                RepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
                 BranchName: !Ref BranchName
                 PollForSourceChanges: false
               RunOrder: 1
@@ -118,10 +103,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM
                 TemplatePath: "BuildArtifact::postconfirm-user-importer-output-template.yaml"
-                RoleArn:
-                  Fn::ImportValue:
-                    !Sub "${ProjectIdentifierName}-${EnvironmentName}-lambda-mgmt-cfn-role-arn"
-                ParameterOverrides: !Sub '{"RepositoryName": "${RepositoryName}", "BranchName": "${BranchName}"}'
+                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+                ParameterOverrides: !Sub '{"RepositoryName": "${PostConfirmUserImportFunctionRepositoryName}", "BranchName": "${BranchName}"}'
               InputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
