@@ -5,6 +5,8 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  FunctionName:
+    Type: String
   BranchName:
     Type: String
   PostConfirmUserImportFunctionRepositoryName:
@@ -13,13 +15,13 @@ Parameters:
     Type: String
   UserTable:
     Type: String
-  CognitoUserPoolId:
-    Type: String
   CodeCommitRepoCodeBuildRoleArn:
     Type: String
   CodeCommitRepoCodePipelineRoleArn:
     Type: String
   LambdaManagerCloudFormationRoleArn:
+    Type: String
+  CognitoTriggeredLambdaRoleArn:
     Type: String
 Resources:
   PostConfirmUserImportFunctionBuildProject:
@@ -27,6 +29,8 @@ Resources:
     Properties:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-build-project"
       Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
+      Source:
+        Type: CODEPIPELINE
       TimeoutInMinutes: 10
       Artifacts:
         Type: CODEPIPELINE
@@ -36,16 +40,14 @@ Resources:
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: FUNCTION_NAME
-            Value: !Sub "${ProjectIdentifierName}-post-confirm-user-importer-func"
+            Value: !Ref FunctionName
           - Name: LAMBDA_ARTIFACT_STORE_BUCKET
             Value: !Ref LambdaArtifactStoreBucket
           - Name: USER_TABLE_NAME
             Value: !Ref UserTable
           - Name: COGNITO_USER_GROUP_NAME
             Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
-          - Name: COGNITO_USER_POOL_ID
-            Value: !Ref CognitoUserPoolId
-          - NAME: FUNCTION_ROLE_ARN
+          - Name: FUNCTION_ROLE_ARN
             Value: !Ref CognitoTriggeredLambdaRoleArn
           - Name: ENVIRONMENT_TAG
             Value: !Ref EnvironmentName
@@ -66,7 +68,7 @@ Resources:
               ActionTypeId:
                 Category: Source
                 Owner: AWS
-                Version: 1
+                Version: "1"
                 Provider: CodeCommit
               OutputArtifacts:
                 - Name: SourceOutput
@@ -82,7 +84,7 @@ Resources:
                 Category: Build
                 Owner: AWS
                 Provider: CodeBuild
-                Version: 1
+                Version: "1"
               Configuration:
                 ProjectName: !Ref PostConfirmUserImportFunctionBuildProject
               InputArtifacts:
@@ -97,14 +99,16 @@ Resources:
                 Category: Deploy
                 Owner: AWS
                 Provider: CloudFormation
-                Version: 1
+                Version: "1"
               Configuration:
                 StackName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirm-user-importer-function-pipeline-stack"
                 ActionMode: CREATE_UPDATE
-                Capabilities: CAPABILITY_IAM
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "BuildArtifact::postconfirm-user-importer-output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
                 ParameterOverrides: !Sub '{"RepositoryName": "${PostConfirmUserImportFunctionRepositoryName}", "BranchName": "${BranchName}"}'
               InputArtifacts:
                 - Name: SourceOutput
               RunOrder: 1
+
+

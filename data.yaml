@@ -22,13 +22,16 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
+      GlobalSecondaryIndexes:
         - IndexName: username-index
           KeySchema:
             - AttributeName: username
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -60,13 +63,16 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
+      GlobalSecondaryIndexes:
         - IndexName: userId-index
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         - IndexName: isSealed-sealTime-index
           KeySchema:
             - AttributeName: isSealed
@@ -75,6 +81,9 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         - IndexName: isSealed-startTime-index
           KeySchema:
             - AttributeName: isSealed
@@ -83,6 +92,9 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -110,19 +122,25 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
+      GlobalSecondaryIndexes:
         - IndexName: targetUserId-index
           KeySchema:
             - AttributeName: targetUserId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         - IndexName: actorUserId-index
           KeySchema:
             - AttributeName: actorUserId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -147,28 +165,28 @@ Resources:
           AttributeType: "S"
         - AttributeName: "userId"
           AttributeType: "S"
-        - AttributeName: "time"
-          AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
-        - IndexName: streamId-time-index
+      GlobalSecondaryIndexes:
+        - IndexName: streamId-index
           KeySchema:
             - AttributeName: streamId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
-        - IndexName: userId-time-index
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: userId-index
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -193,28 +211,28 @@ Resources:
           AttributeType: "S"
         - AttributeName: "userId"
           AttributeType: "S"
-        - AttributeName: "time"
-          AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
-        - IndexName: streamId-time-index
+      GlobalSecondaryIndexes:
+        - IndexName: streamId-index
           KeySchema:
             - AttributeName: streamId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
-        - IndexName: userId-time-index
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: userId-index
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -241,36 +259,37 @@ Resources:
           AttributeType: "S"
         - AttributeName: "userId"
           AttributeType: "S"
-        - AttributeName: "time"
-          AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
-        - IndexName: streamId-time-index
+      GlobalSecondaryIndexes:
+        - IndexName: streamId-index
           KeySchema:
             - AttributeName: streamId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
-        - IndexName: commentId-time-index
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: commentId-index
           KeySchema:
             - AttributeName: commentId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
-        - IndexName: userId-time-index
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: userId-index
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
-            - AttributeName: time
-              KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
@@ -296,13 +315,18 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-      LocalSecondaryIndexes:
+        - AttributeName: time
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
         - IndexName: category-index
           KeySchema:
-            - AttributeName: streamId
+            - AttributeName: category
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1

@@ -7,9 +7,7 @@ Parameters:
     Type: String
   SnsRoleArn:
     Type: String
-  UserTableName:
-    Type: String
-  CognitoTriggeredLambdaRoleArn:
+  PostConfirmFunctionName:
     Type: String
 
 Resources:
@@ -48,7 +46,9 @@ Resources:
 
       # Triggered Lambda
       LambdaConfig:
-        PostConfirmation: !GetAtt CognitoPostConfirmationFunction.Arn
+        PostConfirmation:
+          Fn::ImportValue: !Join ["-", [ !Ref PostConfirmFunctionName, "arn"]]
+
 
   # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
@@ -134,40 +134,6 @@ Resources:
         authenticated: !GetAtt CognitoAuthorizedRole.Arn
         unauthenticated: !GetAtt CognitoUnauthorizedRole.Arn
 
-  # Post Confirmation Trigger
-  CognitoPostConfirmationFunction:
-    Type: "AWS::Lambda::Function"
-    Properties:
-      Code:
-        S3Bucket:
-        S3Key:
-        Version:
-      Description: Moves user to DynamoDB UserTable upon conformation
-      Environment:
-        Variables:
-          DB_USER_TABLE_NAME: !Ref UserTableName
-          COGNITO_USER_GROUP_NAME: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
-          COGNITO_USER_POOL_ID: !Ref UserPool
-
-      FunctionName: "${ProjectIdentifierName}-post-confirm-user-importer"
-      Handler: "lambda_function.lambda_handler"
-      MemorySize: 128
-      Role: !Ref CognitoTriggeredLambdaRoleArn
-      Runtime: python3.7
-      Timeout: 3
-      Tags:
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
-  # Attach User Pool the permission to trigger CognitoPostConfirmationFunction
-  CognitoPostConfirmationFunctionInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt CognitoPostConfirmationFunction.Arn
-      Principal: cognito-idp.amazonaws.com
-      Action: lambda:InvokeFunction
-      SourceArn: !GetAtt UserPool.Arn
 
 Outputs:
   UserPoolId:

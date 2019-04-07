@@ -6,7 +6,10 @@ Create the stacks **strictly** with the order
  2- [Network Layer](#network-layer)
  2- [Cognito Layer](#cognito-layer)
 
-## IAM Layer
+## Layers
+
+### IAM Layer
+
 `iam.yaml` contains specs for IAM Roles
 
 Run the following to craete a stack of its:
@@ -17,7 +20,8 @@ aws cloudformation create-stack --stack-name ${iamStackName} \
 --parameters ProjectIdentifierName=${projectName},EnvironmentName=${enviromentName}
 ```
 
-## Network Layer
+### Network Layer
+
 `network.yaml` contains specs for VPC, Subnet etc.
 
 Run the following to craete a stack of its:
@@ -28,7 +32,10 @@ aws cloudformation create-stack --stack-name ${networkStackName} \
 --parameters ProjectIdentifierName=${projectName},EnvironmentName=${enviromentName}
 ```
 
-# See also
+## See also
+
 - [CloudFormation editing on VSCode](https://hodgkins.io/up-your-cloudformation-game-with-vscode)
+
 - [Building a Continuous Delivery Pipeline for a Lambda Application with AWS CodePipeline](https://docs.aws.amazon.com/lambda/latest/dg/build-pipeline.html)
+
 - [Lambda Build Pipeline sample](https://github.com/widdix/aws-velocity/blob/master/deploy/pipeline.yml)

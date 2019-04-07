@@ -179,25 +179,15 @@ Outputs:
   SNSRoleArn:
     Description: A reference to the created SNS Role ARN
     Value: !GetAtt SNSRole.Arn
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sns-role-arn"
   LambdaManagerCloudFormationRoleArn:
     Description: A reference to the created Lambda managing CloudFormation Role ARN
     Value: !GetAtt LambdaManagerCloudFormationRole.Arn
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-lambda-mgmt-cfn-role-arn"
   CodePipelineRoleArn:
     Description: A reference to the created Code Pipeline Role ARN
     Value: !GetAtt CodePipelineRole.Arn
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-role-arn"
   CodeBuildRoleArn:
     Description: A reference to the created Code Build Role ARN
     Value: !GetAtt CodeBuildRole.Arn
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-role-arn"
   CognitoTriggeredLambdaRoleArn:
     Description: A reference to the created Cognito Triggered Lambda Role ARN
     Value: !GetAtt CognitoTriggeredLambdaRole.Arn
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-role-arn"
