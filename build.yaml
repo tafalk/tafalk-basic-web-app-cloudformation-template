@@ -25,9 +25,9 @@ Parameters:
     Type: String
 Resources:
   PostConfirmUserImportFunctionBuildProject:
-    Type: "AWS::CodeBuild::Project"
+    Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-build-project"
+      Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-build-proj"
       Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -56,10 +56,13 @@ Resources:
       ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
 
   PostConfirmUserImportFunctionPipeline:
-    Type: "AWS::CodePipeline::Pipeline"
+    Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirmuserimportfunction-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-pipeline"
       RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
       RestartExecutionOnUpdate: true
       Stages:
         - Name: Source
@@ -71,7 +74,7 @@ Resources:
                 Version: "1"
                 Provider: CodeCommit
               OutputArtifacts:
-                - Name: SourceOutput
+                - Name: SourceOut
               Configuration:
                 RepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
                 BranchName: !Ref BranchName
@@ -88,9 +91,9 @@ Resources:
               Configuration:
                 ProjectName: !Ref PostConfirmUserImportFunctionBuildProject
               InputArtifacts:
-                - Name: SourceOutput
+                - Name: SourceOut
               OutputArtifacts:
-                - Name: App
+                - Name: BuildOut
               RunOrder: 1
         - Name: Pipeline
           Actions:
@@ -101,14 +104,14 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-postconfirm-user-importer-function-pipeline-stack"
+                StackName: !Sub "${ProjectIdentifierName}-postconfirm-user-importer-function-pipeline-stack"
                 ActionMode: CREATE_UPDATE
-                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-                TemplatePath: "BuildArtifact::postconfirm-user-importer-output-template.yaml"
+                Capabilities: CAPABILITY_IAM
+                TemplatePath: "BuildOut::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
                 ParameterOverrides: !Sub '{"RepositoryName": "${PostConfirmUserImportFunctionRepositoryName}", "BranchName": "${BranchName}"}'
               InputArtifacts:
-                - Name: SourceOutput
+                - Name: BuildOut
               RunOrder: 1
 
 

@@ -5,7 +5,7 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
-  SnsRoleArn:
+  SNSRoleArn:
     Type: String
   PostConfirmFunctionName:
     Type: String
@@ -13,7 +13,7 @@ Parameters:
 Resources:
   # Creates a User Pool
   UserPool:
-    Type: "AWS::Cognito::UserPool"
+    Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up"
       MfaConfiguration: "OFF"
@@ -38,7 +38,7 @@ Resources:
       SmsVerificationMessage: Your verification code is {####}
       SmsConfiguration:
         ExternalId: !Sub "${ProjectIdentifierName}-external-id"
-        SnsCallerArn: !Ref SnsRoleArn
+        SnsCallerArn: !Ref SNSRoleArn
 
       # Email
       EmailVerificationMessage: Your verification code is {####}
@@ -52,7 +52,7 @@ Resources:
 
   # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
-    Type: "AWS::Cognito::UserPoolClient"
+    Type: AWS::Cognito::UserPoolClient
     Properties:
       ClientName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-client"
       GenerateSecret: false
@@ -60,7 +60,7 @@ Resources:
 
   # Creates a federeated Identity pool
   IdentityPool:
-    Type: "AWS::Cognito::IdentityPool"
+    Type: AWS::Cognito::IdentityPool
     Properties:
       IdentityPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip"
       AllowUnauthenticatedIdentities: true
@@ -70,7 +70,7 @@ Resources:
 
   # Assigns the roles to the Identity Pool
   CognitoUnauthorizedRole:
-    Type: "AWS::IAM::Role"
+    Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -96,7 +96,7 @@ Resources:
                   - "cognito-sync:*"
                 Resource: "*"
   CognitoAuthorizedRole:
-    Type: "AWS::IAM::Role"
+    Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -127,7 +127,7 @@ Resources:
                   - "lambda:InvokeFunction"
                 Resource: "*"
   IdentityPoolRoleMapping:
-    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
       IdentityPoolId: !Ref IdentityPool
       Roles:

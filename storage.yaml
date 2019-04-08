@@ -5,13 +5,15 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  LambdaFunctionArtifactStoreBucketName:
+    Type: String
 Resources:
   # The bucket for lambda function zips
   FunctionDeploymentsBucket:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: BucketOwnerFullControl
-      BucketName: !Sub "${ProjectIdentifierName}-lambda-zips-2019"
+      BucketName: !Ref LambdaFunctionArtifactStoreBucketName
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName
@@ -39,5 +41,3 @@ Outputs:
   FunctionDeploymentsBucket:
     Description: A reference to the created FunctionDeploymentsBucket
     Value: !Ref FunctionDeploymentsBucket
-    Export:
-      Name: !Sub "${ProjectIdentifierName}-function-deployments-bucket"

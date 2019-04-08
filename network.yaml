@@ -12,7 +12,7 @@ Parameters:
   EnvironmentName:
     Type: String
   KeyName:
-    Type: "AWS::EC2::KeyPair::KeyName"
+    Type: AWS::EC2::KeyPair::KeyName
   VpcCIDR:
     Type: String
   PublicSubnet1CIDR:

@@ -18,7 +18,7 @@ Parameters:
     ConstraintDescription: must specify 'dev', 'test' or 'prod'.
   KeyName:
     Description: Name of an existing EC2 KeyPair
-    Type: "AWS::EC2::KeyPair::KeyName"
+    Type: AWS::EC2::KeyPair::KeyName
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
     Type: String
@@ -86,7 +86,7 @@ Parameters:
   PostConfirmUserImportFunctionRepositoryName:
     Description: CodeCommit repository for post-confirm user importer function
     Type: String
-    Default: tafalk-post-confirmation-user-importer
+    Default: cognito-user-exporter-function
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -137,19 +137,16 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        LambdaFunctionArtifactStoreBucketName: !Sub "${ProjectIdentifierName}-lambda-zips-2019"
 
   PostConfirmationUserImportFunctionCICDPipeline:
     Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - Storage
-      - Data
-      - IAM
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "build.yaml"]]
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
-        FunctionName: !Sub "${ProjectIdentifierName}-postconfirm-user-importer-func"
+        FunctionName: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func"
         BranchName: !Ref RepositoryBranchName
         PostConfirmUserImportFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
         LambdaArtifactStoreBucket:
@@ -165,15 +162,15 @@ Resources:
         LambdaManagerCloudFormationRoleArn:
           Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
 
-  CognitoAuth:
-    Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - IAM
-    Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
-      Parameters:
-        ProjectIdentifierName: !Ref ProjectIdentifierName
-        EnvironmentName: !Ref EnvironmentName
-        SNSRoleArn:
-          Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
-        PostConfirmFunctionName: !Sub "${ProjectIdentifierName}-postconfirm-user-importer-func"
+  # CognitoAuth:
+  #   Type: AWS::CloudFormation::Stack
+  #   DependsOn: PostConfirmationUserImportFunctionCICDPipeline
+  #   Properties:
+  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
+  #     Parameters:
+  #       ProjectIdentifierName: !Ref ProjectIdentifierName
+  #       EnvironmentName: !Ref EnvironmentName
+  #       PostConfirmFunctionName: !Sub "${ProjectIdentifierName}-postconfirm-user-importer-func"
+  #       SNSRoleArn:
+  #         Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
+
