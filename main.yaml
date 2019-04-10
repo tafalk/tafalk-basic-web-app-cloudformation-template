@@ -146,7 +146,7 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
-        FunctionName: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func"
+        FunctionName: !Sub "${ProjectIdentifierName}CognitoUserExporterFunc"
         BranchName: !Ref RepositoryBranchName
         PostConfirmUserImportFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
         LambdaArtifactStoreBucket:
@@ -170,7 +170,7 @@ Resources:
   #     Parameters:
   #       ProjectIdentifierName: !Ref ProjectIdentifierName
   #       EnvironmentName: !Ref EnvironmentName
-  #       PostConfirmFunctionName: !Sub "${ProjectIdentifierName}-postconfirm-user-importer-func"
+  #       PostConfirmFunctionName: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func"
   #       SNSRoleArn:
   #         Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
 

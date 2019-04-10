@@ -11,6 +11,7 @@ Resources:
   # The bucket for lambda function zips
   FunctionDeploymentsBucket:
     Type: AWS::S3::Bucket
+    # DeletionPolicy: Retain
     Properties:
       AccessControl: BucketOwnerFullControl
       BucketName: !Ref LambdaFunctionArtifactStoreBucketName
