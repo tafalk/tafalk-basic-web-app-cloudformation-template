@@ -45,8 +45,6 @@ Resources:
             Value: !Ref UserTable
           - Name: COGNITO_USER_GROUP_NAME
             Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-users"
-          - Name: FUNCTION_ROLE_ARN
-            Value: !Ref CognitoTriggeredLambdaRoleArn
           - Name: ENVIRONMENT_TAG
             Value: !Ref EnvironmentName
           - Name: APPLICATION_TAG

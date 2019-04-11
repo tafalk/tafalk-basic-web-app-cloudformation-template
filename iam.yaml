@@ -140,31 +140,6 @@ Resources:
             Action: "s3:PutObject"
             Resource: "*"
 
-  CognitoTriggeredLambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - sts:AssumeRole
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-      Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-triggered-lambda-policy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "cognito-idp:*"
-                  - "cognito-identity:*"
-                  - "logs:*"
-                  - "dynamodb:*"
-                Resource: "*"
-
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
@@ -178,9 +153,6 @@ Outputs:
   CodeBuildRole:
     Description: A reference to the created Code Build Role
     Value: !Ref CodeBuildRole
-  CognitoTriggeredLambdaRole:
-    Description: A reference to the created Cognito Triggered Lambda Role
-    Value: !Ref CognitoTriggeredLambdaRole
   SNSRoleArn:
     Description: A reference to the created SNS Role ARN
     Value: !GetAtt SNSRole.Arn
@@ -193,6 +165,3 @@ Outputs:
   CodeBuildRoleArn:
     Description: A reference to the created Code Build Role ARN
     Value: !GetAtt CodeBuildRole.Arn
-  CognitoTriggeredLambdaRoleArn:
-    Description: A reference to the created Cognito Triggered Lambda Role ARN
-    Value: !GetAtt CognitoTriggeredLambdaRole.Arn
