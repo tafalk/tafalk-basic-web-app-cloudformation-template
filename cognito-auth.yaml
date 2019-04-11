@@ -7,7 +7,7 @@ Parameters:
     Type: String
   SNSRoleArn:
     Type: String
-  PostConfirmFunctionName:
+  CognitoUserExporterFunctionArn:
     Type: String
 
 Resources:
@@ -47,7 +47,7 @@ Resources:
       # Triggered Lambda
       LambdaConfig:
         PostConfirmation:
-          Fn::ImportValue: !Join ["-", [ !Ref PostConfirmFunctionName, "arn"]]
+          Fn::ImportValue: !Ref CognitoUserExporterFunctionArn
 
 
   # Creates a User Pool Client to be used by the identity pool
