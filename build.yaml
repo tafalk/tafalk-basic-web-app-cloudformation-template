@@ -19,6 +19,8 @@ Parameters:
     Type: String
   LambdaManagerCloudFormationRoleArn:
     Type: String
+  FunctionName:
+    Type: String
 Resources:
   PostConfirmUserImportFunctionBuildProject:
     Type: AWS::CodeBuild::Project
@@ -101,7 +103,7 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "BuildOut::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                # ParameterOverrides: !Sub '{"RepositoryName": "${PostConfirmUserImportFunctionRepositoryName}", "BranchName": "${BranchName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${FunctionName}", "UserTableName": "${UserTable}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: BuildOut
               RunOrder: 1
