@@ -13,6 +13,8 @@ Parameters:
     Type: String
   UserTable:
     Type: String
+  UserGroup:
+    Type: String
   CodeCommitRepoCodeBuildRoleArn:
     Type: String
   CodeCommitRepoCodePipelineRoleArn:
@@ -21,6 +23,7 @@ Parameters:
     Type: String
   FunctionName:
     Type: String
+
 Resources:
   PostConfirmUserImportFunctionBuildProject:
     Type: AWS::CodeBuild::Project
@@ -98,12 +101,12 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-user-exporter-pipeline"
+                StackName: !Sub "${ProjectIdentifierName}-user-exporter-deploy-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "BuildOut::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${FunctionName}", "UserTableName": "${UserTable}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${FunctionName}", "UserTableName": "${UserTable}", "UserGroupName": "${UserGroup}","Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: BuildOut
               RunOrder: 1

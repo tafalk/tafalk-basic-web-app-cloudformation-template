@@ -152,25 +152,27 @@ Resources:
           Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
         UserTable:
           Fn::GetAtt: [Data, Outputs.UserTable]
+        UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
         CodeCommitRepoCodeBuildRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
         CodeCommitRepoCodePipelineRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
         LambdaManagerCloudFormationRoleArn:
           Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
-        FunctionName: !Sub "${ProjectIdentifierName}-cognito-user-exporter"
+        FunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - PostConfirmationUserImportFunctionCICDPipeline
-      - !Sub "${ProjectIdentifierName}-user-exporter-pipeline"
+    DependsOn: PostConfirmationUserImportFunctionCICDPipeline
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
-        CognitoUserExporterFunctionArn: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-arn"
+        # Should be the same as FunctionName of PostConfirmationUserImportFunctionCICDPipeline Stack
+        CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
         SNSRoleArn:
           Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
+        # Should be the same as UserGroup of PostConfirmationUserImportFunctionCICDPipeline Stack
+        DefaultUserGroupName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
 

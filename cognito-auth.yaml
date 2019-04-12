@@ -7,7 +7,9 @@ Parameters:
     Type: String
   SNSRoleArn:
     Type: String
-  CognitoUserExporterFunctionArn:
+  CognitoUserExporterFunctionName:
+    Type: String
+  DefaultUserGroupName:
     Type: String
 
 Resources:
@@ -46,9 +48,8 @@ Resources:
 
       # Triggered Lambda
       LambdaConfig:
-        PostConfirmation:
-          Fn::ImportValue: !Ref CognitoUserExporterFunctionArn
-
+        # Calculate function ARN from its name
+        PostConfirmation: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${CognitoUserExporterFunctionName}"
 
   # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
@@ -57,6 +58,35 @@ Resources:
       ClientName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-up-client"
       GenerateSecret: false
       UserPoolId: !Ref UserPool
+
+  # Creates a User Pool Group
+  DefaultUserGroupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess"
+  UserPoolDefaultUserGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Default User Group
+      GroupName: !Ref DefaultUserGroupName
+      RoleArn: !GetAtt DefaultUserGroupRole.Arn
+      UserPoolId: !Ref UserPool
+
 
   # Creates a federeated Identity pool
   IdentityPool:
