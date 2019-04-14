@@ -68,8 +68,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated:
-                - "cognito-identity.amazonaws.com"
+              Federated: "cognito-identity.amazonaws.com"
             Action:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
@@ -90,7 +89,7 @@ Resources:
   IdentityPool:
     Type: AWS::Cognito::IdentityPool
     Properties:
-      IdentityPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip"
+      IdentityPoolName: !Sub "${ProjectIdentifierName}_${EnvironmentName}_ip"
       AllowUnauthenticatedIdentities: True
       CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
