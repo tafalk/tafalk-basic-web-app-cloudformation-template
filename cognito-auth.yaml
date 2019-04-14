@@ -5,9 +5,9 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
-  SNSRoleArn:
-    Type: String
   CognitoUserExporterFunctionName:
+    Type: String
+  SNSRoleArn:
     Type: String
   DefaultUserGroupName:
     Type: String
@@ -71,12 +71,10 @@ Resources:
               Federated:
                 - "cognito-identity.amazonaws.com"
             Action:
-              - "sts:AssumeRole"
+              - "sts:AssumeRoleWithWebIdentity"
             Condition:
               StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-              "ForAnyValue:StringLike":
-                "cognito-identity.amazonaws.com:amr": authenticated
+                "cognito-identity.amazonaws.com:aud": !Ref UserPool
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess"
   UserPoolDefaultUserGroup:
@@ -93,7 +91,7 @@ Resources:
     Type: AWS::Cognito::IdentityPool
     Properties:
       IdentityPoolName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-ip"
-      AllowUnauthenticatedIdentities: true
+      AllowUnauthenticatedIdentities: True
       CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
           ProviderName: !GetAtt UserPool.ProviderName
@@ -163,7 +161,6 @@ Resources:
       Roles:
         authenticated: !GetAtt CognitoAuthorizedRole.Arn
         unauthenticated: !GetAtt CognitoUnauthorizedRole.Arn
-
 
 Outputs:
   UserPoolId:
