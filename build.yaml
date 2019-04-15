@@ -7,7 +7,7 @@ Parameters:
     Type: String
   BranchName:
     Type: String
-  PostConfirmUserImportFunctionRepositoryName:
+  CognitoUserExporterFunctionRepositoryName:
     Type: String
   LambdaArtifactStoreBucket:
     Type: String
@@ -21,7 +21,7 @@ Parameters:
     Type: String
   LambdaManagerCloudFormationRoleArn:
     Type: String
-  FunctionName:
+  CognitoUserExporterFunctionName:
     Type: String
 
 Resources:
@@ -73,7 +73,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOut
               Configuration:
-                RepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
+                RepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
                 BranchName: !Ref BranchName
                 PollForSourceChanges: false
               RunOrder: 1
@@ -106,7 +106,7 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "BuildOut::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${FunctionName}", "UserTableName": "${UserTable}", "UserGroupName": "${UserGroup}","Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${CognitoUserExporterFunctionName}", "UserTableName": "${UserTable}", "UserGroupName": "${UserGroup}","Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: BuildOut
               RunOrder: 1

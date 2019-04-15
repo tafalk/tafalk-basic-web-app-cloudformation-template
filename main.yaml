@@ -95,8 +95,20 @@ Parameters:
     Description: The bucket address at which the templates reside
     Type: String
     Default: https://s3.eu-central-1.amazonaws.com/tafalk-cf-templates
+  GooglePlacesApiKey:
+    Description: The API Key to reach Google Places API
+    Type: String
+    Default: AIzaSyCi8K1mwjvbvUUEQ6CEWkxV-jQmhCRhTxI
 Resources:
+  GooglePlacesApiKeyParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: GooglePlacesApiKey
+      Type: String
+      Value: !Ref GooglePlacesApiKey
+      Description: "The API Key to reach Google Places API"
 
+  # Nested Stacks
   IAM:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -129,6 +141,10 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        CacheSubnetName:
+          Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
+        CacheVPCSecurityGroupId:
+          Fn::GetAtt: [Network, Outputs.CacheSecurityGroupId]
 
   Storage:
     Type: AWS::CloudFormation::Stack
@@ -139,40 +155,47 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         LambdaFunctionArtifactStoreBucketName: !Sub "${ProjectIdentifierName}-lambda-zips-2019"
 
-  PostConfirmationUserImportFunctionCICDPipeline:
+  LambdaFunctionCICDPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "build.yaml"]]
       Parameters:
+        # Common
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
         BranchName: !Ref RepositoryBranchName
-        PostConfirmUserImportFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
         LambdaArtifactStoreBucket:
           Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
-        UserTable:
-          Fn::GetAtt: [Data, Outputs.UserTable]
-        UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
         CodeCommitRepoCodeBuildRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
         CodeCommitRepoCodePipelineRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
         LambdaManagerCloudFormationRoleArn:
           Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
-        FunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
+        # CognitoUserExporter
+        CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
+        CognitoUserExporterFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
+        UserTable:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+        UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
+        # Place Finder
+        PlacesCacheEndpoint:
+          Fn::GetAtt: [Data, Outputs.PlacesCacheEndpoint]
+        PlacesCachePort:
+          Fn::GetAtt: [Data, Outputs.PlacesCachePort]
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack
-    DependsOn: PostConfirmationUserImportFunctionCICDPipeline
+    DependsOn: LambdaFunctionCICDPipeline
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
-        # Should be the same as FunctionName of PostConfirmationUserImportFunctionCICDPipeline Stack
+        # Should be the same as FunctionName of LambdaFunctionCICDPipeline Stack
         CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
         SNSRoleArn:
           Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
-        # Should be the same as UserGroup of PostConfirmationUserImportFunctionCICDPipeline Stack
+        # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
         DefaultUserGroupName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
 
