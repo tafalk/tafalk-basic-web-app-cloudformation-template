@@ -70,68 +70,68 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  # StreamTable:
-  #   DependsOn: UserTable
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     TableName: Streams
-  #     BillingMode: PROVISIONED
-  #     AttributeDefinitions:
-  #       - AttributeName: "id"
-  #         AttributeType: "S"
-  #       - AttributeName: "userId"
-  #         AttributeType: "S"
-  #       - AttributeName: "isSealed"
-  #         AttributeType: "N"
-  #       - AttributeName: "startTime"
-  #         AttributeType: "S"
-  #       - AttributeName: "sealTime"
-  #         AttributeType: "S"
-  #     KeySchema:
-  #       - AttributeName: id
-  #         KeyType: HASH
-  #     GlobalSecondaryIndexes:
-  #       - IndexName: userId-index
-  #         KeySchema:
-  #           - AttributeName: userId
-  #             KeyType: HASH
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #       - IndexName: isSealed-sealTime-index
-  #         KeySchema:
-  #           - AttributeName: isSealed
-  #             KeyType: HASH
-  #           - AttributeName: sealTime
-  #             KeyType: RANGE
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #       - IndexName: isSealed-startTime-index
-  #         KeySchema:
-  #           - AttributeName: isSealed
-  #             KeyType: HASH
-  #           - AttributeName: startTime
-  #             KeyType: RANGE
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 1
-  #       WriteCapacityUnits: 1
-  #     Tags:
-  #       - Key: Name
-  #         Value: Streams
-  #       - Key: Environment
-  #         Value: !Ref EnvironmentName
-  #       - Key: Application
-  #         Value: !Ref ProjectIdentifierName
+  StreamTable:
+    DependsOn: UserTable
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Streams
+      BillingMode: PROVISIONED
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "userId"
+          AttributeType: "S"
+        - AttributeName: "isSealed"
+          AttributeType: "N"
+        - AttributeName: "startTime"
+          AttributeType: "S"
+        - AttributeName: "sealTime"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: userId-index
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: isSealed-sealTime-index
+          KeySchema:
+            - AttributeName: isSealed
+              KeyType: HASH
+            - AttributeName: sealTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: isSealed-startTime-index
+          KeySchema:
+            - AttributeName: isSealed
+              KeyType: HASH
+            - AttributeName: startTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: Name
+          Value: Streams
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
 
   # UserInteractionTable:
   #   DependsOn: StreamTable
@@ -372,9 +372,9 @@ Outputs:
   UserTable:
     Description: A reference to the created UserTable
     Value: !Ref UserTable
-  # StreamTable:
-  #   Description: A reference to the created StreamTable
-  #   Value: !Ref StreamTable
+  StreamTable:
+    Description: A reference to the created StreamTable
+    Value: !Ref StreamTable
   # UserInteractionTable:
   #   Description: A reference to the created UserInteractionTable
   #   Value: !Ref UserInteractionTable
@@ -399,9 +399,9 @@ Outputs:
   UserTableArn:
     Description: A reference to the created UserTable ARN
     Value: !GetAtt UserTable.Arn
-  # StreamTableArn:
-  #   Description: A reference to the created StreamTable ARN
-  #   Value: !GetAtt StreamTable.Arn
+  StreamTableArn:
+    Description: A reference to the created StreamTable ARN
+    Value: !GetAtt StreamTable.Arn
   # UserInteractionTableArn:
   #   Description: A reference to the created UserInteractionTable ARN
   #   Value: !GetAtt UserInteractionTable.Arn

@@ -83,10 +83,22 @@ Parameters:
       - false
     Default: false
     ConstraintDescription: must specify true or false.
-  PostConfirmUserImportFunctionRepositoryName:
+  CognitoUserExporterFunctionRepositoryName:
     Description: CodeCommit repository for post-confirm user importer function
     Type: String
     Default: cognito-user-exporter-function
+  PlaceFinderFunctionRepositoryName:
+    Description: CodeCommit repository for place finder function
+    Type: String
+    Default: place-getter-function
+  TokenResolverFunctionRepositoryName:
+    Description: CodeCommit repository for token resolver function
+    Type: String
+    Default: recaptcha-token-resolver-function
+  ResourceSearcherFunctionRepositoryName:
+    Description: CodeCommit repository for resource searcher function
+    Type: String
+    Default: resource-searcher-function
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -99,6 +111,14 @@ Parameters:
     Description: The API Key to reach Google Places API
     Type: String
     Default: AIzaSyCi8K1mwjvbvUUEQ6CEWkxV-jQmhCRhTxI
+  RecaptchaSecret:
+    Description: The Recaptcha V3 Secret of the application
+    Type: String
+    Default: 6Lcro5kUAAAAAFkv0SSu_C89ovz9M_vYxA9FQujJ
+  RecaptchaVerifyEndpoint:
+    Description: The Recaptcha V3 verification endpoint
+    Type: String
+    Default: https://www.google.com/recaptcha/api/siteverify
 Resources:
   GooglePlacesApiKeyParam:
     Type: AWS::SSM::Parameter
@@ -107,6 +127,13 @@ Resources:
       Type: String
       Value: !Ref GooglePlacesApiKey
       Description: "The API Key to reach Google Places API"
+  RecaptchaSecretParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: RecaptchaSecret
+      Type: String
+      Value: !Ref RecaptchaSecret
+      Description: "The Recaptcha Secret"
 
   # Nested Stacks
   IAM:
@@ -174,15 +201,28 @@ Resources:
           Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
         # CognitoUserExporter
         CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
-        CognitoUserExporterFunctionRepositoryName: !Ref PostConfirmUserImportFunctionRepositoryName
+        CognitoUserExporterFunctionRepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
         UserTable:
           Fn::GetAtt: [Data, Outputs.UserTable]
+        StreamTable:
+          Fn::GetAtt: [Data, Outputs.StreamTable]
         UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
         # Place Finder
+        PlaceFinderFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-place-finder"
+        PlaceFinderFunctionRepositoryName: !Ref PlaceFinderFunctionRepositoryName
         PlacesCacheEndpoint:
           Fn::GetAtt: [Data, Outputs.PlacesCacheEndpoint]
         PlacesCachePort:
           Fn::GetAtt: [Data, Outputs.PlacesCachePort]
+        GooglePlacesApiKeyName: !Ref GooglePlacesApiKeyParam
+        # Token Resolver
+        RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
+        RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
+        RecaptchaSecretName: !Ref RecaptchaSecretParam
+        RecaptchaVerifyEndpoint: !Ref RecaptchaVerifyEndpoint
+        # Resource Searcher
+        ResourceSearcherFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
+        ResourceSearcherFunctionRepositoryName: !Ref ResourceSearcherFunctionRepositoryName
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack
