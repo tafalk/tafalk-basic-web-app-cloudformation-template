@@ -21,7 +21,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-sns-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-cognito-sns-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -68,7 +68,7 @@ Resources:
             Action: "sts:AssumeRole"
       Path: /
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-internal-codepipeline-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -121,28 +121,51 @@ Resources:
           Action:
           - "sts:AssumeRole"
       Policies:
-      - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-policy"
+      - PolicyName: !Sub "${ProjectIdentifierName}-internal-codebuild-policy"
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
           - Effect: Allow
             Action:
-            - "logs:CreateLogGroup"
-            - "logs:CreateLogStream"
-            - "logs:PutLogEvents"
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
             Resource: "*"
           - Effect: Allow
             Action: "codecommit:GitPull"
             Resource: "*"
           - Effect: Allow
             Action:
-            - "s3:GetObject"
-            - "s3:GetObjectVersion"
+              - "s3:GetObject"
+              - "s3:GetObjectVersion"
             Resource: "*"
           - Effect: "Allow"
             Action: "s3:PutObject"
             Resource: "*"
 
+  AppSyncLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-logs-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
@@ -156,6 +179,9 @@ Outputs:
   CodeBuildRole:
     Description: A reference to the created Code Build Role
     Value: !Ref CodeBuildRole
+  AppSyncLogRole:
+    Description: A reference to the created AppSYnc CloudWatch Logs Role
+    Value: !Ref AppSyncLogRole
   SNSRoleArn:
     Description: A reference to the created SNS Role ARN
     Value: !GetAtt SNSRole.Arn
@@ -168,3 +194,6 @@ Outputs:
   CodeBuildRoleArn:
     Description: A reference to the created Code Build Role ARN
     Value: !GetAtt CodeBuildRole.Arn
+  AppSyncLogRoleArn:
+    Description: A reference to the created AppSYnc CloudWatch Logs Role ARN
+    Value: !GetAtt AppSyncLogRole.Arn

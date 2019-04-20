@@ -1,0 +1,19 @@
+Description: GraphQl API
+Parameters:
+  ProjectIdentifierName:
+    Type: String
+  EnvironmentName:
+    Type: String
+  AppSyncLogRoleArn:
+    Type: String
+Resources:
+  AppSyncApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-gql-api"
+      AuthenticationType: API_KEY
+      # UserPoolConfig: UserPoolConfig
+      # OpenIDConnectConfig : OpenIDConnectConfig
+      LogConfig:
+        FieldLogLevel: ERROR
+        CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn

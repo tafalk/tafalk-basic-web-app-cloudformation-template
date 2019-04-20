@@ -239,3 +239,12 @@ Resources:
         # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
         DefaultUserGroupName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
 
+  AppSync:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "appsync.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        AppSyncLogRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
