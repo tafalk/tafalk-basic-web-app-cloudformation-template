@@ -4,12 +4,33 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  DomainName:
+    Type: String
+  ZohoCname:
+    Type: String
 Resources:
+
+  # Certification
+  SslCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub "*.${DomainName}"
+      SubjectAlternativeNames:
+        - !Ref DomainName
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+      ValidationMethod: DNS
+
+  # Buckets and Policies
   HostingBucket:
     Type: AWS::S3::Bucket
-    # DeletionPolicy": "Retain"
+    DeletionPolicy": "Retain"
     Properties:
-      BucketName: !Sub "${ProjectIdentifierName}-hosting"
+      BucketName: !Ref DomainName
+      AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: index.html
@@ -29,25 +50,42 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
+  HostingWwwRedirectionBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy": "Retain"
+    Properties:
+      BucketName: !Sub "www.${DomainName}"
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: !Ref DomainName
+          Protocol: https
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
 
-  PrivateHostingBucketPolicy:
+  HostingBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref HostingBucket
       PolicyDocument:
         Statement:
-          - Action:
+          - Sid: PublicReadGetObject
+            Action:
               - "s3:GetObject"
             Effect: Allow
-            Resource: !Join ["", ["arn:aws:s3:::", !Ref HostingBucket, "/*"]]
+            Resource: !Join ["", [ !GetAtt HostingBucket.Arn, "/*"]]
             Principal:
               CanonicalUser: !GetAtt HostingOriginAccessIdentity.S3CanonicalUserId
 
+  # CloudFront Distribution
   HostingOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: "CloudFrontOriginAccessIdentityConfig"
+        Comment: CloudFrontOriginAccessIdentityConfig
 
   HostingCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -55,7 +93,7 @@ Resources:
       DistributionConfig:
         Enabled: true
         Origins:
-          - Id: !Sub "${ProjectIdentifierName}HostingS3Bucket"
+          - Id: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
             DomainName: !GetAtt HostingBucket.DomainName
             S3OriginConfig:
               OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref HostingOriginAccessIdentity]]
@@ -83,18 +121,129 @@ Resources:
             - PUT
           Compress: true
           DefaultTTL: 86400
-          ForwardedValues:
-            QueryString: false
           MaxTTL: 31536000
           MinTTL: 60
-          TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3Bucket"
+          TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
           ViewerProtocolPolicy: "redirect-to-https"
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
         DefaultRootObject: "index.html"
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLCert
+          SslSupportMethod: sni-only
+        Aliases:
+          - !Ref DomainName
       Tags:
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
+  HostingWwwCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Origins:
+          - Id: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
+            DomainName: !GetAtt HostingWwwRedirectionBucket.DomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref HostingOriginAccessIdentity]]
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 400
+            ResponseCode: 200
+            ResponsePagePath: "/"
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: "/"
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: "/"
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          Compress: true
+          DefaultTTL: 604800
+          TargetOriginId: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
+          ViewerProtocolPolicy: "redirect-to-https"
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref SSLCert
+          SslSupportMethod: sni-only
+        Aliases:
+          - !Sub www.${DomainName}
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  # DNS
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: !Ref DomainName
+      HostedZoneConfig:
+        Comment: "Hosted zone for the site"
+      HostedZoneTags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  DNSRecordSetGroup:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZone
+      Comment: The record set group consisting of record sets for the site
+      RecordSets:
+        - Name: !Sub "${DomainName}."
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt HostingCloudFrontDistribution.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Sub "www.${DomainName}."
+          Type: A
+          AliasTarget:
+            DNSName: !GetAtt HostingWwwCloudFrontDistribution.DomainName
+            HostedZoneId: Z2FDTNDATAQYW2
+        - Name: !Sub "${DomainName}."
+          Type: MX
+          TTL: 300
+          ResourceRecords:
+            - "10 mx.zoho.eu"
+            - "20 mx2.zoho.eu"
+        - Name: !Sub "${ZohoCname}.${DomainName}."
+          Type: CNAME
+          TTL: 300
+          ResourceRecords:
+            - "zmverify.zoho.com"
+        - Name: !Sub "${DomainName}."
+          Type: SPF
+          TTL: 300
+          ResourceRecords:
+            - "\"v=spf1 include:zoho.com ~all\""
+        - Name: !Sub "${DomainName}."
+          Type: TXT
+          TTL: 300
+          ResourceRecords:
+            - "\"v=spf1 include:zoho.com ~all\""
 
 Outputs:
   HostingBucketName:

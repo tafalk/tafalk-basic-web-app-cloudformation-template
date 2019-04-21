@@ -8,10 +8,11 @@ Parameters:
   LambdaFunctionArtifactStoreBucketName:
     Type: String
 Resources:
-  # The bucket for lambda function zips
+
+  # Buckets
   FunctionDeploymentsBucket:
     Type: AWS::S3::Bucket
-    # DeletionPolicy: Retain
+    DeletionPolicy: Retain
     Properties:
       AccessControl: BucketOwnerFullControl
       BucketName: !Ref LambdaFunctionArtifactStoreBucketName
@@ -22,18 +23,20 @@ Resources:
           Value: !Ref ProjectIdentifierName
       VersioningConfiguration:
         Status: Enabled
+
+  # Policies
   FunctionDeploymentsBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
       Bucket: !Ref FunctionDeploymentsBucket
       PolicyDocument:
-        Version: 2012-10-17
         Statement:
           - Sid: DenyInsecureConnections
             Effect: Deny
-            Principal: "*"
-            Action: "s3:*"
+            Action:
+              - "s3:*"
             Resource: !Join [ "", [ !GetAtt FunctionDeploymentsBucket.Arn, "/*" ] ]
+            Principal: "*"
             Condition:
               Bool:
                 "aws:SecureTransport": false

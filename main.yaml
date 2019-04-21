@@ -119,6 +119,18 @@ Parameters:
     Description: The Recaptcha V3 verification endpoint
     Type: String
     Default: https://www.google.com/recaptcha/api/siteverify
+  DomainName:
+    Description: The fully qualified domain name for the website
+    Type: String
+    Default: tafalk.com
+  ZohoCname:
+    Description: CNAME prefix for ZohoMail Domain verification
+    Type: String
+    Default: zb15470678
+  ResourceBucketName:
+    Description: The name of the S3 bucket containing the templates and the graphql schemas
+    Type: String
+    Default: tafalk-cf-templates
 Resources:
   GooglePlacesApiKeyParam:
     Type: AWS::SSM::Parameter
@@ -246,5 +258,20 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        ResourceBucketName: !Ref ResourceBucketName
         AppSyncLogRoleArn:
           Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
+        AppSyncResourceDynamoDbRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceDynamoDbRoleArn]
+        UserTableName:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+
+  WebServing:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        DomainName: !Ref DomainName
+        ZohoCname: !Ref ZohoCname

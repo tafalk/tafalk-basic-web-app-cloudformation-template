@@ -4,16 +4,44 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  ResourceBucketName:
+    Type: String
   AppSyncLogRoleArn:
     Type: String
+  AppSyncResourceDynamoDbRoleArn:
+    Type: String
+  UserTableName:
+    Type: String
 Resources:
+  # API
   AppSyncApi:
     Type: AWS::AppSync::GraphQLApi
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-gql-api"
+      Name: !Sub "${ProjectIdentifierName}-appsync-api"
       AuthenticationType: API_KEY
       # UserPoolConfig: UserPoolConfig
       # OpenIDConnectConfig : OpenIDConnectConfig
       LogConfig:
         FieldLogLevel: ERROR
         CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn
+
+  # Schema
+  AppSyncSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema.graphql"
+
+  # DataSources
+  AppSyncUserTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: user_table
+      Description: "The User Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref UserTableName
+        AwsRegion: !Sub ${AWS::Region}
+

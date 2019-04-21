@@ -1,0 +1,37 @@
+schema {
+	query: Query
+	mutation: Mutation
+	subscription: Subscription
+}
+
+type Query {
+	listStreamLikes(streamId: ID!): [Like]
+	listPaginatedStreamComments(streamId: ID!, first: Int, after: String): CommentConnection
+	search(query: String!): [SearchResult]
+		@aws_auth(cognito_groups: ["TafalkUsers"])
+	getUser(id: ID!): User
+	getUserByUsername(username: String!): [User]
+	listUsers(first: Int, after: String): UserConnection
+	getStream(id: ID!): Stream
+	listStreams(first: Int, after: String): StreamConnection
+	listLiveStreams(first: Int, after: String): StreamConnection
+		@aws_auth(cognito_groups: ["TafalkUsers"])
+	listSealedStreams(first: Int, after: String): StreamConnection
+	listAllStreamsByUsers(userIds: [ID!]): [Stream]
+	listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
+	listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
+	getComment(id: ID!): Comment
+	listComments(first: Int, after: String): CommentConnection
+	getLike(id: ID!): Like
+	listLikes(first: Int, after: String): LikeConnection
+	getUncloggerHint(id: ID!): UncloggerHint
+	listUncloggerHints(first: Int, after: String): UncloggerHintConnection
+	getUserInteraction(id: ID!): UserInteraction
+	listUserInteractions(first: Int, after: String): UserInteractionConnection
+	listUserInteractionsByActorUserIdIndex(actorUserId: String!, first: Int, after: String): UserInteractionConnection
+	listUserInteractionsByTargetUserIdIndex(targetUserId: String!, first: Int, after: String): UserInteractionConnection
+	queryUserInteractionsBetweenUsersByUserIdIndices(actorUserId: String!, targetUserId: String!): [UserInteraction]
+	getFlag(id: ID!): Flag
+	listFlags(filter: TableFlagFilterInput, limit: Int, nextToken: String): FlagConnection
+	getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
+}

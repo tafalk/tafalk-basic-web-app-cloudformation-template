@@ -166,6 +166,33 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: "*"
+
+  AppSyncResourceDynamoDbRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-dynamodb-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "dynamodb:DeleteItem"
+                  - "dynamodb:GetItem"
+                  - "dynamodb:PutItem"
+                  - "dynamodb:Query"
+                  - "dynamodb:Scan"
+                  - "dynamodb:UpdateItem"
+                Resource: "*"
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
@@ -180,8 +207,11 @@ Outputs:
     Description: A reference to the created Code Build Role
     Value: !Ref CodeBuildRole
   AppSyncLogRole:
-    Description: A reference to the created AppSYnc CloudWatch Logs Role
+    Description: A reference to the created AppSync CloudWatch Logs Role
     Value: !Ref AppSyncLogRole
+  AppSyncResourceDynamoDbRole:
+    Description: A reference to the created AppSync DyanmoDB Role
+    Value: !Ref AppSyncResourceDynamoDbRole
   SNSRoleArn:
     Description: A reference to the created SNS Role ARN
     Value: !GetAtt SNSRole.Arn
@@ -197,3 +227,6 @@ Outputs:
   AppSyncLogRoleArn:
     Description: A reference to the created AppSYnc CloudWatch Logs Role ARN
     Value: !GetAtt AppSyncLogRole.Arn
+  AppSyncResourceDynamoDbRoleArn:
+    Description: A reference to the created AppSYnc DynamoDB Role ARN
+    Value: !GetAtt AppSyncResourceDynamoDbRole.Arn
