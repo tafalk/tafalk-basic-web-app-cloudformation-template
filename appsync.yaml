@@ -10,7 +10,27 @@ Parameters:
     Type: String
   AppSyncResourceDynamoDbRoleArn:
     Type: String
+  AppSyncResourceLambdaRoleArn:
+    Type: String
   UserTableName:
+    Type: String
+  StreamTableName:
+    Type: String
+  UserInteractionTableName:
+    Type: String
+  LikeTableName:
+    Type: String
+  CommentTableName:
+    Type: String
+  FlagTableName:
+    Type: String
+  UncloggerPromptTableName:
+    Type: String
+  PlaceGetterFunctionArn:
+    Type: String
+  ResourceSearcherFunctionArn:
+    Type: String
+  RecaptchaTokenResolverFunctionArn:
     Type: String
 Resources:
   # API
@@ -37,11 +57,106 @@ Resources:
     Type: AWS::AppSync::DataSource
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      Name: user_table
+      Name: user_ds
       Description: "The User Table AppSync Data Source"
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
       DynamoDBConfig:
         TableName: !Ref UserTableName
         AwsRegion: !Sub ${AWS::Region}
-
+  AppSyncStreamTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: stream_ds
+      Description: "The Stream Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref StreamTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncUserInteractionTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: user_interaction_ds
+      Description: "The UserInteraction Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref UserInteractionTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncLikeTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: like_ds
+      Description: "The Like Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref LikeTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncCommentTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: comment_ds
+      Description: "The Comment Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref CommentTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncFlagTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: flag_ds
+      Description: "The Flag Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref FlagTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncUncloggerPromptTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: unclogger_prompt_ds
+      Description: "The UncloggerPrompt Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref UncloggerPromptTableName
+        AwsRegion: !Sub ${AWS::Region}
+  AppSyncPlaceGetterFunctionDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: place_getter_ds
+      Description: "The Place-Getter Function AppSync Data Source"
+      Type:  AWS_LAMBDA
+      ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
+      LambdaConfig:
+        LambdaFunctionArn: !Ref PlaceGetterFunctionArn
+  AppSyncResourceSearcherFunctionDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: resource_searcher_ds
+      Description: "The Resource-Searcher Function AppSync Data Source"
+      Type:  AWS_LAMBDA
+      ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
+      LambdaConfig:
+        LambdaFunctionArn: !Ref ResourceSearcherFunctionArn
+  AppSyncRecaptchaTokenResolverFunctionDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: recaptcha_token_resolver_ds
+      Description: "The Recaptcha-Token-Resolver Function AppSync Data Source"
+      Type:  AWS_LAMBDA
+      ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
+      LambdaConfig:
+        LambdaFunctionArn: !Ref RecaptchaTokenResolverFunctionArn
