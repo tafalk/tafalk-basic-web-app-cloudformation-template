@@ -1,37 +1,352 @@
 schema {
-	query: Query
-	mutation: Mutation
-	subscription: Subscription
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
 }
 
+# Q U E R I E S
 type Query {
-	listStreamLikes(streamId: ID!): [Like]
-	listPaginatedStreamComments(streamId: ID!, first: Int, after: String): CommentConnection
-	search(query: String!): [SearchResult]
-		@aws_auth(cognito_groups: ["TafalkUsers"])
-	getUser(id: ID!): User
-	getUserByUsername(username: String!): [User]
-	listUsers(first: Int, after: String): UserConnection
-	getStream(id: ID!): Stream
-	listStreams(first: Int, after: String): StreamConnection
-	listLiveStreams(first: Int, after: String): StreamConnection
-		@aws_auth(cognito_groups: ["TafalkUsers"])
-	listSealedStreams(first: Int, after: String): StreamConnection
-	listAllStreamsByUsers(userIds: [ID!]): [Stream]
-	listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
-	listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
-	getComment(id: ID!): Comment
-	listComments(first: Int, after: String): CommentConnection
-	getLike(id: ID!): Like
-	listLikes(first: Int, after: String): LikeConnection
-	getUncloggerHint(id: ID!): UncloggerHint
-	listUncloggerHints(first: Int, after: String): UncloggerHintConnection
-	getUserInteraction(id: ID!): UserInteraction
-	listUserInteractions(first: Int, after: String): UserInteractionConnection
-	listUserInteractionsByActorUserIdIndex(actorUserId: String!, first: Int, after: String): UserInteractionConnection
-	listUserInteractionsByTargetUserIdIndex(targetUserId: String!, first: Int, after: String): UserInteractionConnection
-	queryUserInteractionsBetweenUsersByUserIdIndices(actorUserId: String!, targetUserId: String!): [UserInteraction]
-	getFlag(id: ID!): Flag
-	listFlags(filter: TableFlagFilterInput, limit: Int, nextToken: String): FlagConnection
-	getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
+  # User
+  getUserByUsername(username: String!): [User]
+  listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
+  listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
+  listUserInteractionsByActorUserIdIndex(actorUserId: String!, first: Int, after: String): UserInteractionConnection
+
+  # Stream
+  getStream(id: ID!): Stream
+  listSealedStreams(first: Int, after: String): StreamConnection
+  listLiveStreams(first: Int, after: String): StreamConnection
+    @aws_auth(cognito_groups: ["TafalkUsers"])
+
+  # User interaction
+  queryUserInteractionsBetweenUsersByUserIdIndices(actorUserId: String!, targetUserId: String!): [UserInteraction]
+
+  # Stream reaction
+  listStreamLikes(streamId: ID!): [Like]
+  listPaginatedStreamComments(streamId: ID!, first: Int, after: String): CommentConnection
+
+  # Search
+  search(query: String!): [SearchResult]
+    @aws_auth(cognito_groups: ["TafalkUsers"])
+
+  # Recaptcha V3 token
+  getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result  
+}
+
+# M U T A T I O N S
+type Mutation {
+  # User
+  updateUser(input: UpdateUserInput!): User
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+  deleteUser(input: DeleteUserInput!): User
+
+  # Stream
+  createStream(input: CreateStreamInput!): Stream
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+  updateStream(input: UpdateStreamInput!): Stream
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+
+  # User interaction
+  createUserInteraction(input: CreateUserInteractionInput!): UserInteraction
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+  deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+
+  # Stream reaction
+  createLike(input: CreateLikeInput!): Like
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+  createComment(input: CreateCommentInput!): Comment
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+  deleteLike(input: DeleteLikeInput!): Like
+    @aws_auth(cognito_groups : ["TafalkUsers"])
+
+  # Flag
+  createFlag(input: CreateFlagInput!): Flag
+  deleteFlag(input: DeleteFlagInput!): Flag
+}
+
+# S U B S C R I P T I O N S
+type Subscription {
+  # Stream
+  onUpdateStream(id: ID!): Stream
+    @aws_subscribe(mutations : ["updateStream"])
+
+  # Stream reaction
+  onCreateOrDeleteLike(streamId: String!): Like
+    @aws_subscribe(mutations : ["createLike", "deleteLike"])
+}
+
+# I N T E R F A C E S
+interface CommunityReaction {
+  id: ID!
+  streamId: String!
+  time: String
+  userId: String!
+}
+
+# U N I O N S
+union SearchResult = Stream | User
+
+# I N P U T S
+# User
+input UpdateUserInput {
+  allowDirectMesages: Boolean
+  bio: String
+  birthDate: String
+  cognitoIdentityId: String
+  createdAt: String
+  email: String
+  fullName: String
+  id: ID!
+  lastAccess: String
+  locationId: String
+  preferredName: String
+  profilePictureKey: String
+  profilePrivacy: ProfilePrivacy
+  site: String
+  theme: String
+  username: String
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+# Stream
+input CreateStreamInput {
+  body: String!
+  id: ID!
+  isSealed: Int
+  locationId: String
+  mood: [Mood]
+  position: [Position]
+  privacy: StreamPrivacy!
+  sealedAt: String
+  startedAt: String!
+  title: String
+  track: String
+  userId: String!
+  visits: Int
+}
+
+input UpdateStreamInput {
+  body: String
+  id: ID!
+  isSealed: Int
+  locationId: String
+  mood: [Mood]
+  position: [Position]
+  privacy: StreamPrivacy
+  sealedAt: String
+  startedAt: String
+  title: String
+  track: String
+  visits: Int
+}
+
+# User interaction
+input CreateUserInteractionInput {
+  actorUserId: String!
+  interactionType: UserInteractionType
+  targetUserId: String!
+}
+
+input DeleteUserInteractionInput {
+  id: ID!
+}
+
+# Stream reaction
+input CreateLikeInput {
+  streamId: String!
+  time: String
+  userId: String!
+}
+
+input CreateCommentInput {
+  content: String
+  streamId: String!
+  time: String
+  userId: String!
+}
+
+input DeleteLikeInput {
+  id: ID!
+}
+
+# Flag
+input CreateFlagInput {
+  category: String!
+  commentId: String
+  detail: String!
+  note: String
+  reviewNote: String
+  reviewStatus: String
+  streamId: String
+  time: String
+  userId: String
+}
+
+input DeleteFlagInput {
+  id: ID!
+}
+
+# T Y P E S
+type User {
+  allowDirectMesages: Boolean
+  bio: String
+  birthDate: String!
+  cognitoIdentityId: String
+  comments: CommentConnection
+  createdAt: String
+  email: String
+  id: ID!
+  lastAccess: String
+  likedStreams: LikeConnection
+  location: Location
+  locationId: String
+  preferredName: String
+  profilePictureKey: String
+  profilePrivacy: ProfilePrivacy!
+  site: String
+  streams: StreamConnection
+  theme: String
+  userInteractions: UserInteractionConnection
+  username: String!
+}
+
+type Stream {
+  body: String!
+  comments: [Comment]
+  flags: [Flag]
+  id: ID!
+  isSealed: Int
+  likes: [Like]
+  location: Location
+  locationId: String
+  mood: [Mood]
+  position: [Position]
+  privacy: StreamPrivacy!
+  sealedAt: String
+  startedAt: String!
+  title: String
+  track: String
+  uncloggerHintId: String
+  user: User!
+  userId: String!
+  visits: Int
+}
+
+type UserInteraction {
+  actorUserId: String!
+  id: ID!
+  interactionType: UserInteractionType
+  lastChangeTime: String!
+  targetUser: User
+  targetUserId: String!
+}
+
+type Like implements CommunityReaction {
+  id: ID!
+  stream: Stream!
+  streamId: String!
+  time: String
+  userId: String!
+}
+
+type Comment implements CommunityReaction {
+  content: String
+  flags: [Flag]
+  id: ID!
+  streamId: String!
+  time: String
+  user: User!
+  userId: String!
+}
+
+type Flag {
+  category: String!
+  commentId: String
+  detail: String!
+  id: ID!
+  note: String
+  reviewNote: String
+  reviewStatus: String
+  stream: Stream
+  streamId: String
+  time: String
+  userId: String!
+}
+
+type RecaptchaV3Result {
+  challengeTimestamp: String
+  errorCodes: [String]
+  hostname: String
+  success: Boolean
+}
+
+# C O N N E C T I O N   T Y P E S
+type StreamConnection {
+  items: [Stream]
+  nextToken: String
+}
+
+type UserInteractionConnection {
+  items: [UserInteraction]
+  nextToken: String
+}
+
+type LikeConnection {
+  items: [Like]
+  nextToken: String
+}
+
+type CommentConnection {
+  items: [Comment]
+  nextToken: String
+}
+
+# E N U M S
+enum Mood {
+  Aroused
+  AsUsual
+  Drunk
+  HardToExplain
+  High
+  Melancholic
+  Relieved
+}
+
+enum Position {
+  AllFours
+  Kneeling
+  Lying
+  Sitting
+  Squatting
+  Standing
+  Walking
+}
+
+enum ProfilePrivacy {
+  Private
+  Protected
+  Public
+}
+
+enum StreamPrivacy {
+  Private
+  PrivateButWatching
+  Protected
+  Public
+}
+enum UncloggerHintCategory {
+  Default
+  DidYouKnow
+  HistoricalEvent
+  News
+  PhilosophicalSchool
+}
+
+enum UserInteractionType {
+  Block
+  Watch
 }
