@@ -52,6 +52,47 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema.graphql"
 
+  # Resolvers
+  QueryGetUserByUsernameResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getUserByUsername
+      DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getUserByUsername.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+
+  QueryListStreamsByUserResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listStreamsByUser
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamsByUser.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  QueryListLikesByUserResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listLikesByUser
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listLikesByUser.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  QueryListUserInteractionsByActorUserIdIndexResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listUserInteractionsByActorUserIdIndex
+      DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listUserInteractionsByActorUserIdIndex.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
   # DataSources
   AppSyncUserTableDataSource:
     Type: AWS::AppSync::DataSource
