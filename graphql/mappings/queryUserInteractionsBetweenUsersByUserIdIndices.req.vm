@@ -1,0 +1,23 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "actorUserId-index",
+  "query" : {
+    "expression": "#actorUserId = :actorUserId",
+    "expressionNames" : {
+    "#actorUserId" : "actorUserId"
+  },
+    "expressionValues" : {
+      ":actorUserId" : { "S" : "${ctx.args.actorUserId}" }
+    }
+  },
+  "filter" : {
+    "expression" : "contains(#targetUserId, :targetUserId)",
+    "expressionNames" : {
+      "#targetUserId" : "targetUserId"
+    },
+    "expressionValues" : {
+      ":targetUserId" : { "S" : "${ctx.args.targetUserId}" }
+    }
+  }
+}

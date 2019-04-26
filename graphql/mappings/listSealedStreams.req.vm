@@ -1,0 +1,16 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "isSealed-sealedAt-index",
+  "query" : {
+    "expression": "isSealed = :isSealed",
+    "expressionValues" : {
+      ":isSealed" : {
+        "N" : 1
+      }
+    }
+  },
+  "scanIndexForward": false,
+  "limit": $util.defaultIfNull(${ctx.args.first}, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.after, null))
+}

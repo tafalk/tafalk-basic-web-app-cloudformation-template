@@ -53,7 +53,7 @@ Resources:
       DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema.graphql"
 
   # Resolvers
-  QueryGetUserByUsernameResolver:
+  GetUserByUsernameResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -63,7 +63,7 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getUserByUsername.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 
-  QueryListStreamsByUserResolver:
+  ListStreamsByUserResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -73,7 +73,7 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamsByUser.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
-  QueryListLikesByUserResolver:
+  ListLikesByUserResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -83,7 +83,7 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listLikesByUser.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
-  QueryListUserInteractionsByActorUserIdIndexResolver:
+  ListUserInteractionsByActorUserIdIndexResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -92,6 +92,86 @@ Resources:
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listUserInteractionsByActorUserIdIndex.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  GetStreamResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getStream
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getStream.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  ListSealedStreamsResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listSealedStreams
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listSealedStreams.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  ListLiveStreamsResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listLiveStreams
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listLiveStreams.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  QueryUserInteractionsBetweenUsersByUserIdIndicesResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: queryUserInteractionsBetweenUsersByUserIdIndices
+      DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/queryUserInteractionsBetweenUsersByUserIdIndices.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+
+  ListStreamLikesResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listStreamLikes
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamLikes.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+
+  ListPaginatedStreamCommentsResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listPaginatedStreamComments
+      DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listPaginatedStreamComments.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  SearchResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: search
+      DataSourceName: !GetAtt AppSyncResourceSearcherFunctionDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/search.resp.vm"
+
+  GetRecaptchaTokenResultResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getRecaptchaTokenResult
+      DataSourceName: !GetAtt AppSyncRecaptchaTokenResolverFunctionDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
 
   # DataSources
   AppSyncUserTableDataSource:

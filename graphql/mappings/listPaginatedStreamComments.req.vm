@@ -1,0 +1,17 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "streamId-time-index",
+  "query" : {
+    "expression": "streamId = :streamId",
+    "expressionValues" : {
+      ":streamId" : {
+        "S" : "${ctx.args.streamId}"
+      }
+    }
+  },
+  "scanIndexForward": false,
+  ## Add 'limit' and 'nextToken' arguments to this field in your schema to implement pagination. **
+  "limit": $util.defaultIfNull(${ctx.args.first}, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.after, null))
+}
