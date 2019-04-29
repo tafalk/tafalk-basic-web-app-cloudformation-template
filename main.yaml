@@ -263,8 +263,28 @@ Resources:
           Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
         AppSyncResourceDynamoDbRoleArn:
           Fn::GetAtt: [IAM, Outputs.AppSyncResourceDynamoDbRoleArn]
+        AppSyncResourceLambdaRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceLambdaRoleArn]
         UserTableName:
           Fn::GetAtt: [Data, Outputs.UserTable]
+        StreamTableName:
+          Fn::GetAtt: [Data, Outputs.StreamTable]
+        LikeTableName:
+          Fn::GetAtt: [Data, Outputs.StreamLikeTable]
+        CommentTableName:
+          Fn::GetAtt: [Data, Outputs.StreamCommentTable]
+        UserInteractionTableName:
+          Fn::GetAtt: [Data, Outputs.UserInteractionTable]
+        FlagTableName:
+          Fn::GetAtt: [Data, Outputs.FlagTable]
+        UncloggerPromptTableName:
+          Fn::GetAtt: [Data, Outputs.UncloggerPromptTable]
+        PlaceGetterFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-place-finder"
+        RecaptchaTokenResolverFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
+        ResourceSearcherFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
   WebServing:
     Type: AWS::CloudFormation::Stack

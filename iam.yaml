@@ -193,6 +193,31 @@ Resources:
                   - "dynamodb:Scan"
                   - "dynamodb:UpdateItem"
                 Resource: "*"
+
+  AppSyncResourceLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-lambda-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                  - "lambda:InvokeFunction"
+                Resource: "*"
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role
@@ -212,6 +237,9 @@ Outputs:
   AppSyncResourceDynamoDbRole:
     Description: A reference to the created AppSync DyanmoDB Role
     Value: !Ref AppSyncResourceDynamoDbRole
+  AppSyncResourceLambdaRole:
+    Description: A reference to the created AppSync Lambda Role
+    Value: !Ref AppSyncResourceLambdaRole
   SNSRoleArn:
     Description: A reference to the created SNS Role ARN
     Value: !GetAtt SNSRole.Arn
@@ -225,8 +253,11 @@ Outputs:
     Description: A reference to the created Code Build Role ARN
     Value: !GetAtt CodeBuildRole.Arn
   AppSyncLogRoleArn:
-    Description: A reference to the created AppSYnc CloudWatch Logs Role ARN
+    Description: A reference to the created AppSync CloudWatch Logs Role ARN
     Value: !GetAtt AppSyncLogRole.Arn
   AppSyncResourceDynamoDbRoleArn:
-    Description: A reference to the created AppSYnc DynamoDB Role ARN
+    Description: A reference to the created AppSync DynamoDB Role ARN
     Value: !GetAtt AppSyncResourceDynamoDbRole.Arn
+  AppSyncResourceLambdaRoleArn:
+    Description: A reference to the created AppSync Lambda Role ARN
+    Value: !GetAtt AppSyncResourceLambdaRole.Arn
