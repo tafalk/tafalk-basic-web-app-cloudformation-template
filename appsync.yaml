@@ -192,7 +192,7 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteUser.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   CreateStreamResolver:
@@ -202,7 +202,7 @@ Resources:
       TypeName: Mutation
       FieldName: createStream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createStream.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createInputIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   UpdateStreamResolver:
@@ -232,7 +232,7 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUserInteraction
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteUserInteraction.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   CreateLikeResolver:
@@ -242,7 +242,7 @@ Resources:
       TypeName: Mutation
       FieldName: createLike
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createLike.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   DeleteLikeResolver:
@@ -262,7 +262,7 @@ Resources:
       TypeName: Mutation
       FieldName: createComment
       DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createComment.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   CreateFlagResolver:
@@ -272,7 +272,7 @@ Resources:
       TypeName: Mutation
       FieldName: createFlag
       DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createFlag.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   DeleteFlagResolver:
@@ -282,7 +282,7 @@ Resources:
       TypeName: Mutation
       FieldName: deleteFlag
       DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteFlag.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   # D A T A   S O U R C E S
