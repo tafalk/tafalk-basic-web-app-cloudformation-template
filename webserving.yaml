@@ -27,7 +27,7 @@ Resources:
   # Buckets and Policies
   HostingBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy": "Retain"
+    DeletionPolicy: "Retain"
     Properties:
       BucketName: !Ref DomainName
       AccessControl: PublicRead
@@ -52,7 +52,7 @@ Resources:
 
   HostingWwwRedirectionBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy": "Retain"
+    DeletionPolicy: "Retain"
     Properties:
       BucketName: !Sub "www.${DomainName}"
       AccessControl: PublicRead
@@ -132,7 +132,7 @@ Resources:
         DefaultRootObject: "index.html"
         PriceClass: PriceClass_100
         ViewerCertificate:
-          AcmCertificateArn: !Ref SSLCert
+          AcmCertificateArn: !Ref SslCertificate
           SslSupportMethod: sni-only
         Aliases:
           - !Ref DomainName
@@ -184,7 +184,7 @@ Resources:
               Forward: none
         PriceClass: PriceClass_100
         ViewerCertificate:
-          AcmCertificateArn: !Ref SSLCert
+          AcmCertificateArn: !Ref SslCertificate
           SslSupportMethod: sni-only
         Aliases:
           - !Sub www.${DomainName}
@@ -255,7 +255,7 @@ Outputs:
   HostingBucketSecureURL:
     Description: Name of S3 bucket to hold website content
     Value:
-      !Join:
+      Fn::Join:
         - ""
         - - "https://"
           - !GetAtt HostingBucket.DomainName
@@ -265,7 +265,7 @@ Outputs:
     Value: !GetAtt HostingCloudFrontDistribution.DomainName
   HostingCloudFrontSecureURL:
     Value:
-      !Join:
+      Fn::Join:
         - ""
         - - "https://"
           - !GetAtt HostingCloudFrontDistribution.DomainName
