@@ -33,7 +33,7 @@ Parameters:
   RecaptchaTokenResolverFunctionArn:
     Type: String
 Resources:
-  # API
+  # A P I
   AppSyncApi:
     Type: AWS::AppSync::GraphQLApi
     Properties:
@@ -45,14 +45,15 @@ Resources:
         FieldLogLevel: ERROR
         CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn
 
-  # Schema
+  # S C H E M A
   AppSyncSchema:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
       DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema.graphql"
 
-  # Resolvers
+  # R E S O L V E R S
+  # Query
   GetUserByUsernameResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -173,7 +174,118 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
 
-  # DataSources
+  # Mutations
+  UpdateUserResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateUser
+      DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/updateUser.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  DeleteUserResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: deleteUser
+      DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteUser.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  CreateStreamResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: createStream
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createStream.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  UpdateStreamResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateStream
+      DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/updateStream.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  CreateUserInteractionResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: createUserInteraction
+      DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createUserInteraction.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  DeleteUserInteractionResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: deleteUserInteraction
+      DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteUserInteraction.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  CreateLikeResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: createLike
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createLike.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  DeleteLikeResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: deleteLike
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteLike.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  CreateCommentResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: createComment
+      DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createComment.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  CreateFlagResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: createFlag
+      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createFlag.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  DeleteFlagResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: deleteFlag
+      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/deleteFlag.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -185,6 +297,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UserTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncStreamTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -196,6 +309,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref StreamTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncUserInteractionTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -207,6 +321,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UserInteractionTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncLikeTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -218,6 +333,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref LikeTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncCommentTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -229,6 +345,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref CommentTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncFlagTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -240,6 +357,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref FlagTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncUncloggerPromptTableDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -251,6 +369,7 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UncloggerPromptTableName
         AwsRegion: !Sub ${AWS::Region}
+
   AppSyncPlaceGetterFunctionDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -261,6 +380,7 @@ Resources:
       ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
       LambdaConfig:
         LambdaFunctionArn: !Ref PlaceGetterFunctionArn
+
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
@@ -271,6 +391,7 @@ Resources:
       ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
       LambdaConfig:
         LambdaFunctionArn: !Ref ResourceSearcherFunctionArn
+
   AppSyncRecaptchaTokenResolverFunctionDataSource:
     Type: AWS::AppSync::DataSource
     Properties:

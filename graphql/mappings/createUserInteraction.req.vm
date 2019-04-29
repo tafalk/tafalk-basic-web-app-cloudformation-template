@@ -1,0 +1,21 @@
+## See https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-dynamodb-resolvers.html
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": {
+    "id": { "S" : "$utils.autoId()" },
+  },
+  "attributeValues": {
+    "actorUserId": { "S" : "${ctx.args.input.actorUserId}" },
+    "targetUserId": { "S" : "${ctx.args.input.targetUserId}" },
+    "interactionType": { "S" : "${ctx.args.input.interactionType}" },
+    "lastChangeTime": { "S" : "$util.time.nowISO8601()"},
+  },
+  ## "attributeValues": $util.dynamodb.toMapValuesJson($ctx.args.input),
+  ## "condition": {
+  ##   "expression": "attribute_not_exists(#id)",
+  ##   "expressionNames": {
+  ##     "#id": "id",
+  ##   },
+  },
+}
