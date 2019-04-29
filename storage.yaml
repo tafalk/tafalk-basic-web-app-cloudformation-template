@@ -26,7 +26,7 @@ Resources:
 
   # Policies
   FunctionDeploymentsBucketPolicy:
-    Type: 'AWS::S3::BucketPolicy'
+    Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref FunctionDeploymentsBucket
       PolicyDocument:
