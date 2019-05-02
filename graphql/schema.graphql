@@ -269,6 +269,11 @@ type RecaptchaV3Result {
   success: Boolean
 }
 
+type Location {
+	id: ID!
+	value: String
+}
+
 # C O N N E C T I O N   T Y P E S
 type StreamConnection {
   items: [Stream]
