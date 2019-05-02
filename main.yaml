@@ -286,12 +286,12 @@ Resources:
         ResourceSearcherFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
-  WebServing:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
-      Parameters:
-        ProjectIdentifierName: !Ref ProjectIdentifierName
-        EnvironmentName: !Ref EnvironmentName
-        DomainName: !Ref DomainName
-        ZohoCname: !Ref ZohoCname
+  # WebServing:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
+  #     Parameters:
+  #       ProjectIdentifierName: !Ref ProjectIdentifierName
+  #       EnvironmentName: !Ref EnvironmentName
+  #       DomainName: !Ref DomainName
+  #       ZohoCname: !Ref ZohoCname

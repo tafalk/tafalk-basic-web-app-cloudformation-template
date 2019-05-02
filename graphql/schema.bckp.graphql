@@ -15,7 +15,7 @@ type Query {
   # Stream
   getStream(id: ID!): Stream
   listSealedStreams(first: Int, after: String): StreamConnection
-  listLiveStreams(first: Int, after: String): StreamConnection
+  listLiveStreams(first: Int, after: String): StreamConnection @aws_auth(cognito_groups: ["TafalkUsers"])
 
   # User interaction
   queryUserInteractionsBetweenUsersByUserIdIndices(actorUserId: String!, targetUserId: String!): [UserInteraction]
@@ -25,7 +25,7 @@ type Query {
   listPaginatedStreamComments(streamId: ID!, first: Int, after: String): CommentConnection
 
   # Search
-  search(query: String!): [SearchResult]
+  search(query: String!): [SearchResult] @aws_auth(cognito_groups: ["TafalkUsers"])
 
   # Recaptcha V3 token
   getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result  
@@ -34,21 +34,21 @@ type Query {
 # M U T A T I O N S
 type Mutation {
   # User
-  updateUser(input: UpdateUserInput!): User
+  updateUser(input: UpdateUserInput!): User @aws_auth(cognito_groups : ["TafalkUsers"])
   deleteUser(input: DeleteUserInput!): User
 
   # Stream
-  createStream(input: CreateStreamInput!): Stream
-  updateStream(input: UpdateStreamInput!): Stream 
+  createStream(input: CreateStreamInput!): Stream @aws_auth(cognito_groups : ["TafalkUsers"])
+  updateStream(input: UpdateStreamInput!): Stream @aws_auth(cognito_groups : ["TafalkUsers"])
 
   # User interaction
-  createUserInteraction(input: CreateUserInteractionInput!): UserInteraction
-  deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction
+  createUserInteraction(input: CreateUserInteractionInput!): UserInteraction @aws_auth(cognito_groups : ["TafalkUsers"])
+  deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction @aws_auth(cognito_groups : ["TafalkUsers"])
 
   # Stream reaction
-  createLike(input: CreateLikeInput!): Like
-  createComment(input: CreateCommentInput!): Comment
-  deleteLike(input: DeleteLikeInput!): Like
+  createLike(input: CreateLikeInput!): Like @aws_auth(cognito_groups : ["TafalkUsers"])
+  createComment(input: CreateCommentInput!): Comment @aws_auth(cognito_groups : ["TafalkUsers"])
+  deleteLike(input: DeleteLikeInput!): Like @aws_auth(cognito_groups : ["TafalkUsers"])
 
   # Flag
   createFlag(input: CreateFlagInput!): Flag
@@ -57,7 +57,10 @@ type Mutation {
 
 # S U B S C R I P T I O N S
 type Subscription {
+  # Stream
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
+
+  # Stream reaction
   onCreateOrDeleteLike(streamId: String!): Like @aws_subscribe(mutations : ["createLike", "deleteLike"])
 }
 
