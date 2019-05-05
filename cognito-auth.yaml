@@ -76,6 +76,7 @@ Resources:
                 "cognito-identity.amazonaws.com:aud": !Ref UserPool
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess"
+
   UserPoolDefaultUserGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
@@ -83,7 +84,6 @@ Resources:
       GroupName: !Ref DefaultUserGroupName
       RoleArn: !GetAtt DefaultUserGroupRole.Arn
       UserPoolId: !Ref UserPool
-
 
   # Creates a federeated Identity pool
   IdentityPool:

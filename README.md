@@ -28,13 +28,52 @@ The user is expected to supply some parameters and some of those parameters requ
 10- Get a site-specific email address from ZohoMail. [CNAME for mail verification](https://www.zoho.com/mail/help/adminconsole/domain-verification.html#alink4) is also needed in parameters
 11- Create an S3 bucket and copy all the `yaml` files and the graphql folder (the bucket also should have a `graphql` folder) within this repository. We are going to address that location for stack creation.
 
-You should also add ACM (AWS Certificate Manager) certificates as Route53. They are requested in the templates but, adding the created certs to Route53 cannot be done automatically now: [Forum post 1](https://forums.aws.amazon.com/thread.jspa?messageID=821952), [Forum post 2](https://forums.aws.amazon.com/ann.jspa?annID=6076)
-
 ## Creating the stack
 
 ### Console
 
+- Sign in to AWS Console.
+  
+- Go to CloudFormation page and click **Create Stack** button.
+
+  - Choose **Template is ready** option for *Prerequisite - Prepare template*
+
+  - Choose **Amazon S3** for *Template Source*.
+
+- We are going to enter the HTTP URL of the `main.yaml` file we have uploaded among the other ones. It should look like:
+
+```url
+https://s3.{{aws-region}}.amazonaws.com/{{bucket-name-of-the-templates}}/main.yaml
+```
+
+- Click next and enter parameters for your case.
+
+- Next, next, next...
+
 ### AWS-CLI
+
+I personally favor CLI usage whenever possible, but creating this stack require a dozen of parameters and managing them with a command is not always as clear as the console screen. Still, this command should work:
+
+```sh
+aws cloudformation create-stack \
+  --stack-name {{your-stack-name}} \
+  --template-body https://s3.{{aws-region}}.amazonaws.com/{{bucket-name-of-the-templates}}/main.yaml \
+  --parameters \
+    ParameterKey=KeyPairName,ParameterValue=TestKey \
+    ParameterKey=SubnetIDs,ParameterValue=SubnetID1\\,SubnetID2
+```
+
+### Manual work for Certificate Validation
+
+This template features a SSL certificate creation for [AWS Certificate Manager (ACM)](https://aws.amazon.com/certificate-manager/). However, validating that certificate blocks the Hosted Zone and CDN creations which can be investigated in [webserving.yaml](webserving.yaml) file and cannot be completed unless a corresponding CNAME record is added to the Route53 Hosted Zone.
+
+To the date, AWS do not supply an automated way for this.
+
+> There are custom solutions around the net (like [binxio's solution](https://github.com/binxio/cfn-certificate-provider)); however, they are not implemented in this repo for the sake of simplicity.
+
+To manually do that after stack creation is initiated, check the AWS Certificate Manager page in AWS console.
+
+When an entry appears there, under *Validation* tab, click **Create Record in Route 53** (for a more pictured guide, see [here](https://aws.amazon.com/blogs/security/easier-certificate-validation-using-dns-with-aws-certificate-manager/)) and leave the stack creation in rest until validation is done and other steps are ready to continue.
 
 ## See also
 

@@ -8,26 +8,20 @@ Parameters:
     Type: String
   ZohoCname:
     Type: String
+
 Resources:
 
-  # Certification
-  SslCertificate:
-    Type: AWS::CertificateManager::Certificate
+  # CloudFront Origin Access Identity
+  HostingOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
-      DomainName: !Sub "*.${DomainName}"
-      SubjectAlternativeNames:
-        - !Ref DomainName
-      Tags:
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
-      ValidationMethod: DNS
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: CloudFrontOriginAccessIdentityConfig
 
   # Buckets and Policies
   HostingBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: "Retain"
+    DeletionPolicy: Retain
     Properties:
       BucketName: !Ref DomainName
       AccessControl: PublicRead
@@ -52,7 +46,7 @@ Resources:
 
   HostingWwwRedirectionBucket:
     Type: AWS::S3::Bucket
-    DeletionPolicy: "Retain"
+    DeletionPolicy: Retain
     Properties:
       BucketName: !Sub "www.${DomainName}"
       AccessControl: PublicRead
@@ -80,13 +74,23 @@ Resources:
             Principal:
               CanonicalUser: !GetAtt HostingOriginAccessIdentity.S3CanonicalUserId
 
-  # CloudFront Distribution
-  HostingOriginAccessIdentity:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+  # Certification
+  SslCertificate:
+    Type: AWS::CertificateManager::Certificate
     Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: CloudFrontOriginAccessIdentityConfig
+      DomainName: !Sub "*.${DomainName}"
+      SubjectAlternativeNames:
+        - !Ref DomainName
+      Tags:
+        - Key: Name
+          Value: !Sub "${ProjectIdentifierName}-ssl-cert"
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+      ValidationMethod: DNS
 
+  # CloudFront Distribution
   HostingCloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:

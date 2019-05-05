@@ -6,6 +6,7 @@ Parameters:
     Type: String
     MinLength: 3
     MaxLength: 10
+    Default: tafalk
     ConstraintDescription: must be between 3 and 10 characters.
   EnvironmentName:
     Description: An environment name that will be added to resource names
@@ -249,7 +250,7 @@ Resources:
         SNSRoleArn:
           Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
         # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
-        DefaultUserGroupName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
+        DefaultUserGroupName: !Sub "${ProjectIdentifierName}-default-ug"
 
   AppSync:
     Type: AWS::CloudFormation::Stack
@@ -286,12 +287,12 @@ Resources:
         ResourceSearcherFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
-  # WebServing:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
-  #     Parameters:
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       DomainName: !Ref DomainName
-  #       ZohoCname: !Ref ZohoCname
+  WebServing:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        DomainName: !Ref DomainName
+        ZohoCname: !Ref ZohoCname
