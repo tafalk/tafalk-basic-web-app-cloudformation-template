@@ -12,11 +12,11 @@ Parameters:
 Resources:
 
   # CloudFront Origin Access Identity
-  HostingOriginAccessIdentity:
+  OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: CloudFrontOriginAccessIdentityConfig
+        Comment: !Sub "OAI Config for ${DomainName}"
 
   # Buckets and Policies
   HostingBucket:
@@ -72,7 +72,7 @@ Resources:
             Effect: Allow
             Resource: !Join ["", [ !GetAtt HostingBucket.Arn, "/*"]]
             Principal:
-              CanonicalUser: !GetAtt HostingOriginAccessIdentity.S3CanonicalUserId
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
 
   # Certification
   # SslCertificate:
@@ -100,7 +100,7 @@ Resources:
           - Id: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
             DomainName: !GetAtt HostingBucket.DomainName
             S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref HostingOriginAccessIdentity]]
+              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 300
             ErrorCode: 400
@@ -155,7 +155,7 @@ Resources:
           - Id: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
             DomainName: !GetAtt HostingWwwRedirectionBucket.DomainName
             S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref HostingOriginAccessIdentity]]
+              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
         CustomErrorResponses:
           - ErrorCachingMinTTL: 300
             ErrorCode: 400
