@@ -218,27 +218,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-  RedisCacheSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      VpcId: !Ref VPC
-      GroupDescription: Access to the cache instance
-      SecurityGroupIngress:
-        - CidrIp: !Ref PrivateComputeSubnet1CIDR
-          FromPort: 6379
-          ToPort: 6379
-          IpProtocol: tcp
-        - CidrIp: !Ref PrivateComputeSubnet2CIDR
-          FromPort: 6379
-          ToPort: 6379
-          IpProtocol: tcp
-      Tags:
-        - Key: Name
-          Value: !Sub "${ProjectIdentifierName}-${EnvironmentName}-nat-sg"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+
   # NAT instances 1 (always there)
   NatInstance1:
     Type: AWS::EC2::Instance
@@ -447,6 +427,3 @@ Outputs:
   NATSecurityGroup:
     Description: Security group for NAT instances
     Value: !Ref NATSecurityGroup
-  CacheSecurityGroupId:
-    Description: Security group for Cache instances
-    Value: !Ref RedisCacheSecurityGroup

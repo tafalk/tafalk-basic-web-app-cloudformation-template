@@ -133,13 +133,6 @@ Parameters:
     Type: String
     Default: tafalk-cf-templates
 Resources:
-  GooglePlacesApiKeyParam:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: GooglePlacesApiKey
-      Type: String
-      Value: !Ref GooglePlacesApiKey
-      Description: "The API Key to reach Google Places API"
   RecaptchaSecretParam:
     Type: AWS::SSM::Parameter
     Properties:
@@ -181,10 +174,6 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
-        CacheSubnetName:
-          Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
-        CacheVPCSecurityGroupId:
-          Fn::GetAtt: [Network, Outputs.CacheSecurityGroupId]
 
   Storage:
     Type: AWS::CloudFormation::Stack
@@ -220,14 +209,6 @@ Resources:
         StreamTable:
           Fn::GetAtt: [Data, Outputs.StreamTable]
         UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
-        # Place Finder
-        PlaceFinderFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-place-finder"
-        PlaceFinderFunctionRepositoryName: !Ref PlaceFinderFunctionRepositoryName
-        PlacesCacheEndpoint:
-          Fn::GetAtt: [Data, Outputs.PlacesCacheEndpoint]
-        PlacesCachePort:
-          Fn::GetAtt: [Data, Outputs.PlacesCachePort]
-        GooglePlacesApiKeyName: !Ref GooglePlacesApiKeyParam
         # Token Resolver
         RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
@@ -280,8 +261,6 @@ Resources:
           Fn::GetAtt: [Data, Outputs.FlagTable]
         UncloggerPromptTableName:
           Fn::GetAtt: [Data, Outputs.UncloggerPromptTable]
-        PlaceGetterFunctionArn:
-          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-place-finder"
         RecaptchaTokenResolverFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         ResourceSearcherFunctionArn:

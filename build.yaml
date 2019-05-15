@@ -25,10 +25,6 @@ Parameters:
     Type: String
   CognitoUserExporterFunctionName:
     Type: String
-  PlaceFinderFunctionName:
-    Type: String
-  PlaceFinderFunctionRepositoryName:
-    Type: String
   RecaptchaTokenResolverFunctionName:
     Type: String
   RecaptchaTokenResolverFunctionRepositoryName:
@@ -36,12 +32,6 @@ Parameters:
   ResourceSearcherFunctionName:
     Type: String
   ResourceSearcherFunctionRepositoryName:
-    Type: String
-  PlacesCacheEndpoint:
-    Type: String
-  PlacesCachePort:
-    Type: String
-  GooglePlacesApiKeyName:
     Type: String
   RecaptchaSecretName:
     Type: String
@@ -54,25 +44,6 @@ Resources:
     Properties:
       Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-build-proj"
       Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
-      Source:
-        Type: CODEPIPELINE
-      TimeoutInMinutes: 10
-      Artifacts:
-        Type: CODEPIPELINE
-      Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: "aws/codebuild/python:3.7.1"
-        Type: LINUX_CONTAINER
-        EnvironmentVariables:
-          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
-            Value: !Ref LambdaArtifactStoreBucket
-      ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
-
-  PlaceGetterFunctionBuildProject:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: !Sub "${ProjectIdentifierName}-place-getter-func-build-proj"
-      Description: Used to build google-places-getter function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -183,65 +154,6 @@ Resources:
                 ParameterOverrides: !Sub '{"FunctionName": "${CognitoUserExporterFunctionName}", "UserTableName": "${UserTable}", "UserGroupName": "${UserGroup}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: UEBuild
-              RunOrder: 1
-
-  PlaceFinderFunctionPipeline:
-    Type: AWS::CodePipeline::Pipeline
-    Properties:
-      Name: !Sub "${ProjectIdentifierName}-place-finder-pipeline"
-      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
-      ArtifactStore:
-        Type: S3
-        Location: !Ref LambdaArtifactStoreBucket
-      RestartExecutionOnUpdate: true
-      Stages:
-        - Name: Source
-          Actions:
-            - Name: FetchSource
-              ActionTypeId:
-                Category: Source
-                Owner: AWS
-                Version: "1"
-                Provider: CodeCommit
-              OutputArtifacts:
-                - Name: PFSource
-              Configuration:
-                RepositoryName: !Ref PlaceFinderFunctionRepositoryName
-                BranchName: !Ref BranchName
-                PollForSourceChanges: false
-              RunOrder: 1
-        - Name: Build
-          Actions:
-            - Name: BuildFunction
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: "1"
-              Configuration:
-                ProjectName: !Ref PlaceGetterFunctionBuildProject
-              InputArtifacts:
-                - Name: PFSource
-              OutputArtifacts:
-                - Name: PFBuild
-              RunOrder: 1
-        - Name: Pipeline
-          Actions:
-            - Name: DeployPipeline
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: "1"
-              Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-place-finder-deploy-stack"
-                ActionMode: CREATE_UPDATE
-                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
-                TemplatePath: "PFBuild::output-template.yaml"
-                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${PlaceFinderFunctionName}", "RedisEndpoint": "${PlacesCacheEndpoint}", "RedisPort": "${PlacesCachePort}", "GooglePlacesApiKeyName": "${GooglePlacesApiKeyName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
-              InputArtifacts:
-                - Name: PFBuild
               RunOrder: 1
 
   RecaptchaResolverFunctionPipeline:

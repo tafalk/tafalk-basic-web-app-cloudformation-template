@@ -26,8 +26,6 @@ Parameters:
     Type: String
   UncloggerPromptTableName:
     Type: String
-  PlaceGetterFunctionArn:
-    Type: String
   ResourceSearcherFunctionArn:
     Type: String
   RecaptchaTokenResolverFunctionArn:
@@ -136,17 +134,6 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref UncloggerPromptTableName
         AwsRegion: !Sub ${AWS::Region}
-
-  AppSyncPlaceGetterFunctionDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      Name: place_getter_ds
-      Description: "The Place-Getter Function AppSync Data Source"
-      Type:  AWS_LAMBDA
-      ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
-      LambdaConfig:
-        LambdaFunctionArn: !Ref PlaceGetterFunctionArn
 
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource
@@ -444,16 +431,6 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceUserId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
-  LocationOfStreamResolver:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: Stream
-      FieldName: location
-      DataSourceName: !GetAtt AppSyncPlaceGetterFunctionDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambdaBySource.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
-
   CommentsOfStreamResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -483,16 +460,6 @@ Resources:
       DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getFlagsOfStream.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
-
-  LocationOfUserResolver:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: User
-      FieldName: location
-      DataSourceName: !GetAtt AppSyncPlaceGetterFunctionDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambdaBySource.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
 
   StreamsOfUserResolver:
     Type: AWS::AppSync::Resolver
