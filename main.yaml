@@ -18,7 +18,7 @@ Parameters:
     Default: dev
     ConstraintDescription: must specify 'dev', 'test' or 'prod'.
   KeyName:
-    Description: Name of an existing EC2 KeyPair
+    Description: Name of an existing EC2 KeyPair (if NAT)
     Type: AWS::EC2::KeyPair::KeyName
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -76,22 +76,25 @@ Parameters:
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
-  IsHighAvailable:
-    Description: Should the resources (i.e. NAT instance) created multi-AZ?
+  NatInstanceRequirement:
+    Description: Should the resources NAT instance created? if so, single or multi-AZ?
     Type: String
     AllowedValues:
-      - true
-      - false
-    Default: false
-    ConstraintDescription: must specify true or false.
+      - none
+      - single-az
+      - multi-az
+    Default: none
+  WebServingRequirement:
+    Description: Should the serving S3 buckets, Cloudformation, Certificate and Route53 Hosted Zone created?
+    Type: String
+    AllowedValues:
+      - "true"
+      - "false"
+    Default: "false"
   CognitoUserExporterFunctionRepositoryName:
     Description: CodeCommit repository for post-confirm user importer function
     Type: String
     Default: cognito-user-exporter-function
-  PlaceFinderFunctionRepositoryName:
-    Description: CodeCommit repository for place finder function
-    Type: String
-    Default: place-getter-function
   TokenResolverFunctionRepositoryName:
     Description: CodeCommit repository for token resolver function
     Type: String
@@ -108,10 +111,6 @@ Parameters:
     Description: The bucket address at which the templates reside
     Type: String
     Default: https://s3.eu-central-1.amazonaws.com/tafalk-cf-templates
-  GooglePlacesApiKey:
-    Description: The API Key to reach Google Places API
-    Type: String
-    Default: AIzaSyCi8K1mwjvbvUUEQ6CEWkxV-jQmhCRhTxI
   RecaptchaSecret:
     Description: The Recaptcha V3 Secret of the application
     Type: String
@@ -132,7 +131,13 @@ Parameters:
     Description: The name of the S3 bucket containing the templates and the graphql schemas
     Type: String
     Default: tafalk-cf-templates
+
+Conditions:
+  CreateWebServing: !Equals [ !Ref NatInstanceRequirement, "true" ]
+
 Resources:
+
+  # Parameter Store
   RecaptchaSecretParam:
     Type: AWS::SSM::Parameter
     Properties:
@@ -165,7 +170,7 @@ Resources:
         PrivateSupportSubnet2CIDR: !Ref PrivateSupportSubnet2CIDR
         PrivateComputeSubnet1CIDR: !Ref PrivateComputeSubnet1CIDR
         PrivateComputeSubnet2CIDR: !Ref PrivateComputeSubnet2CIDR
-        IsHighAvailable: !Ref IsHighAvailable
+        NatInstanceRequirement: !Ref NatInstanceRequirement
 
   Data:
     Type: AWS::CloudFormation::Stack
@@ -268,6 +273,7 @@ Resources:
 
   WebServing:
     Type: AWS::CloudFormation::Stack
+    Condition: CreateWebServing
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
       Parameters:

@@ -27,11 +27,12 @@ Parameters:
     Type: String
   PrivateComputeSubnet2CIDR:
     Type: String
-  IsHighAvailable:
+  NatInstanceRequirement:
     Type: String
 
 Conditions:
-  CreateMultiAzResources: !Equals [ !Ref IsHighAvailable, true ]
+  CreateNAT: !Not [!Equals [ !Ref NatInstanceRequirement, none ]]
+  CreateMultiAzNAT: !Equals [ !Ref NatInstanceRequirement, multi-az ]
 
 Resources:
   # VPC
@@ -48,6 +49,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   # Internet Gateway
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -59,11 +61,13 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
+
   # Public Subnets
   PublicSubnet1:
     Type: AWS::EC2::Subnet
@@ -79,6 +83,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -93,6 +98,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   # Private Subnets
   PrivateSupportSubnet1:
     Type: AWS::EC2::Subnet
@@ -108,6 +114,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateSupportSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -122,6 +129,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateComputeSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -136,6 +144,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateComputeSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -164,6 +173,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   NATSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -223,6 +233,7 @@ Resources:
   NatInstance1:
     Type: AWS::EC2::Instance
     DependsOn: InternetGatewayAttachment
+    Condition: CreateNAT
     Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", NatInstanceAMI]
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
@@ -248,7 +259,7 @@ Resources:
   NatInstance2:
     Type: AWS::EC2::Instance
     DependsOn: InternetGatewayAttachment
-    Condition: CreateMultiAzResources
+    Condition: CreateMultiAzNAT
     Properties:
       ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", NatInstanceAMI]
       AvailabilityZone: !Select [ 1, !GetAZs '' ]
@@ -354,7 +365,7 @@ Resources:
       InstanceId: !Ref NatInstance1
   DefaultComputePrivateRoute2:
     Type: AWS::EC2::Route
-    Condition: CreateMultiAzResources
+    Condition: CreateMultiAzNAT
     Properties:
       RouteTableId: !Ref PrivateComputeRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
