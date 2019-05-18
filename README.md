@@ -62,7 +62,33 @@ aws cloudformation create-stack \
     ParameterKey=SubnetIDs,ParameterValue=SubnetID1\\,SubnetID2
 ```
 
-### Manual work for Certificate Validation
+### Manual work
+
+#### Registered Domain Nameservers
+
+The created Route 53 hosted zone may arbitrarily create the name servers (NS). And this may lead to problems in certificate validation.
+
+Not to encounter such cases, from the AWS Console, you have to update *Registered Domain name servers*:
+
+- Sign in to the [console](https://console.aws.amazon.com) and go to **Route 53** service.
+
+- From the left pane, click *Hosted Zones*.
+
+- In the next window, click on your domain. Note down the value for the *record set* with type `NS` -typically four name servers. 
+
+- From the left pane, click *Registered Domains*.
+
+- In the next window, click on your domain.
+
+- Click **Add or edit name servers**.
+
+- Enter the hosted zone name servers you have previously noted down from scratch.
+
+- An email will be received telling the registered domain name servers are updated.
+
+See the [docs](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate-dns-domain-in-use.html#migrate-dns-update-domain) for further information.
+
+#### Certificate Validation
 
 This template features a SSL certificate creation for [AWS Certificate Manager (ACM)](https://aws.amazon.com/certificate-manager/). However, validating that certificate blocks the Hosted Zone and CDN creations which can be investigated in [webserving.yaml](webserving.yaml) file and cannot be completed unless a corresponding CNAME record is added to the Route53 Hosted Zone.
 
@@ -73,6 +99,11 @@ To the date, AWS do not supply an automated way for this.
 To manually do that after stack creation is initiated, check the AWS Certificate Manager page in AWS console.
 
 When an entry appears there, under *Validation* tab, click **Create Record in Route 53** (for a more pictured guide, see [here](https://aws.amazon.com/blogs/security/easier-certificate-validation-using-dns-with-aws-certificate-manager/)) and leave the stack creation in rest until validation is done and other steps are ready to continue.
+
+> The newly created hosted zone should be ready for the certificate to be verified.
+> To check it, run:
+> `dig tafalk.com`
+> And it should contain a `;; ANSWER SECTION:`
 
 ## See also
 

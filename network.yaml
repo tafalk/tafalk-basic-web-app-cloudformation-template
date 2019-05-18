@@ -292,6 +292,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateSupportRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -303,6 +304,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateSupportRouteTable2:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -314,6 +316,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateComputeRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -325,6 +328,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   PrivateComputeRouteTable2:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -345,24 +349,31 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+
   DefaultSupportPrivateRoute1:
     Type: AWS::EC2::Route
+    Condition: CreateNAT
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
       InstanceId: !Ref NatInstance1
+
   DefaultSupportPrivateRoute2:
     Type: AWS::EC2::Route
+    Condition: CreateMultiAzNAT
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable2
       DestinationCidrBlock: 0.0.0.0/0
-      InstanceId: !Ref NatInstance1
+      InstanceId: !Ref NatInstance2
+
   DefaultComputePrivateRoute1:
     Type: AWS::EC2::Route
+    Condition: CreateNAT
     Properties:
       RouteTableId: !Ref PrivateComputeRouteTable1
       DestinationCidrBlock: 0.0.0.0/0
       InstanceId: !Ref NatInstance1
+
   DefaultComputePrivateRoute2:
     Type: AWS::EC2::Route
     Condition: CreateMultiAzNAT
@@ -377,26 +388,31 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1
+
   PublicSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet2
+
   PrivateSupportSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable1
       SubnetId: !Ref PrivateSupportSubnet1
+
   PrivateSupportSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateSupportRouteTable2
       SubnetId: !Ref PrivateSupportSubnet2
+
   PrivateComputeSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref PrivateComputeRouteTable1
       SubnetId: !Ref PrivateComputeSubnet1
+
   PrivateComputeSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
