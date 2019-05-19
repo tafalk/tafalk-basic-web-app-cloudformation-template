@@ -78,7 +78,7 @@ Resources:
 
   # Certification
   SslCertificate:
-    Type: Custom::ACMCertificate
+    Type: Custom::SslCertificate
     Version: '1.0'
     Properties:
       ServiceToken: !Ref CertificateDelegatingFunctionArn
