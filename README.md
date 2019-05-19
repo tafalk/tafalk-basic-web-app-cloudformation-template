@@ -88,26 +88,9 @@ Not to encounter such cases, from the AWS Console, you have to update *Registere
 
 See the [docs](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate-dns-domain-in-use.html#migrate-dns-update-domain) for further information.
 
-#### Certificate Validation
+#### ACM certificate validation
 
-This template features a SSL certificate creation for [AWS Certificate Manager (ACM)](https://aws.amazon.com/certificate-manager/). However, validating that certificate blocks the Hosted Zone and CDN creations which can be investigated in [webserving.yaml](webserving.yaml) file and cannot be completed unless a corresponding CNAME record is added to the Route53 Hosted Zone.
-
-To the date, AWS do not supply an automated way for this. And also, the certificate should strictly be created in `us-east-1` region as [it says](https://docs.aws.amazon.com/acm/latest/userguide/acm-regions.html):
-
-> To use an ACM Certificate with Amazon CloudFront, you must request or import the certificate in the US East (N. Virginia) region.
-
-Cloudformation without custom resources cannot create resources out of region, i.e. if this stack is created in a region other than `us-east-1` the ertification cannot work.
-
-> There are custom solutions around the net (like [binxio's solution](https://github.com/binxio/cfn-certificate-provider)); however, they are not implemented in this repo for the sake of simplicity.
-
-To manually do that after stack creation is initiated, check the AWS Certificate Manager page in AWS console.
-
-When an entry appears there, under *Validation* tab, click **Create Record in Route 53** (for a more pictured guide, see [here](https://aws.amazon.com/blogs/security/easier-certificate-validation-using-dns-with-aws-certificate-manager/)) and leave the stack creation in rest until validation is done and other steps are ready to continue.
-
-> The newly created hosted zone should be ready for the certificate to be verified.
-> To check it, run:
-> `dig tafalk.com`
-> And it should contain a `;; ANSWER SECTION:`
+Thanks to rhboyd's great  [Custom Resource ACM](https://github.com/rhboyd/CustomResourceACM/) certificae validation (i.e. adding CNAME to domain) can be done automatically now.
 
 ## See also
 
@@ -116,3 +99,5 @@ When an entry appears there, under *Validation* tab, click **Create Record in Ro
 - [Building a Continuous Delivery Pipeline for a Lambda Application with AWS CodePipeline](https://docs.aws.amazon.com/lambda/latest/dg/build-pipeline.html)
 
 - [Lambda Build Pipeline sample](https://github.com/widdix/aws-velocity/blob/master/deploy/pipeline.yml)
+
+- [Custom Resource ACM](https://github.com/rhboyd/CustomResourceACM/)
