@@ -103,6 +103,10 @@ Parameters:
     Description: CodeCommit repository for resource searcher function
     Type: String
     Default: resource-searcher-function
+  CertificateDelegatingFunctionRepositoryName:
+    Description: CodeCommit repository for ACM certificate delegating function
+    Type: String
+    Default: certificate-delegating-function
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -120,7 +124,7 @@ Parameters:
     Type: String
     Default: https://www.google.com/recaptcha/api/siteverify
   DomainName:
-    Description: The fully qualified domain name for the website
+    Description: The naked domain name for the website
     Type: String
     Default: tafalk.com
   ZohoCname:
@@ -131,6 +135,13 @@ Parameters:
     Description: The name of the S3 bucket containing the templates and the graphql schemas
     Type: String
     Default: tafalk-cf-templates
+  CertificateRegion:
+    Description: The region in which the SSL cert for the domain be created
+    Type: String
+    AllowedValues:
+      - us-east-1
+    Default: us-east-1
+    ConstraintDescription : AWS needs cert to be strictly in N.Virgina for Cloudfront usage
 
 Conditions:
   CreateWebServing: !Equals [ !Ref WebServingRequirement, "true" ]
@@ -222,6 +233,10 @@ Resources:
         # Resource Searcher
         ResourceSearcherFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
         ResourceSearcherFunctionRepositoryName: !Ref ResourceSearcherFunctionRepositoryName
+        # Certificate Delegating
+        CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
+        CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
+        AcmCertRegion: !Ref CertificateRegion
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack

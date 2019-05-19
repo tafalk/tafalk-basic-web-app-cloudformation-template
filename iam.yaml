@@ -218,6 +218,7 @@ Resources:
                   - "logs:PutLogEvents"
                   - "lambda:InvokeFunction"
                 Resource: "*"
+
 Outputs:
   SNSRole:
     Description: A reference to the created SNS Role

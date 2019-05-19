@@ -75,128 +75,128 @@ Resources:
               CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
 
   # Certification
-  SslCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Sub "*.${DomainName}"
-      SubjectAlternativeNames:
-        - !Ref DomainName
-      Tags:
-        - Key: Name
-          Value: !Sub "${ProjectIdentifierName}-ssl-cert"
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
-      ValidationMethod: DNS
+  # SslCertificate:
+  #   Type: AWS::CertificateManager::Certificate
+  #   Properties:
+  #     DomainName: !Sub "*.${DomainName}"
+  #     SubjectAlternativeNames:
+  #       - !Ref DomainName
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub "${ProjectIdentifierName}-ssl-cert"
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
+  #     ValidationMethod: DNS
 
   # CloudFront Distribution
-  HostingCloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Enabled: true
-        Origins:
-          - Id: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
-            DomainName: !GetAtt HostingBucket.DomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 400
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: "/"
-        DefaultCacheBehavior:
-          AllowedMethods:
-            - DELETE
-            - GET
-            - HEAD
-            - OPTIONS
-            - PATCH
-            - POST
-            - PUT
-          Compress: true
-          DefaultTTL: 86400
-          MaxTTL: 31536000
-          MinTTL: 60
-          TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
-          ViewerProtocolPolicy: "redirect-to-https"
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-        DefaultRootObject: "index.html"
-        PriceClass: PriceClass_100
-        ViewerCertificate:
-          AcmCertificateArn: !Ref SslCertificate
-          SslSupportMethod: sni-only
-        Aliases:
-          - !Ref DomainName
-      Tags:
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+  # HostingCloudFrontDistribution:
+  #   Type: AWS::CloudFront::Distribution
+  #   Properties:
+  #     DistributionConfig:
+  #       Enabled: true
+  #       Origins:
+  #         - Id: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
+  #           DomainName: !GetAtt HostingBucket.DomainName
+  #           S3OriginConfig:
+  #             OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
+  #       CustomErrorResponses:
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 400
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 403
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 404
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #       DefaultCacheBehavior:
+  #         AllowedMethods:
+  #           - DELETE
+  #           - GET
+  #           - HEAD
+  #           - OPTIONS
+  #           - PATCH
+  #           - POST
+  #           - PUT
+  #         Compress: true
+  #         DefaultTTL: 86400
+  #         MaxTTL: 31536000
+  #         MinTTL: 60
+  #         TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
+  #         ViewerProtocolPolicy: "redirect-to-https"
+  #         ForwardedValues:
+  #           QueryString: false
+  #           Cookies:
+  #             Forward: none
+  #       DefaultRootObject: "index.html"
+  #       PriceClass: PriceClass_100
+  #       ViewerCertificate:
+  #         AcmCertificateArn: !Ref SslCertificate
+  #         SslSupportMethod: sni-only
+  #       Aliases:
+  #         - !Ref DomainName
+  #     Tags:
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
 
-  HostingWwwCloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Enabled: true
-        Origins:
-          - Id: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
-            DomainName: !GetAtt HostingWwwRedirectionBucket.DomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 400
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: "/"
-        DefaultCacheBehavior:
-          AllowedMethods:
-            - DELETE
-            - GET
-            - HEAD
-            - OPTIONS
-            - PATCH
-            - POST
-            - PUT
-          Compress: true
-          DefaultTTL: 604800
-          TargetOriginId: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
-          ViewerProtocolPolicy: "redirect-to-https"
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
-        PriceClass: PriceClass_100
-        ViewerCertificate:
-          AcmCertificateArn: !Ref SslCertificate
-          SslSupportMethod: sni-only
-        Aliases:
-          - !Sub www.${DomainName}
-      Tags:
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+  # HostingWwwCloudFrontDistribution:
+  #   Type: AWS::CloudFront::Distribution
+  #   Properties:
+  #     DistributionConfig:
+  #       Enabled: true
+  #       Origins:
+  #         - Id: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
+  #           DomainName: !GetAtt HostingWwwRedirectionBucket.DomainName
+  #           S3OriginConfig:
+  #             OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
+  #       CustomErrorResponses:
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 400
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 403
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #         - ErrorCachingMinTTL: 300
+  #           ErrorCode: 404
+  #           ResponseCode: 200
+  #           ResponsePagePath: "/"
+  #       DefaultCacheBehavior:
+  #         AllowedMethods:
+  #           - DELETE
+  #           - GET
+  #           - HEAD
+  #           - OPTIONS
+  #           - PATCH
+  #           - POST
+  #           - PUT
+  #         Compress: true
+  #         DefaultTTL: 604800
+  #         TargetOriginId: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
+  #         ViewerProtocolPolicy: "redirect-to-https"
+  #         ForwardedValues:
+  #           QueryString: false
+  #           Cookies:
+  #             Forward: none
+  #       PriceClass: PriceClass_100
+  #       ViewerCertificate:
+  #         AcmCertificateArn: !Ref SslCertificate
+  #         SslSupportMethod: sni-only
+  #       Aliases:
+  #         - !Sub www.${DomainName}
+  #     Tags:
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
 
   # DNS
   HostedZone:

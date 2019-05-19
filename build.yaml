@@ -1,21 +1,14 @@
 Description:
   This template creates build projects
 Parameters:
+  # Common
   ProjectIdentifierName:
     Type: String
   EnvironmentName:
     Type: String
   BranchName:
     Type: String
-  CognitoUserExporterFunctionRepositoryName:
-    Type: String
   LambdaArtifactStoreBucket:
-    Type: String
-  UserTable:
-    Type: String
-  StreamTable:
-    Type: String
-  UserGroup:
     Type: String
   CodeCommitRepoCodeBuildRoleArn:
     Type: String
@@ -23,20 +16,39 @@ Parameters:
     Type: String
   LambdaManagerCloudFormationRoleArn:
     Type: String
+  # Cognito User Exporter
   CognitoUserExporterFunctionName:
     Type: String
+  CognitoUserExporterFunctionRepositoryName:
+    Type: String
+  UserTable:
+    Type: String
+  StreamTable:
+    Type: String
+  UserGroup:
+    Type: String
+  # Token Resolver
   RecaptchaTokenResolverFunctionName:
     Type: String
   RecaptchaTokenResolverFunctionRepositoryName:
-    Type: String
-  ResourceSearcherFunctionName:
-    Type: String
-  ResourceSearcherFunctionRepositoryName:
     Type: String
   RecaptchaSecretName:
     Type: String
   RecaptchaVerifyEndpoint:
     Type: String
+  # Resource Searcher
+  ResourceSearcherFunctionName:
+    Type: String
+  ResourceSearcherFunctionRepositoryName:
+    Type: String
+  # Certificate Delegating
+  CertificateDelegatingFunctionName:
+    Type: String
+  CertificateDelegatingFunctionRepositoryName:
+    Type: String
+  AcmCertRegion:
+    Type: String
+
 Resources:
   # CodeBuild projects
   CognitoUserExporterFunctionBuildProject:
@@ -82,6 +94,25 @@ Resources:
     Properties:
       Name: !Sub "${ProjectIdentifierName}-resource-searcher-func-build-proj"
       Description: Used to build resource searcher function from the CodeCommit Repo
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: "aws/codebuild/python:3.7.1"
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
+            Value: !Ref LambdaArtifactStoreBucket
+      ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
+
+  CertificateDelegatingFunctionBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-cert-delegate-func-build-proj"
+      Description: Used to build certificate delegating function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -274,3 +305,61 @@ Resources:
                 - Name: RSBuild
               RunOrder: 1
 
+  CertificateDelegatingFunctionPiepeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-cert-delegate-pipeline"
+      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: FetchSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeCommit
+              OutputArtifacts:
+                - Name: CDSource
+              Configuration:
+                RepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
+                BranchName: !Ref BranchName
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildFunction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CertificateDelegatingFunctionBuildProject
+              InputArtifacts:
+                - Name: CDSource
+              OutputArtifacts:
+                - Name: CDBuild
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: !Sub "${ProjectIdentifierName}-cert-delegate-resolver-deploy-stack"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: "CDBuild::output-template.yaml"
+                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+                ParameterOverrides: !Sub '{"FunctionName": "${RecaptchaTokenResolverFunctionName}", "AcmCertRegion": "${AcmCertRegion}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+              InputArtifacts:
+                - Name: CDBuild
+              RunOrder: 1
