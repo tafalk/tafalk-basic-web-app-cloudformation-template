@@ -8,6 +8,8 @@ Parameters:
     Type: String
   ZohoCname:
     Type: String
+  CertificateDelegatingFunctionArn:
+    Type: String
 
 Resources:
 
@@ -75,6 +77,13 @@ Resources:
               CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
 
   # Certification
+  SslCertificate:
+    Type: Custom::ACMCertificate
+    Version: '1.0'
+    Properties:
+      ServiceToken: !Ref CertificateDelegatingFunctionArn
+      DomainName: !Ref DomainName
+
   # SslCertificate:
   #   Type: AWS::CertificateManager::Certificate
   #   Properties:

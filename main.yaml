@@ -296,3 +296,5 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         DomainName: !Ref DomainName
         ZohoCname: !Ref ZohoCname
+        CertificateDelegatingFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"

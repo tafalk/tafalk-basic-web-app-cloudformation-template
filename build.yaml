@@ -308,7 +308,7 @@ Resources:
   CertificateDelegatingFunctionPiepeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-cert-delegate-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-cert-delegating-pipeline"
       RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -354,12 +354,12 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-cert-delegate-resolver-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-cert-delegate-deploy-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "CDBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${RecaptchaTokenResolverFunctionName}", "AcmCertRegion": "${AcmCertRegion}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${CertificateDelegatingFunctionName}", "AcmCertRegion": "${AcmCertRegion}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: CDBuild
               RunOrder: 1
