@@ -7,6 +7,8 @@ Parameters:
     Type: String
   LambdaFunctionArtifactStoreBucketName:
     Type: String
+  UserFileBucketName:
+    Type: String
 Resources:
 
   # Buckets
@@ -23,6 +25,36 @@ Resources:
           Value: !Ref ProjectIdentifierName
       VersioningConfiguration:
         Status: Enabled
+
+  UserFilesBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      BucketName: !Ref UserFileBucketName
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - HEAD
+              - GET
+              - PUT
+              - POST
+              - DELETE
+            MaxAge: 3000
+            ExposeHeaders:
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+              - x-amz-id-2
+              - ETag
+            AllowedHeaders:
+              - "*"
 
   # Policies
   FunctionDeploymentsBucketPolicy:
@@ -45,3 +77,6 @@ Outputs:
   FunctionDeploymentsBucket:
     Description: A reference to the created FunctionDeploymentsBucket
     Value: !Ref FunctionDeploymentsBucket
+  UserFilesBucket:
+    Description: A reference to the created UserFilesBucket
+    Value: !Ref UserFilesBucket
