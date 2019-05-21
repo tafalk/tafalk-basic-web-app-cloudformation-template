@@ -48,7 +48,7 @@ Resources:
               - POST
               - DELETE
             MaxAge: 3000
-            ExposeHeaders:
+            ExposedHeaders:
               - x-amz-server-side-encryption
               - x-amz-request-id
               - x-amz-id-2
