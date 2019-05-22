@@ -225,7 +225,7 @@ Resources:
           Fn::GetAtt: [Data, Outputs.UserTable]
         StreamTable:
           Fn::GetAtt: [Data, Outputs.StreamTable]
-        UserGroup: !Sub "${ProjectIdentifierName}-${EnvironmentName}-default-ug"
+        UserGroup: !Sub "${ProjectIdentifierName}-default-ug"
         # Token Resolver
         RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
