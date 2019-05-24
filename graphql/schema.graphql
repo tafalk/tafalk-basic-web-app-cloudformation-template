@@ -84,7 +84,7 @@ input UpdateUserInput {
   fullName: String
   id: ID!
   lastAccess: String
-  locationId: String
+  location: String
   preferredName: String
   profilePictureKey: String
   profilePrivacy: ProfilePrivacy
@@ -102,7 +102,7 @@ input CreateStreamInput {
   body: String!
   id: ID!
   isSealed: Int
-  locationId: String
+  location: String
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy!
@@ -118,7 +118,7 @@ input UpdateStreamInput {
   body: String
   id: ID!
   isSealed: Int
-  locationId: String
+  location: String
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy
@@ -187,8 +187,7 @@ type User {
   id: ID!
   lastAccess: String
   likedStreams: LikeConnection
-  location: Location
-  locationId: String
+  location: String
   preferredName: String
   profilePictureKey: String
   profilePrivacy: ProfilePrivacy!
@@ -206,8 +205,7 @@ type Stream {
   id: ID!
   isSealed: Int
   likes: [Like]
-  location: Location
-  locationId: String
+  location: String
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy!
@@ -267,11 +265,6 @@ type RecaptchaV3Result {
   errorCodes: [String]
   hostname: String
   success: Boolean
-}
-
-type Location {
-	id: ID!
-	value: String
 }
 
 # C O N N E C T I O N   T Y P E S
