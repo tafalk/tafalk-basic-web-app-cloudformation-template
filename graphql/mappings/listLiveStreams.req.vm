@@ -1,7 +1,7 @@
 {
   "version" : "2017-02-28",
   "operation" : "Query",
-  "index" : "isSealed-startedAt-index",
+  "index" : "isSealed-startTime-index",
   "query" : {
     "expression": "isSealed = :isSealed",
     "expressionValues" : {

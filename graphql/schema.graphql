@@ -106,8 +106,8 @@ input CreateStreamInput {
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy!
-  sealedAt: String
-  startedAt: String!
+  sealTime: String
+  startTime: String!
   title: String
   track: String
   userId: String!
@@ -122,8 +122,8 @@ input UpdateStreamInput {
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy
-  sealedAt: String
-  startedAt: String
+  sealTime: String
+  startTime: String
   title: String
   track: String
   visits: Int
@@ -209,8 +209,8 @@ type Stream {
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy!
-  sealedAt: String
-  startedAt: String!
+  sealTime: String
+  startTime: String!
   title: String
   track: String
   uncloggerHintId: String
