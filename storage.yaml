@@ -77,6 +77,13 @@ Outputs:
   FunctionDeploymentsBucket:
     Description: A reference to the created FunctionDeploymentsBucket
     Value: !Ref FunctionDeploymentsBucket
+  FunctionDeploymentsBucketArn:
+    Description: A reference to the created FunctionDeploymentsBucket Arn
+    Value: !GetAtt FunctionDeploymentsBucket.Arn
   UserFilesBucket:
     Description: A reference to the created UserFilesBucket
     Value: !Ref UserFilesBucket
+  UserFilesBucketArn:
+    Description: A reference to the created UserFilesBucket Arn
+    Value: !GetAtt UserFilesBucket.Arn
+

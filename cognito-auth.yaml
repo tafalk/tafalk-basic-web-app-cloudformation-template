@@ -11,6 +11,8 @@ Parameters:
     Type: String
   DefaultUserGroupName:
     Type: String
+  UserFilesBucketArn:
+    Type: String
 
 Resources:
   # Creates a User Pool
@@ -122,6 +124,33 @@ Resources:
                   - "mobileanalytics:PutEvents"
                   - "cognito-sync:*"
                 Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: !Sub "${UserFilesBucketArn}/protected/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:PutObject"
+                Resource: !Sub "${UserFilesBucketArn}/uploads/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:ListBucket"
+                Resource: !Sub "${UserFilesBucketArn}"
+                Condition:
+                  StringLike:
+                    "s3:prefix":
+                      - "public/"
+                      - "public/*"
+                      - "protected/"
+                      - "protected/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:DeleteObject"
+                Resource:
+                  - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
+
   CognitoAuthorizedRole:
     Type: AWS::IAM::Role
     Properties:
@@ -153,6 +182,37 @@ Resources:
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: !Sub "${UserFilesBucketArn}/protected/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:PutObject"
+                Resource: !Sub "${UserFilesBucketArn}/uploads/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:ListBucket"
+                Resource: !Sub "${UserFilesBucketArn}"
+                Condition:
+                  StringLike:
+                    "s3:prefix":
+                      - "public/"
+                      - "public/*"
+                      - "protected/"
+                      - "protected/*"
+                      - "private/${cognito-identity.amazonaws.com:sub}/"
+                      - "private/${cognito-identity.amazonaws.com:sub}/*"
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:DeleteObject"
+                Resource:
+                  - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
+                  - !Join ["/", [ !Ref UserFilesBucketArn, "protected", "${cognito-identity.amazonaws.com:sub}", "*"]]
+                  - !Join ["/", [ !Ref UserFilesBucketArn, "private", "${cognito-identity.amazonaws.com:sub}", "*"]]
+
   IdentityPoolRoleMapping:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
