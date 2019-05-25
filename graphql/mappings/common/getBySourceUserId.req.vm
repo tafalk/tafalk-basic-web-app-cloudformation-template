@@ -2,6 +2,6 @@
   "version": "2017-02-28",
   "operation": "GetItem",
   "key": {
-    "id": { "S" : "${ctx.src.userId}" }
+    "id": { "S" : "${ctx.source.userId}" }
   },
 }
