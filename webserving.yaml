@@ -93,9 +93,9 @@ Resources:
         Enabled: true
         Origins:
           - Id: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
-            DomainName: !GetAtt HostingBucket.DomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
+            DomainName: !Select [1, !Split ["//", !GetAtt HostingBucket.WebsiteURL]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
         CustomErrorResponses:
           - ErrorCachingMinTTL: 300
             ErrorCode: 400
@@ -128,7 +128,6 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
-        DefaultRootObject: "index.html"
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !GetAtt SslCertificate.Arn
@@ -148,33 +147,12 @@ Resources:
         Enabled: true
         Origins:
           - Id: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
-            DomainName: !GetAtt HostingWwwRedirectionBucket.DomainName
-            S3OriginConfig:
-              OriginAccessIdentity: !Join ["", ["origin-access-identity/cloudfront/", !Ref OriginAccessIdentity]]
-        CustomErrorResponses:
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 400
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: "/"
-          - ErrorCachingMinTTL: 300
-            ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: "/"
+            DomainName: !Select [1, !Split ["//", !GetAtt HostingWwwRedirectionBucket.WebsiteURL]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
         DefaultCacheBehavior:
-          AllowedMethods:
-            - DELETE
-            - GET
-            - HEAD
-            - OPTIONS
-            - PATCH
-            - POST
-            - PUT
-          Compress: true
-          DefaultTTL: 604800
+          DefaultTTL: 5
+          MaxTTL: 30
           TargetOriginId: !Sub "${ProjectIdentifierName}HostingWwwS3BucketOrigin"
           ViewerProtocolPolicy: "redirect-to-https"
           ForwardedValues:
