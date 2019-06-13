@@ -200,6 +200,7 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         LambdaFunctionArtifactStoreBucketName: !Sub "${ProjectIdentifierName}-lambda-zips-2019"
         UserFileBucketName: !Sub "${ProjectIdentifierName}-userfiles"
+        SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
 
   LambdaFunctionCICDPipeline:
     Type: AWS::CloudFormation::Stack

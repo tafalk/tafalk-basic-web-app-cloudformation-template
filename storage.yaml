@@ -9,6 +9,9 @@ Parameters:
     Type: String
   UserFileBucketName:
     Type: String
+  SitePoliciesBucketName:
+    Type: String
+
 Resources:
 
   # Buckets
@@ -56,6 +59,24 @@ Resources:
             AllowedHeaders:
               - "*"
 
+  SitePoliciesBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref SitePoliciesBucketName
+      AccessControl: PublicRead
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - "*"
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
   # Policies
   FunctionDeploymentsBucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -73,6 +94,18 @@ Resources:
               Bool:
                 "aws:SecureTransport": false
 
+  SitePoliciesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SitePoliciesBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: Allow
+            Resource: !Join ["", [ !GetAtt SitePoliciesBucket.Arn, "/*"]]
+            Principal: "*"
+
 Outputs:
   FunctionDeploymentsBucket:
     Description: A reference to the created FunctionDeploymentsBucket
@@ -86,4 +119,10 @@ Outputs:
   UserFilesBucketArn:
     Description: A reference to the created UserFilesBucket Arn
     Value: !GetAtt UserFilesBucket.Arn
+  SitePoliciesBucket:
+    Description: A reference to the created SitePoliciesBucket
+    Value: !Ref SitePoliciesBucket
+  SitePoliciesBucketArn:
+    Description: A reference to the created SitePoliciesBucket Arn
+    Value: !GetAtt SitePoliciesBucket.Arn
 

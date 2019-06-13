@@ -48,6 +48,9 @@ Parameters:
     Type: String
   AcmCertRegion:
     Type: String
+  # # Site Policies
+  # SitePoliciesRepositoryName:
+  #   Type: String
 
 Resources:
   # CodeBuild projects
@@ -363,3 +366,46 @@ Resources:
               InputArtifacts:
                 - Name: CDBuild
               RunOrder: 1
+
+  # SitePoliciesPipeline:
+  #   Type: AWS::CodePipeline::Pipeline
+  #   Properties:
+  #     Name: !Sub "${ProjectIdentifierName}-site-policies-pipeline"
+  #     RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+  #     ArtifactStore:
+  #       Type: S3
+  #       Location: !Ref LambdaArtifactStoreBucket
+  #     RestartExecutionOnUpdate: true
+  #     Stages:
+  #       - Name: Source
+  #         Actions:
+  #           - Name: FetchSource
+  #             ActionTypeId:
+  #               Category: Source
+  #               Owner: AWS
+  #               Version: "1"
+  #               Provider: CodeCommit
+  #             OutputArtifacts:
+  #               - Name: SPSource
+  #             Configuration:
+  #               RepositoryName: !Ref SitePoliciesRepositoryName
+  #               BranchName: !Ref BranchName
+  #               PollForSourceChanges: false
+  #             RunOrder: 1
+  #       - Name: Pipeline
+  #         Actions:
+  #           - Name: DeployPipeline
+  #             ActionTypeId:
+  #               Category: Deploy
+  #               Owner: AWS
+  #               Provider: CodeDeploy
+  #               Version: "1"
+  #             Configuration:
+  #               StackName: !Sub "${ProjectIdentifierName}-cert-delegate-deploy-stack"
+  #               ActionMode: CREATE_UPDATE
+  #               Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+  #               RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+  #               ParameterOverrides: !Sub '{"FunctionName": "${CertificateDelegatingFunctionName}", "AcmCertRegion": "${AcmCertRegion}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+  #             InputArtifacts:
+  #               - Name: SPSource
+  #             RunOrder: 1
