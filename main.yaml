@@ -107,6 +107,10 @@ Parameters:
     Description: CodeCommit repository for ACM certificate delegating function
     Type: String
     Default: certificate-delegating-function
+  SitePoliciesRepositoryName:
+    Description: CodeCommit repository for site policies
+    Type: String
+    Default: site-policies
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -239,6 +243,9 @@ Resources:
         CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
         CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
         AcmCertRegion: !Ref CertificateRegion
+        # Site Policies
+        SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
+        SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack
