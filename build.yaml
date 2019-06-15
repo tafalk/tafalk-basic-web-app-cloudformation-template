@@ -23,8 +23,6 @@ Parameters:
     Type: String
   UserTable:
     Type: String
-  StreamTable:
-    Type: String
   UserGroup:
     Type: String
   # Token Resolver
@@ -40,6 +38,10 @@ Parameters:
   ResourceSearcherFunctionName:
     Type: String
   ResourceSearcherFunctionRepositoryName:
+    Type: String
+  StreamTable:
+    Type: String
+  CantoTable:
     Type: String
   # Certificate Delegating
   CertificateDelegatingFunctionName:
@@ -304,7 +306,7 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "RSBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${ResourceSearcherFunctionName}", "StreamTable": "${StreamTable}", "UserTable": "${UserTable}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${ResourceSearcherFunctionName}", "StreamTable": "${StreamTable}", "UserTable": "${UserTable}", "CantoTable": "${CantoTable}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: RSBuild
               RunOrder: 1

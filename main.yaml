@@ -228,8 +228,6 @@ Resources:
         CognitoUserExporterFunctionRepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
         UserTable:
           Fn::GetAtt: [Data, Outputs.UserTable]
-        StreamTable:
-          Fn::GetAtt: [Data, Outputs.StreamTable]
         UserGroup: !Sub "${ProjectIdentifierName}-default-ug"
         # Token Resolver
         RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
@@ -239,6 +237,10 @@ Resources:
         # Resource Searcher
         ResourceSearcherFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
         ResourceSearcherFunctionRepositoryName: !Ref ResourceSearcherFunctionRepositoryName
+        StreamTable:
+          Fn::GetAtt: [Data, Outputs.StreamTable]
+        CantoTable:
+          Fn::GetAtt: [Data, Outputs.CantoTable]
         # Certificate Delegating
         CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
         CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
