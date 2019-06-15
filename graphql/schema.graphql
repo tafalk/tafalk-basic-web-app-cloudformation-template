@@ -86,6 +86,7 @@ input UpdateUserInput {
   lastAccess: String
   location: String
   preferredName: String
+  language: String
   profilePictureKey: String
   profilePrivacy: ProfilePrivacy
   site: String
@@ -189,6 +190,7 @@ type User {
   likedStreams: LikeConnection
   location: String
   preferredName: String
+  language: String
   profilePictureKey: String
   profilePrivacy: ProfilePrivacy!
   site: String
