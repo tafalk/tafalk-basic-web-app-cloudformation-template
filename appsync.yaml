@@ -14,6 +14,8 @@ Parameters:
     Type: String
   UserTableName:
     Type: String
+  CantoTableName:
+    Type: String
   StreamTableName:
     Type: String
   UserInteractionTableName:
@@ -61,6 +63,18 @@ Resources:
       ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
       DynamoDBConfig:
         TableName: !Ref UserTableName
+        AwsRegion: !Sub ${AWS::Region}
+
+  AppSyncCantoTableDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Name: cantos_ds
+      Description: "The Canto Table AppSync Data Source"
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
+      DynamoDBConfig:
+        TableName: !Ref CantoTableName
         AwsRegion: !Sub ${AWS::Region}
 
   AppSyncStreamTableDataSource:
@@ -249,6 +263,16 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamLikes.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 
+  ListCantoLikesResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listCantoLikes
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listCantoLikes.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+
   ListPaginatedStreamCommentsResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -278,6 +302,27 @@ Resources:
       DataSourceName: !GetAtt AppSyncRecaptchaTokenResolverFunctionDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
+
+  # Cantos
+  ListCantosResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listCantos
+      DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/listPaginated.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  GetCantoResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getCanto
+      DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getById.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   # Mutations
   UpdateUserResolver:
@@ -421,6 +466,17 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceStreamId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
+  CantoOfLikeResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Like
+      FieldName: canto
+      DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceCantoId.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+
   UserOfStreamResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -449,6 +505,16 @@ Resources:
       FieldName: likes
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getLikesOfStream.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+
+  LikesOfCantoResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Canto
+      FieldName: likes
+      DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getLikesOfCanto.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 
   FlagsOfStreamResolver:
@@ -489,6 +555,16 @@ Resources:
       FieldName: targetUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceTargetUserId.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  UserOfStreamResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Canto
+      FieldName: user
+      DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceUserId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
   # API key

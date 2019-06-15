@@ -43,8 +43,35 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  StreamTable:
+  CantoTable:
     DependsOn: UserTable
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Cantos
+      BillingMode: PROVISIONED
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "startTime"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: startTime
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: Name
+          Value: Streams
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  StreamTable:
+    DependsOn: CantoTable
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: Streams
@@ -209,6 +236,8 @@ Resources:
           AttributeType: "S"
         - AttributeName: "streamId"
           AttributeType: "S"
+        - AttributeName: "cantoId"
+          AttributeType: "S"
         - AttributeName: "userId"
           AttributeType: "S"
       KeySchema:
@@ -218,6 +247,15 @@ Resources:
         - IndexName: streamId-index
           KeySchema:
             - AttributeName: streamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: cantoId-index
+          KeySchema:
+            - AttributeName: cantoId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
@@ -340,6 +378,9 @@ Outputs:
   UserTable:
     Description: A reference to the created UserTable
     Value: !Ref UserTable
+  CantoTable:
+    Description: A reference to the created CantoTable
+    Value: !Ref CantoTable
   StreamTable:
     Description: A reference to the created StreamTable
     Value: !Ref StreamTable
@@ -361,6 +402,9 @@ Outputs:
   UserTableArn:
     Description: A reference to the created UserTable ARN
     Value: !GetAtt UserTable.Arn
+  CantoTableArn:
+    Description: A reference to the created CantoTable ARN
+    Value: !GetAtt CantoTable.Arn
   StreamTableArn:
     Description: A reference to the created StreamTable ARN
     Value: !GetAtt StreamTable.Arn

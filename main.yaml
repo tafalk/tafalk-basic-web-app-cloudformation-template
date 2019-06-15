@@ -280,6 +280,8 @@ Resources:
           Fn::GetAtt: [IAM, Outputs.AppSyncResourceLambdaRoleArn]
         UserTableName:
           Fn::GetAtt: [Data, Outputs.UserTable]
+        CantoTableName:
+          Fn::GetAtt: [Data, Outputs.CantoTable]
         StreamTableName:
           Fn::GetAtt: [Data, Outputs.StreamTable]
         LikeTableName:

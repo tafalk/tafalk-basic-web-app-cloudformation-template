@@ -1,0 +1,14 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "cantoId-index",
+  "query" : {
+    "expression": "cantoId = :cantoId",
+    "expressionValues" : {
+      ":cantoId" : {
+        "S" : "${ctx.args.cantoId}"
+      }
+    }
+  },
+  "scanIndexForward": false
+}

@@ -28,7 +28,14 @@ type Query {
   search(query: String!): [SearchResult] @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Recaptcha V3 token
-  getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result  
+  getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
+
+  # Cantos
+  getCanto(id: ID!): Canto
+  listCantos(first: Int, after: String): CantoConnection
+
+  # Canto Likes
+  listCantoLikes(cantoId: ID!): [Like]
 }
 
 # M U T A T I O N S
@@ -53,24 +60,28 @@ type Mutation {
   # Flag
   createFlag(input: CreateFlagInput!): Flag
   deleteFlag(input: DeleteFlagInput!): Flag
+
+  # Canto
+  createCanto(input: CreateCantoInput!): Stream @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateCanto(input: UpdateCantoInput!): Stream  @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
 # S U B S C R I P T I O N S
 type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
-  onCreateOrDeleteLike(streamId: String!): Like @aws_subscribe(mutations : ["createLike", "deleteLike"])
+  onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike"])
 }
 
 # I N T E R F A C E S
 interface CommunityReaction {
   id: ID!
-  streamId: String!
+  streamId: String
   time: String
   userId: String!
 }
 
 # U N I O N S
-union SearchResult = Stream | User
+union SearchResult = Stream | Canto | User
 
 # I N P U T S
 # User
@@ -130,6 +141,24 @@ input UpdateStreamInput {
   visits: Int
 }
 
+# Canto
+input CreateCantoInput {
+  id: ID!
+  body: String!
+  startTime: String!
+  lastUpdateTime: String
+  userId: String!
+  visits: Int
+}
+
+input UpdateCantoInput {
+  id: ID!
+  body: String
+  lastUpdateTime: String
+  userId: String
+  visits: Int
+}
+
 # User interaction
 input CreateUserInteractionInput {
   actorUserId: String!
@@ -143,7 +172,8 @@ input DeleteUserInteractionInput {
 
 # Stream reaction
 input CreateLikeInput {
-  streamId: String!
+  streamId: String
+  cantoId: String
   time: String
   userId: String!
 }
@@ -221,6 +251,17 @@ type Stream {
   visits: Int
 }
 
+type Canto {
+  id: ID!
+  body: String!
+  flags: [Flag]
+  likes: [Like]
+  startTime: String!
+  user: User!
+  userId: String!
+  visits: Int
+}
+
 type UserInteraction {
   actorUserId: String!
   id: ID!
@@ -234,6 +275,8 @@ type Like implements CommunityReaction {
   id: ID!
   stream: Stream!
   streamId: String!
+  canto: Canto
+  cantoId: String  
   time: String
   userId: String!
 }
@@ -272,6 +315,11 @@ type RecaptchaV3Result {
 # C O N N E C T I O N   T Y P E S
 type StreamConnection {
   items: [Stream]
+  nextToken: String
+}
+
+type CantoConnection {
+  items: [Canto]
   nextToken: String
 }
 
@@ -323,6 +371,7 @@ enum StreamPrivacy {
   Protected
   Public
 }
+
 enum UncloggerHintCategory {
   Default
   DidYouKnow
