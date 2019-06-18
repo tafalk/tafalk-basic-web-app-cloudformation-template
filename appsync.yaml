@@ -567,7 +567,7 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceTargetUserId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
-  UserOfStreamResolver:
+  UserOfCantoResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
