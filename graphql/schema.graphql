@@ -144,10 +144,9 @@ input UpdateStreamInput {
 # Canto
 input CreateCantoInput {
   id: ID!
-  body: String!
-  startTime: String!
+  body: String
+  startTime: String
   lastUpdateTime: String
-  userId: String!
   visits: Int
 }
 
@@ -155,7 +154,6 @@ input UpdateCantoInput {
   id: ID!
   body: String
   lastUpdateTime: String
-  userId: String
   visits: Int
 }
 
@@ -254,12 +252,11 @@ type Stream {
 
 type Canto {
   id: ID!
-  body: String!
+  body: String
   flags: [Flag]
   likes: [Like]
-  startTime: String!
-  user: User!
-  userId: String!
+  startTime: String
+  user: User
   visits: Int
 }
 
