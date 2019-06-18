@@ -224,6 +224,7 @@ type User {
   profilePictureKey: String
   profilePrivacy: ProfilePrivacy!
   site: String
+  canto: Canto
   streams: StreamConnection
   theme: String
   userInteractions: UserInteractionConnection
