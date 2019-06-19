@@ -145,15 +145,15 @@ input UpdateStreamInput {
 input CreateCantoInput {
   id: ID!
   body: String
-  startTime: String
+  startTime: String!
   lastUpdateTime: String
   visits: Int
 }
 
 input UpdateCantoInput {
   id: ID!
-  body: String
-  lastUpdateTime: String
+  body: String!
+  lastUpdateTime: String!
   visits: Int
 }
 
