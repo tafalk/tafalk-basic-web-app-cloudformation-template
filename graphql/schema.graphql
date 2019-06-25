@@ -62,13 +62,14 @@ type Mutation {
   deleteFlag(input: DeleteFlagInput!): Flag
 
   # Canto
-  createCanto(input: CreateCantoInput!): Stream @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateCanto(input: UpdateCantoInput!): Stream  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createCanto(input: CreateCantoInput!): Canto @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateCanto(input: UpdateCantoInput!): Canto  @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
 # S U B S C R I P T I O N S
 type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
+  onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations : ["updateCanto"])
   onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike"])
 }
 
@@ -256,6 +257,7 @@ type Canto {
   flags: [Flag]
   likes: [Like]
   startTime: String
+  lastUpdateTime: String
   user: User
   visits: Int
 }
