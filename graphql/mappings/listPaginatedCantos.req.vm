@@ -7,7 +7,7 @@
       "#status": "status",
     },
     "expressionValues": {
-      ":status": $util.dynamodb.toDynamoDBJson($ctx.args.status),
+      ":status": { "S" : "OK" }
     },
   },
   "index": "status-lastUpdateTime-index",
