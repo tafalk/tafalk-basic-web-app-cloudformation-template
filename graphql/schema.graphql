@@ -124,7 +124,6 @@ input CreateStreamInput {
   title: String
   track: String
   userId: String!
-  visits: Int
 }
 
 input UpdateStreamInput {
@@ -139,7 +138,6 @@ input UpdateStreamInput {
   startTime: String
   title: String
   track: String
-  visits: Int
 }
 
 # Canto
@@ -148,14 +146,12 @@ input CreateCantoInput {
   body: String
   startTime: String!
   lastUpdateTime: String
-  visits: Int
 }
 
 input UpdateCantoInput {
   id: ID!
   body: String!
   lastUpdateTime: String!
-  visits: Int
 }
 
 # User interaction
@@ -248,7 +244,6 @@ type Stream {
   uncloggerHintId: String
   user: User!
   userId: String!
-  visits: Int
 }
 
 type Canto {
@@ -259,7 +254,6 @@ type Canto {
   startTime: String
   lastUpdateTime: String
   user: User
-  visits: Int
 }
 
 type UserInteraction {
