@@ -255,6 +255,7 @@ type Canto {
   startTime: String
   lastUpdateTime: String
   status: String
+  user: User!
 }
 
 type UserInteraction {
