@@ -146,6 +146,7 @@ input CreateCantoInput {
   body: String
   startTime: String!
   lastUpdateTime: String
+  status: !String
 }
 
 input UpdateCantoInput {
@@ -153,6 +154,7 @@ input UpdateCantoInput {
   startTime: String!
   body: String!
   lastUpdateTime: String!
+  status: String
 }
 
 # User interaction
@@ -254,7 +256,7 @@ type Canto {
   likes: [Like]
   startTime: String
   lastUpdateTime: String
-  user: User
+  status: String
 }
 
 type UserInteraction {

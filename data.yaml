@@ -52,13 +52,25 @@ Resources:
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
-        - AttributeName: "startTime"
+        - AttributeName: "status"
+          AttributeType: "S"
+        - AttributeName: "lastUpdateTime"
           AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
-        - AttributeName: startTime
-          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: status-lastUpdateTime-index
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: lastUpdateTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
