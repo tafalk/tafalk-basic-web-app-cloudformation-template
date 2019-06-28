@@ -151,10 +151,8 @@ input CreateCantoInput {
 
 input UpdateCantoInput {
   id: ID!
-  startTime: String!
   body: String!
   lastUpdateTime: String!
-  status: String
 }
 
 # User interaction
