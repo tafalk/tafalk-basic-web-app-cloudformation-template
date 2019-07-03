@@ -249,10 +249,10 @@ type Stream {
 
 type Canto {
   id: ID!
-  body: String
+  body: String!
   flags: [Flag]
   likes: [Like]
-  startTime: String
+  startTime: String!
   lastUpdateTime: String
   status: String
   user: User!
