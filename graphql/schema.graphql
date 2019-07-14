@@ -243,7 +243,7 @@ type Stream {
   title: String
   track: String
   uncloggerHintId: String
-  user: User!
+  user: User
   userId: String!
 }
 
@@ -255,7 +255,7 @@ type Canto {
   startTime: String!
   lastUpdateTime: String
   status: String
-  user: User!
+  user: User
 }
 
 type UserInteraction {
@@ -283,7 +283,7 @@ type Comment implements CommunityReaction {
   id: ID!
   streamId: String!
   time: String
-  user: User!
+  user: User
   userId: String!
 }
 
