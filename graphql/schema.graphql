@@ -87,6 +87,7 @@ union SearchResult = Stream | Canto | User
 # I N P U T S
 # User
 input UpdateUserInput {
+  accountStatus: String
   allowDirectMesages: Boolean
   bio: String
   birthDate: String
@@ -204,6 +205,7 @@ input DeleteFlagInput {
 
 # T Y P E S
 type User {
+  accountStatus: String
   allowDirectMesages: Boolean
   bio: String
   birthDate: String!
