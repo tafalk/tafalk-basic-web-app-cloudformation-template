@@ -76,7 +76,6 @@ type Subscription {
 # I N T E R F A C E S
 interface CommunityReaction {
   id: ID!
-  streamId: String
   time: String
   userId: String!
 }
@@ -171,6 +170,7 @@ input DeleteUserInteractionInput {
 input CreateLikeInput {
   streamId: String
   cantoId: String
+  indices: String
   time: String
   userId: String!
 }
@@ -276,6 +276,7 @@ type Like implements CommunityReaction {
   canto: Canto
   cantoId: String  
   time: String
+  indices: String
   userId: String!
 }
 
