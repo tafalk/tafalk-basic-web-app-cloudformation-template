@@ -54,6 +54,7 @@ type Mutation {
 
   # Stream reaction
   createLike(input: CreateLikeInput!): Like @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateLikeIndices(input: UpdateLikeIndicesInput): Like @aws_auth(cognito_groups: ["tafalk-default-ug"]) 
   createComment(input: CreateCommentInput!): Comment @aws_auth(cognito_groups: ["tafalk-default-ug"])
   deleteLike(input: DeleteLikeInput!): Like @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
@@ -70,7 +71,7 @@ type Mutation {
 type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations : ["updateCanto"])
-  onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike"])
+  onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike", "updateLikeIndices"])
 }
 
 # I N T E R F A C E S
@@ -166,13 +167,19 @@ input DeleteUserInteractionInput {
   id: ID!
 }
 
-# Stream reaction
+# Stream / Canto reaction
 input CreateLikeInput {
   streamId: String
   cantoId: String
   indices: String
   time: String
   userId: String!
+}
+
+input UpdateLikeIndicesInput {
+  id: ID!
+  indices: String!
+  time: String!
 }
 
 input CreateCommentInput {
