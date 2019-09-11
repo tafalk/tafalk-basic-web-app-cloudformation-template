@@ -101,7 +101,6 @@ input UpdateUserInput {
   preferredName: String
   language: String
   profilePictureKey: String
-  profilePrivacy: ProfilePrivacy
   site: String
   theme: String
   username: String
@@ -227,7 +226,6 @@ type User {
   preferredName: String
   language: String
   profilePictureKey: String
-  profilePrivacy: ProfilePrivacy!
   site: String
   canto: Canto
   streams: StreamConnection
@@ -363,12 +361,6 @@ enum Position {
   Squatting
   Standing
   Walking
-}
-
-enum ProfilePrivacy {
-  Private
-  Protected
-  Public
 }
 
 enum StreamPrivacy {
