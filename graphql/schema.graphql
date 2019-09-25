@@ -59,8 +59,10 @@ type Mutation {
   deleteLike(input: DeleteLikeInput!): Like @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Flag
-  createFlag(input: CreateFlagInput!): Flag
-  deleteFlag(input: DeleteFlagInput!): Flag
+  createFlag(input: CreateFlagInput!): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateFlagContent(input: UpdateFlagContentInput): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateFlagReview(input: UpdateFlagReviewInput): Flag @aws_auth(cognito_groups: ["tafalk-admin-ug"])
+  deleteFlag(input: DeleteFlagInput!): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Canto
   createCanto(input: CreateCantoInput!): Canto @aws_auth(cognito_groups: ["tafalk-default-ug"])
@@ -194,15 +196,30 @@ input DeleteLikeInput {
 
 # Flag
 input CreateFlagInput {
+  contentType: String!
+  contentId: String
+  flaggerUserId: String!
   category: String!
-  commentId: String
-  detail: String!
-  note: String
-  reviewNote: String
+  type: String!
+  detail: String
+  createTime: String
+  lastUpdateTime: String
+}
+
+input UpdateFlagContentInput {
+  id: ID!
+  category: String
+  type: String
+  detail: String
+  lastUpdateTime: String
+}
+
+input UpdateFlagReviewInput {
+  id: ID!
+  reviewerUserId: String
   reviewStatus: String
-  streamId: String
-  time: String
-  userId: String
+  reviewNote: String
+  lastUpdateTime: String
 }
 
 input DeleteFlagInput {
@@ -296,17 +313,20 @@ type Comment implements CommunityReaction {
 }
 
 type Flag {
-  category: String!
-  commentId: String
-  detail: String!
   id: ID!
-  note: String
-  reviewNote: String
+  contentType: String!
+  contentId: String
+  flaggerUserId: String!
+  flaggerUser: User
+  category: String!
+  type: String!
+  detail: String
+  reviewerUserId: String
+  reviewerUser: User
   reviewStatus: String
-  stream: Stream
-  streamId: String
-  time: String
-  userId: String!
+  reviewNote: String
+  createTime: String
+  lastUpdateTime: String
 }
 
 type RecaptchaV3Result {
