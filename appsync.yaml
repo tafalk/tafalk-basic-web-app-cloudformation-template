@@ -455,6 +455,26 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
+  UpdateFlagContentResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateFlagContent
+      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
+  UpdateFlagReviewResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateFlagReview
+      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+
   DeleteFlagResolver:
     Type: AWS::AppSync::Resolver
     Properties:
