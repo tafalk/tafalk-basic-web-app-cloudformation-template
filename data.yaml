@@ -298,42 +298,31 @@ Resources:
     DependsOn: StreamLikeTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Flags
+      TableName: ContentFlags
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
-        - AttributeName: "streamId"
+        - AttributeName: "contentId"
           AttributeType: "S"
-        - AttributeName: "commentId"
-          AttributeType: "S"
-        - AttributeName: "userId"
+        - AttributeName: "flaggerUserId"
           AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: streamId-index
+        - IndexName: contentId-index
           KeySchema:
-            - AttributeName: streamId
+            - AttributeName: contentId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: commentId-index
+        - IndexName: flaggerUserId-index
           KeySchema:
-            - AttributeName: commentId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: userId-index
-          KeySchema:
-            - AttributeName: userId
+            - AttributeName: flaggerUserId
               KeyType: HASH
           Projection:
             ProjectionType: ALL
@@ -345,7 +334,7 @@ Resources:
         WriteCapacityUnits: 1
       Tags:
         - Key: Name
-          Value: Flags
+          Value: ContentFlags
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
