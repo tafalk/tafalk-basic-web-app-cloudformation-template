@@ -1,11 +1,11 @@
 {
   "version": "2017-02-28",
   "operation" : "Query",
-  "index" : "streamId-index",
+  "index" : "contentId-index",
   "query" : {
-    "expression": "streamId = :streamId",
+    "expression": "contentId = :contentId",
     "expressionValues" : {
-      ":streamId" : {
+      ":contentId" : {
         "S" : "$ctx.source.id"
       }
     }
