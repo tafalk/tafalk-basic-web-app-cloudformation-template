@@ -1,11 +1,11 @@
 {
   "version": "2017-02-28",
   "operation" : "Query",
-  "index" : "commentId-index",
+  "index" : "contentId-index",
   "query" : {
-    "expression": "commentId = :commentId",
+    "expression": "contentId = :contentId",
     "expressionValues" : {
-      ":commentId" : {
+      ":contentId" : {
         "S" : "$ctx.source.id"
       }
     }
