@@ -90,7 +90,7 @@ union SearchResult = Stream | Canto | User
 # User
 input UpdateUserInput {
   accountStatus: String
-  allowDirectMesages: Boolean
+  allowDirectMessages: Boolean
   bio: String
   birthDate: String
   cognitoIdentityId: String
@@ -229,7 +229,7 @@ input DeleteFlagInput {
 # T Y P E S
 type User {
   accountStatus: String
-  allowDirectMesages: Boolean
+  allowDirectMessages: Boolean
   bio: String
   birthDate: String!
   cognitoIdentityId: String
