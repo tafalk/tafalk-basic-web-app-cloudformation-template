@@ -36,6 +36,9 @@ type Query {
 
   # Canto Likes
   listCantoLikes(cantoId: ID!): [Like]
+
+  # Flag
+  listFlags(contentId: ID!): [Flag]
 }
 
 # M U T A T I O N S
@@ -74,6 +77,7 @@ type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations : ["updateCanto"])
   onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike", "updateLikeIndices"])
+  onCreateOrDeleteFlag(contentId: String): Flag @aws_subscribe(mutations : ["createFlag", "deleteFlag"])
 }
 
 # I N T E R F A C E S
