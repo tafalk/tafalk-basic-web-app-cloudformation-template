@@ -79,6 +79,14 @@ aws cloudformation create-stack \
     ParameterKey=SubnetIDs,ParameterValue=SubnetID1\\,SubnetID2
 ```
 
+#### Testing validity of templates
+
+In project root, run:
+
+```sh
+aws cloudformation validate-template --template-body file://{yaml_file_name}
+```
+
 ### Manual work
 
 #### Registered Domain Nameservers

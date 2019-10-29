@@ -131,7 +131,9 @@ Resources:
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !GetAtt SslCertificate.Arn
+          MinimumProtocolVersion: TLSv1.1_2016
           SslSupportMethod: sni-only
+        HttpVersion: http2
         Aliases:
           - !Ref DomainName
       Tags:
@@ -162,7 +164,9 @@ Resources:
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !GetAtt SslCertificate.Arn
+          MinimumProtocolVersion: TLSv1.1_2016
           SslSupportMethod: sni-only
+        HttpVersion: http2
         Aliases:
           - !Sub www.${DomainName}
       Tags:
