@@ -39,6 +39,9 @@ type Query {
 
   # Flag
   listFlags(contentId: ID!): [Flag]
+
+  # UncloggerPrompt
+  listUncloggerPrompts(first: Int, after: String): UncloggerPromptConnection
 }
 
 # M U T A T I O N S
@@ -70,6 +73,11 @@ type Mutation {
   # Canto
   createCanto(input: CreateCantoInput!): Canto @aws_auth(cognito_groups: ["tafalk-default-ug"])
   updateCanto(input: UpdateCantoInput!): Canto  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+
+  # UncloggerPrompt
+  createUncloggerPrompt(input: CreateUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUncloggerPrompt(input: UpdateUncloggerPromptInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
 # S U B S C R I P T I O N S
@@ -230,6 +238,31 @@ input DeleteFlagInput {
   id: ID!
 }
 
+# UncloggerPrompt
+input CreateUncloggerPromptInput {
+  category: String!
+  body: String!
+  language: String
+  state: String
+  creatorUserId: String
+  createTime: String
+}
+
+input UpdateUncloggerPromptInput {
+  id: ID!
+  category: String
+  body: String
+  language: String
+  state: String
+  creatorUserId: String
+  approverUserId: String
+  approveTime: String
+}
+
+input DeleteUncloggerPromptInput {
+  id: ID!
+}
+
 # T Y P E S
 type User {
   accountStatus: String
@@ -340,6 +373,20 @@ type RecaptchaV3Result {
   success: Boolean
 }
 
+type UncloggerPrompt {
+  id: ID!
+  category: String!
+  body: String!
+  language: String
+  state: String
+  creatorUserId: String
+  creatorUser: User
+  approverUserId: String
+  approverUser: User
+  createTime: String
+  approveTime: String
+}
+
 # C O N N E C T I O N   T Y P E S
 type StreamConnection {
   items: [Stream]
@@ -363,6 +410,11 @@ type LikeConnection {
 
 type CommentConnection {
   items: [Comment]
+  nextToken: String
+}
+
+type UncloggerPromptConnection {
+  items: [UncloggerPrompt]
   nextToken: String
 }
 
