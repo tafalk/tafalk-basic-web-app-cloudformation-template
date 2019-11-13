@@ -146,6 +146,18 @@ Parameters:
       - us-east-1
     Default: us-east-1
     ConstraintDescription : AWS needs cert to be strictly in N.Virgina for Cloudfront usage
+  AuroraMysqlEngineVersion:
+    Description: The version of the AWS Aurora Engine for MySql
+    Type: String
+    Default: '5.6'
+  AuroraMysqlMasterUsername:
+    Description: The username for the AWS Aurora DB
+    Type: String
+    Default: root
+  AuroraMysqlMasterUserPassword:
+    Description: The username for the AWS Aurora DB
+    Type: String
+    NoEcho: true
 
 Conditions:
   CreateWebServing: !Equals [ !Ref WebServingRequirement, "true" ]
@@ -194,6 +206,14 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        AuroraMysqlEngineVersion: !Ref AuroraMysqlEngineVersion
+        AuroraMysqlMasterUsername: !Ref AuroraMysqlMasterUsername
+        AuroraMysqlMasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+        AuroraMysqlDBSubnetGroupNames:
+          !Join
+            - ","
+            - - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
+              - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet2]
 
   Storage:
     Type: AWS::CloudFormation::Stack
