@@ -152,12 +152,23 @@ Parameters:
     Default: '5.6'
   AuroraMysqlMasterUsername:
     Description: The username for the AWS Aurora DB
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]*$
     Type: String
     Default: root
+    MinLength: 1
+    MaxLength: 16
   AuroraMysqlMasterUserPassword:
     Description: The username for the AWS Aurora DB
+    AllowedPattern: ^[a-zA-Z0-9]+$
+    ConstraintDescription: Must be between 8 to 41 alphanumeric characters.
     Type: String
+    MinLength: 8
+    MaxLength: 41
     NoEcho: true
+  RdsBootstrapFunctionRepositoryName:
+    Description: CodeCommit repository for RDS Bootstrap function
+    Type: String
+    Default: rds-bootstrap-function
 
 Conditions:
   CreateWebServing: !Equals [ !Ref WebServingRequirement, "true" ]
@@ -172,6 +183,20 @@ Resources:
       Type: String
       Value: !Ref RecaptchaSecret
       Description: "The Recaptcha Secret"
+  AuroraMysqlMasterUsernameParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: AuroraMysqlMasterUsername
+      Type: String
+      Value: !Ref AuroraMysqlMasterUsername
+      Description: "The Aurora Mysql Master Username Secret"
+  AuroraMysqlMasterUserPasswordParam:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: AuroraMysqlMasterUserPassword
+      Type: String
+      Value: !Ref AuroraMysqlMasterUserPassword
+      Description: "The Aurora Mysql Master User Password Secret"
 
   # Nested Stacks
   IAM:
@@ -268,6 +293,37 @@ Resources:
         # Site Policies
         SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
         SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
+
+  RDSBootstrap:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: Data
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
+      Parameters:
+        # Common
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        # Pipeline Common
+        BranchName: !Ref RepositoryBranchName
+        LambdaArtifactStoreBucket:
+          Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
+        CodeCommitRepoCodeBuildRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
+        CodeCommitRepoCodePipelineRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
+        LambdaManagerCloudFormationRoleArn:
+          Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
+        # Custom Resource Function
+        RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
+        RdsBootstrapFunctionRepositoryName: !Ref RdsBootstrapFunctionRepositoryName
+        AuroraMysqlEndpoint:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
+        AuroraMysqlPort:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
+        FlagTableName: Flags
+        UncloggerPromptTableName: UncloggerPrompts
+        AuroraMysqlMasterUsernameSecretName: !Ref AuroraMysqlMasterUsernameParam
+        AuroraMysqlMasterUserPasswordSecretName: !Ref AuroraMysqlMasterUserPasswordParam
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack

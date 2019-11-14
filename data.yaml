@@ -423,7 +423,6 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-
 Outputs:
   UserTable:
     Description: A reference to the created UserTable
@@ -473,3 +472,9 @@ Outputs:
   UncloggerPromptTableArn:
     Description: A reference to the created UncloggerPromptTable ARN
     Value: !GetAtt UncloggerPromptTable.Arn
+  ApprovalDbClusterEndpointAddress:
+    Description: Endpoint of ApprovalDBCluster
+    Value: !GetAtt ApprovalDbCluster.Endpoint.Address
+  ApprovalDbClusterEndpointPort:
+    Description: Port of ApprovalDBCluster
+    Value: !GetAtt ApprovalDbCluster.Endpoint.Port
