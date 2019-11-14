@@ -24,6 +24,8 @@ Parameters:
     Type: String
   AuroraMysqlEndpoint:
     Type: String
+  AuroraMysqlApprovalDbName:
+    Type: String
   AuroraMysqlPort:
     Type: String
   FlagTableName:
@@ -107,7 +109,7 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "DBBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${AuroraMysqlEndpoint}", "Port": "${AuroraMysqlPort}","FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${AuroraMysqlEndpoint}", "Port": "${AuroraMysqlPort}", "ApprovalDbName": "${AuroraMysqlApprovalDbName}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: DBBuild
               RunOrder: 1

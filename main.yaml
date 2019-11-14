@@ -320,6 +320,8 @@ Resources:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
         AuroraMysqlPort:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
+        AuroraMysqlApprovalDbName:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterName]
         FlagTableName: Flags
         UncloggerPromptTableName: UncloggerPrompts
         AuroraMysqlMasterUsernameSecretName: !Ref AuroraMysqlMasterUsernameParam

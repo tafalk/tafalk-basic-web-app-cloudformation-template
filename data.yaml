@@ -472,6 +472,9 @@ Outputs:
   UncloggerPromptTableArn:
     Description: A reference to the created UncloggerPromptTable ARN
     Value: !GetAtt UncloggerPromptTable.Arn
+  ApprovalDbClusterName:
+    Description: Name of ApprovalDBCluster
+    Value: !Ref ApprovalDbCluster
   ApprovalDbClusterEndpointAddress:
     Description: Endpoint of ApprovalDBCluster
     Value: !GetAtt ApprovalDbCluster.Endpoint.Address
