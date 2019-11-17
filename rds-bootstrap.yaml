@@ -4,6 +4,14 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  AuroraMysqlEngineVersion:
+    Type: String
+  AuroraMysqlMasterUsername:
+    Type: String
+  AuroraMysqlMasterUserPassword:
+    Type: String
+  AuroraMysqlDBSubnetGroupNames:
+    Type: CommaDelimitedList
   BranchName:
     Type: String
   LambdaArtifactStoreBucket:
@@ -22,18 +30,49 @@ Parameters:
     Type: String
   AuroraMysqlMasterUserPasswordSecretName:
     Type: String
-  AuroraMysqlEndpoint:
-    Type: String
-  AuroraMysqlApprovalDbName:
-    Type: String
-  AuroraMysqlPort:
-    Type: String
   FlagTableName:
     Type: String
   UncloggerPromptTableName:
     Type: String
 
 Resources:
+  # DBSubnet Group
+  ApprovalDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Approval DB Subnet Group
+      SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+  # Serverless Aurora DB Cluster
+  ApprovalDbCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: !Ref AuroraMysqlEngineVersion
+      DatabaseName: Approval
+      MasterUsername: !Ref AuroraMysqlMasterUsername
+      MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+      DBClusterIdentifier: approvalcluster-1
+      BackupRetentionPeriod: 35
+      DeletionProtection: true
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 8
+        MinCapacity: 2
+        SecondsUntilAutoPause: 300
+      DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: Approval
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
   # Build Project
   RdsBootstrapFunctionBuildProject:
     Type: AWS::CodeBuild::Project
@@ -55,7 +94,7 @@ Resources:
       ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
 
   # Pipeline
-  CertificateDelegatingFunctionPiepeline:
+  RdsBootstrapFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-pipeline"
@@ -109,14 +148,20 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "DBBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${AuroraMysqlEndpoint}", "Port": "${AuroraMysqlPort}", "ApprovalDbName": "${AuroraMysqlApprovalDbName}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${ApprovalDbCluster.Endpoint.Address}", "Port": "${ApprovalDbCluster.Endpoint.Port}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: DBBuild
               RunOrder: 1
 
-  # Certification
+  # Custom Resource For Bootstrapping
   RdsBootstrap:
     Type: Custom::RdsBootstrap
+    DependsOn: [ApprovalDbCluster, RdsBootstrapFunctionPipeline]
     Version: '1.0'
     Properties:
       ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RdsBootstrapFunctionName}"
+
+Outputs:
+  ApprovalDbClusterName:
+    Description: Name of ApprovalDBCluster
+    Value: !Ref ApprovalDbCluster

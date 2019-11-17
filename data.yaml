@@ -6,28 +6,8 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
-  AuroraMysqlEngineVersion:
-    Type: String
-  AuroraMysqlMasterUsername:
-    Type: String
-  AuroraMysqlMasterUserPassword:
-    Type: String
-  AuroraMysqlDBSubnetGroupNames:
-    Type: CommaDelimitedList
 
 Resources:
-  # DBSubnet Group
-  ApprovalDBSubnetGroup:
-    Type: AWS::RDS::DBSubnetGroup
-    Properties:
-      DBSubnetGroupDescription: Approval DB Subnet Group
-      SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
-      Tags:
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
-
   # DynamoDb
   UserTable:
     Type: AWS::DynamoDB::Table
@@ -395,34 +375,6 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  # Relational
-  ApprovalDbCluster:
-    DependsOn: ApprovalDBSubnetGroup
-    Type: AWS::RDS::DBCluster
-    Properties:
-      Engine: aurora-mysql
-      EngineMode: serverless
-      EngineVersion: !Ref AuroraMysqlEngineVersion
-      DatabaseName: Approval
-      MasterUsername: !Ref AuroraMysqlMasterUsername
-      MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
-      DBClusterIdentifier: approvalcluster-1
-      BackupRetentionPeriod: 35
-      DeletionProtection: true
-      ScalingConfiguration:
-        AutoPause: true
-        MaxCapacity: 8
-        MinCapacity: 2
-        SecondsUntilAutoPause: 300
-      DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
-      Tags:
-        - Key: Name
-          Value: Approval
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
-
 Outputs:
   UserTable:
     Description: A reference to the created UserTable
@@ -472,12 +424,3 @@ Outputs:
   UncloggerPromptTableArn:
     Description: A reference to the created UncloggerPromptTable ARN
     Value: !GetAtt UncloggerPromptTable.Arn
-  ApprovalDbClusterName:
-    Description: Name of ApprovalDBCluster
-    Value: !Ref ApprovalDbCluster
-  ApprovalDbClusterEndpointAddress:
-    Description: Endpoint of ApprovalDBCluster
-    Value: !GetAtt ApprovalDbCluster.Endpoint.Address
-  ApprovalDbClusterEndpointPort:
-    Description: Port of ApprovalDBCluster
-    Value: !GetAtt ApprovalDbCluster.Endpoint.Port
