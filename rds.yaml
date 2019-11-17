@@ -1,0 +1,168 @@
+Description: Bootstraps RDS resources (i.e. creates tables)
+Parameters:
+  ProjectIdentifierName:
+    Type: String
+  EnvironmentName:
+    Type: String
+  AuroraMysqlEngineVersion:
+    Type: String
+  AuroraMysqlMasterUsername:
+    Type: String
+  AuroraMysqlMasterUserPassword:
+    Type: String
+  AuroraMysqlDBSubnetGroupNames:
+    Type: CommaDelimitedList
+  BranchName:
+    Type: String
+  LambdaArtifactStoreBucket:
+    Type: String
+  CodeCommitRepoCodeBuildRoleArn:
+    Type: String
+  CodeCommitRepoCodePipelineRoleArn:
+    Type: String
+  LambdaManagerCloudFormationRoleArn:
+    Type: String
+  RdsBootstrapFunctionName:
+    Type: String
+  RdsBootstrapFunctionRepositoryName:
+    Type: String
+  AuroraMysqlMasterUsernameSecretName:
+    Type: String
+  AuroraMysqlMasterUserPasswordSecretName:
+    Type: String
+  FlagTableName:
+    Type: String
+  UncloggerPromptTableName:
+    Type: String
+
+Resources:
+  # DBSubnet Group
+  ApprovalDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Approval DB Subnet Group
+      SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+  # Serverless Aurora DB Cluster
+  ApprovalDbCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: !Ref AuroraMysqlEngineVersion
+      DatabaseName: Approval
+      MasterUsername: !Ref AuroraMysqlMasterUsername
+      MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+      DBClusterIdentifier: approvalcluster-1
+      BackupRetentionPeriod: 35
+      DeletionProtection: false
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 8
+        MinCapacity: 2
+        SecondsUntilAutoPause: 300
+      DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: Approval
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  # Build Project
+  RdsBootstrapFunctionBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-func-build-proj"
+      Description: Used to build RDS Bootstrap function from the CodeCommit Repo
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: "aws/codebuild/python:3.7.1"
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
+            Value: !Ref LambdaArtifactStoreBucket
+      ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
+
+  # Pipeline
+  RdsBootstrapFunctionPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-pipeline"
+      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: FetchSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeCommit
+              OutputArtifacts:
+                - Name: DBSource
+              Configuration:
+                RepositoryName: !Ref RdsBootstrapFunctionRepositoryName
+                BranchName: !Ref BranchName
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildFunction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref RdsBootstrapFunctionBuildProject
+              InputArtifacts:
+                - Name: DBSource
+              OutputArtifacts:
+                - Name: DBBuild
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrap-deploy-stack"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: "DBBuild::output-template.yaml"
+                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${ApprovalDbCluster.Endpoint.Address}", "Port": "${ApprovalDbCluster.Endpoint.Port}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+              InputArtifacts:
+                - Name: DBBuild
+              RunOrder: 1
+
+  # Custom Resource For Bootstrapping
+  RdsBootstrap:
+    Type: Custom::RdsBootstrap
+    DependsOn: [ApprovalDbCluster, RdsBootstrapFunctionPipeline]
+    Version: '1.0'
+    Properties:
+      ServiceToken: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${RdsBootstrapFunctionName}"
+
+Outputs:
+  ApprovalDbClusterName:
+    Description: Name of ApprovalDBCluster
+    Value: !Ref ApprovalDbCluster

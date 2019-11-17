@@ -285,10 +285,10 @@ Resources:
         SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
         SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
 
-  RDSBootstrap:
+  RDS:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds.yaml"]]
       Parameters:
         # Common
         ProjectIdentifierName: !Ref ProjectIdentifierName
