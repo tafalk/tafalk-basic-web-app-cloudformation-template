@@ -59,7 +59,7 @@ Resources:
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: approvalcluster-1
       BackupRetentionPeriod: 35
-      DeletionProtection: true
+      DeletionProtection: false
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 8
@@ -73,6 +73,7 @@ Resources:
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
+
   # Build Project
   RdsBootstrapFunctionBuildProject:
     Type: AWS::CodeBuild::Project
