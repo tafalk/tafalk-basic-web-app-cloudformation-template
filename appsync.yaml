@@ -10,6 +10,8 @@ Parameters:
     Type: String
   AppSyncResourceDynamoDbRoleArn:
     Type: String
+  AppSyncResourceAuroraRoleArn:
+    Type: String
   AppSyncResourceLambdaRoleArn:
     Type: String
   UserTableName:
@@ -24,14 +26,15 @@ Parameters:
     Type: String
   CommentTableName:
     Type: String
-  FlagTableName:
+  ApprovalDbClusterIdentifier:
     Type: String
-  UncloggerPromptTableName:
+  AuroraMysqlAppCredentialSecretStoreArn:
     Type: String
   ResourceSearcherFunctionArn:
     Type: String
   RecaptchaTokenResolverFunctionArn:
     Type: String
+
 Resources:
   # A P I
   AppSyncApi:
@@ -125,29 +128,20 @@ Resources:
         TableName: !Ref CommentTableName
         AwsRegion: !Sub ${AWS::Region}
 
-  AppSyncFlagTableDataSource:
+  AppSyncApprovalDbDataSource:
     Type: AWS::AppSync::DataSource
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      Name: flag_ds
-      Description: "The Flag Table AppSync Data Source"
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
-      DynamoDBConfig:
-        TableName: !Ref FlagTableName
-        AwsRegion: !Sub ${AWS::Region}
-
-  AppSyncUncloggerPromptTableDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      Name: unclogger_prompt_ds
-      Description: "The UncloggerPrompt Table AppSync Data Source"
-      Type: AMAZON_DYNAMODB
-      ServiceRoleArn: !Ref AppSyncResourceDynamoDbRoleArn
-      DynamoDBConfig:
-        TableName: !Ref UncloggerPromptTableName
-        AwsRegion: !Sub ${AWS::Region}
+      Name: approval_ds
+      Description: "The ApprovalDB AppSync Data Source"
+      Type: RELATIONAL_DATABASE
+      ServiceRoleArn: !Ref AppSyncResourceAuroraRoleArn
+      RelationalDatabaseConfig:
+        RelationalDatabaseSourceType: RDS_HTTP_ENDPOINT
+        RdsHttpEndpointConfig:
+          AwsRegion: !Sub ${AWS::Region}
+          DbClusterIdentifier: !Ref ApprovalDbClusterIdentifier
+          AwsSecretStoreArn: !Ref AuroraMysqlAppCredentialSecretStoreArn
 
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource
@@ -269,7 +263,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Query
       FieldName: listFlags
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listContentFlags.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 
@@ -319,7 +313,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Query
       FieldName: listUncloggerPrompts
-      DataSourceName: !GetAtt AppSyncUncloggerPromptTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/listPaginated.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -471,7 +465,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: createFlag
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -481,7 +475,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: updateFlagContent
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -491,7 +485,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: updateFlagReview
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -501,7 +495,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: deleteFlag
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -511,7 +505,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: createUncloggerPrompt
-      DataSourceName: !GetAtt AppSyncUncloggerPromptTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createInputIdItem.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -521,7 +515,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: updateUncloggerPrompt
-      DataSourceName: !GetAtt AppSyncUncloggerPromptTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -531,7 +525,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
       FieldName: deleteUncloggerPrompt
-      DataSourceName: !GetAtt AppSyncUncloggerPromptTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
 
@@ -552,7 +546,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Comment
       FieldName: flags
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getCommentFlags.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 
@@ -622,7 +616,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Stream
       FieldName: flags
-      DataSourceName: !GetAtt AppSyncFlagTableDataSource.Name
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getFlagsOfStream.req.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
 

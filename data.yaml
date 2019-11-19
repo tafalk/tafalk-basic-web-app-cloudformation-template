@@ -6,6 +6,16 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  ApprovalDbClusterIdentifier:
+    Type: String
+  AuroraMysqlEngineVersion:
+    Type: String
+  AuroraMysqlMasterUsername:
+    Type: String
+  AuroraMysqlMasterUserPassword:
+    Type: String
+  AuroraMysqlDBSubnetGroupNames:
+    Type: CommaDelimitedList
 
 Resources:
   # DynamoDb
@@ -294,88 +304,128 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  FlagTable:
-    DependsOn: StreamLikeTable
-    Type: AWS::DynamoDB::Table
+  # FlagTable:
+  #   DependsOn: StreamLikeTable
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: ContentFlags
+  #     BillingMode: PROVISIONED
+  #     AttributeDefinitions:
+  #       - AttributeName: "id"
+  #         AttributeType: "S"
+  #       - AttributeName: "contentId"
+  #         AttributeType: "S"
+  #       - AttributeName: "flaggerUserId"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: contentId-index
+  #         KeySchema:
+  #           - AttributeName: contentId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #       - IndexName: flaggerUserId-index
+  #         KeySchema:
+  #           - AttributeName: flaggerUserId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
+  #     Tags:
+  #       - Key: Name
+  #         Value: ContentFlags
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
+
+  # UncloggerPromptTable:
+  #   DependsOn: FlagTable
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: UncloggerPrompts
+  #     BillingMode: PROVISIONED
+  #     AttributeDefinitions:
+  #       - AttributeName: "id"
+  #         AttributeType: "S"
+  #       - AttributeName: "category"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: category-index
+  #         KeySchema:
+  #           - AttributeName: category
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
+  #     Tags:
+  #       - Key: Name
+  #         Value: UncloggerPrompts
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
+
+  # DBSubnet Group
+  ApprovalDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
     Properties:
-      TableName: ContentFlags
-      BillingMode: PROVISIONED
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "contentId"
-          AttributeType: "S"
-        - AttributeName: "flaggerUserId"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: contentId-index
-          KeySchema:
-            - AttributeName: contentId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: flaggerUserId-index
-          KeySchema:
-            - AttributeName: flaggerUserId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      DBSubnetGroupDescription: Approval DB Subnet Group
+      SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
       Tags:
-        - Key: Name
-          Value: ContentFlags
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  UncloggerPromptTable:
-    DependsOn: FlagTable
-    Type: AWS::DynamoDB::Table
+  # Serverless Aurora DB Cluster
+  ApprovalDbCluster:
+    Type: AWS::RDS::DBCluster
     Properties:
-      TableName: UncloggerPrompts
-      BillingMode: PROVISIONED
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "category"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: category-index
-          KeySchema:
-            - AttributeName: category
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: !Ref AuroraMysqlEngineVersion
+      DatabaseName: Approval
+      MasterUsername: !Ref AuroraMysqlMasterUsername
+      MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+      DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier
+      BackupRetentionPeriod: 35
+      DeletionProtection: false
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 8
+        MinCapacity: 2
+        SecondsUntilAutoPause: 300
+      DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
       Tags:
         - Key: Name
-          Value: UncloggerPrompts
+          Value: Approval
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
 Outputs:
+  # DynamoDB
   UserTable:
     Description: A reference to the created UserTable
     Value: !Ref UserTable
@@ -394,12 +444,6 @@ Outputs:
   StreamLikeTable:
     Description: A reference to the created StreamLikeTable
     Value: !Ref StreamLikeTable
-  FlagTable:
-    Description: A reference to the created FlagTable
-    Value: !Ref FlagTable
-  UncloggerPromptTable:
-    Description: A reference to the created UncloggerPromptTable
-    Value: !Ref UncloggerPromptTable
   UserTableArn:
     Description: A reference to the created UserTable ARN
     Value: !GetAtt UserTable.Arn
@@ -418,9 +462,25 @@ Outputs:
   StreamLikeTableArn:
     Description: A reference to the created StreamLikeTable ARN
     Value: !GetAtt StreamLikeTable.Arn
-  FlagTableArn:
-    Description: A reference to the created FlagTable ARN
-    Value: !GetAtt FlagTable.Arn
-  UncloggerPromptTableArn:
-    Description: A reference to the created UncloggerPromptTable ARN
-    Value: !GetAtt UncloggerPromptTable.Arn
+  # Relational
+  ApprovalDbCluster:
+    Description: A reference to the created ApprovalDbCluster i.e. its name
+    Value: !Ref ApprovalDbCluster
+  ApprovalDbClusterEndpointAddress:
+    Description: A reference to the created ApprovalDbCluster endpoint address
+    Value: !GetAtt ApprovalDbCluster.Endpoint.Address
+  ApprovalDbClusterEndpointPort:
+    Description: A reference to the created ApprovalDbCluster endpoint port
+    Value: !GetAtt ApprovalDbCluster.Endpoint.Port
+  # FlagTable:
+  #   Description: A reference to the created FlagTable
+  #   Value: !Ref FlagTable
+  # UncloggerPromptTable:
+  #   Description: A reference to the created UncloggerPromptTable
+  #   Value: !Ref UncloggerPromptTable
+  # FlagTableArn:
+  #   Description: A reference to the created FlagTable ARN
+  #   Value: !GetAtt FlagTable.Arn
+  # UncloggerPromptTableArn:
+  #   Description: A reference to the created UncloggerPromptTable ARN
+  #   Value: !GetAtt UncloggerPromptTable.Arn

@@ -50,11 +50,31 @@ Parameters:
     Type: String
   AcmCertRegion:
     Type: String
+  # RDS Bootstrap
+  RdsBootstrapFunctionName:
+    Type: String
+  RdsBootstrapFunctionRepositoryName:
+    Type: String
+  AuroraMysqlMasterUsernameSecretName:
+    Type: String
+  AuroraMysqlMasterUserPasswordSecretName:
+    Type: String
+  ApprovalDbCluster:
+    Type: String
+  ApprovalDbClusterEndpointAddress:
+    Type: String
+  ApprovalDbClusterEndpointPort:
+    Type: String
+  FlagTableName:
+    Type: String
+  UncloggerPromptTableName:
+    Type: String
   # Site Policies
   SitePoliciesRepositoryName:
     Type: String
   SitePoliciesBucketName:
     Type: String
+
 Resources:
   # CodeBuild projects
   CognitoUserExporterFunctionBuildProject:
@@ -119,6 +139,27 @@ Resources:
     Properties:
       Name: !Sub "${ProjectIdentifierName}-cert-delegate-func-build-proj"
       Description: Used to build certificate delegating function from the CodeCommit Repo
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: "aws/codebuild/python:3.7.1"
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
+            Value: !Ref LambdaArtifactStoreBucket
+      ServiceRole: !Ref CodeCommitRepoCodeBuildRoleArn
+
+    # Build Project
+
+  RdsBootstrapFunctionBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-func-build-proj"
+      Description: Used to build RDS Bootstrap function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -368,6 +409,65 @@ Resources:
                 ParameterOverrides: !Sub '{"FunctionName": "${CertificateDelegatingFunctionName}", "AcmCertRegion": "${AcmCertRegion}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: CDBuild
+              RunOrder: 1
+
+  RdsBootstrapFunctionPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-pipeline"
+      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: FetchSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeCommit
+              OutputArtifacts:
+                - Name: DBSource
+              Configuration:
+                RepositoryName: !Ref RdsBootstrapFunctionRepositoryName
+                BranchName: !Ref BranchName
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildFunction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref RdsBootstrapFunctionBuildProject
+              InputArtifacts:
+                - Name: DBSource
+              OutputArtifacts:
+                - Name: DBBuild
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrap-deploy-stack"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: "DBBuild::output-template.yaml"
+                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "MasterUsernameSecretName": "${AuroraMysqlMasterUsernameSecretName}", "MasterUserPasswordSecretName": "${AuroraMysqlMasterUserPasswordSecretName}", "Endpoint": "${ApprovalDbClusterEndpointAddress}", "Port": "${ApprovalDbClusterEndpointPort}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+              InputArtifacts:
+                - Name: DBBuild
               RunOrder: 1
 
   SitePoliciesPipeline:

@@ -194,6 +194,28 @@ Resources:
                   - "dynamodb:UpdateItem"
                 Resource: "*"
 
+  AppSyncResourceAuroraRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-aurora-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "rds:*"
+                Resource: "*"
+
   AppSyncResourceLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -238,6 +260,9 @@ Outputs:
   AppSyncResourceDynamoDbRole:
     Description: A reference to the created AppSync DyanmoDB Role
     Value: !Ref AppSyncResourceDynamoDbRole
+  AppSyncResourceAuroraRole:
+    Description: A reference to the created AppSync Aurora Role
+    Value: !Ref AppSyncResourceAuroraRole
   AppSyncResourceLambdaRole:
     Description: A reference to the created AppSync Lambda Role
     Value: !Ref AppSyncResourceLambdaRole
@@ -259,6 +284,9 @@ Outputs:
   AppSyncResourceDynamoDbRoleArn:
     Description: A reference to the created AppSync DynamoDB Role ARN
     Value: !GetAtt AppSyncResourceDynamoDbRole.Arn
+  AppSyncResourceAuroraRoleArn:
+    Description: A reference to the created AppSync Aurora Role ARN
+    Value: !GetAtt AppSyncResourceAuroraRole.Arn
   AppSyncResourceLambdaRoleArn:
     Description: A reference to the created AppSync Lambda Role ARN
     Value: !GetAtt AppSyncResourceLambdaRole.Arn

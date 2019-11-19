@@ -196,6 +196,21 @@ Resources:
       Type: String
       Value: !Ref AuroraMysqlMasterUserPassword
       Description: "The Aurora Mysql Master User Password Secret"
+  AuroraMysqlAppCredentialSecretStore:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: AuroraMysqlAppCredentialSecretStore
+      Description: This secret has a hardcoded password in SecretString (use GenerateSecretString instead)
+      GenerateSecretString:
+        GenerateSecretString
+      SecretString: !Sub '{"username":"${AuroraMysqlMasterUsername}","password":"${AuroraMysqlMasterUserPassword}"}'
+      Tags:
+        - Key: Name
+          Value: AuroraMysqlAppCredentialSecretStore
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
 
   # Nested Stacks
   IAM:
@@ -230,6 +245,15 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        AuroraMysqlEngineVersion: !Ref AuroraMysqlEngineVersion
+        AuroraMysqlMasterUsername: !Ref AuroraMysqlMasterUsername
+        AuroraMysqlMasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+        ApprovalDbClusterIdentifier: approvalcluster-1
+        AuroraMysqlDBSubnetGroupNames:
+          !Join
+            - ","
+            - - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
+              - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet2]
 
   Storage:
     Type: AWS::CloudFormation::Stack
@@ -281,43 +305,32 @@ Resources:
         CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
         CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
         AcmCertRegion: !Ref CertificateRegion
-        # Site Policies
-        SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
-        SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
-
-  RDS:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds.yaml"]]
-      Parameters:
-        # Common
-        ProjectIdentifierName: !Ref ProjectIdentifierName
-        EnvironmentName: !Ref EnvironmentName
-        AuroraMysqlEngineVersion: !Ref AuroraMysqlEngineVersion
-        AuroraMysqlMasterUsername: !Ref AuroraMysqlMasterUsername
-        AuroraMysqlMasterUserPassword: !Ref AuroraMysqlMasterUserPassword
-        AuroraMysqlDBSubnetGroupNames:
-          !Join
-            - ","
-            - - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
-              - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet2]
-        # Pipeline Common
-        BranchName: !Ref RepositoryBranchName
-        LambdaArtifactStoreBucket:
-          Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
-        CodeCommitRepoCodeBuildRoleArn:
-          Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
-        CodeCommitRepoCodePipelineRoleArn:
-          Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
-        LambdaManagerCloudFormationRoleArn:
-          Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
-        # Custom Resource Function
+        # RDS
         RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
         RdsBootstrapFunctionRepositoryName: !Ref RdsBootstrapFunctionRepositoryName
+        ApprovalDbCluster:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbCluster]
+        ApprovalDbClusterEndpointAddress:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
+        ApprovalDbClusterEndpointPort:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
         FlagTableName: Flags
         UncloggerPromptTableName: UncloggerPrompts
         AuroraMysqlMasterUsernameSecretName: !Ref AuroraMysqlMasterUsernameParam
         AuroraMysqlMasterUserPasswordSecretName: !Ref AuroraMysqlMasterUserPasswordParam
+        # Site Policies
+        SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
+        SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
+
+  # RDSBootstrap:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
+  #     Parameters:
+  #       # Common
+  #       ProjectIdentifierName: !Ref ProjectIdentifierName
+  #       EnvironmentName: !Ref EnvironmentName
+  #       RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack
@@ -348,6 +361,8 @@ Resources:
           Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
         AppSyncResourceDynamoDbRoleArn:
           Fn::GetAtt: [IAM, Outputs.AppSyncResourceDynamoDbRoleArn]
+        AppSyncResourceAuroraRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceAuroraRoleArn]
         AppSyncResourceLambdaRoleArn:
           Fn::GetAtt: [IAM, Outputs.AppSyncResourceLambdaRoleArn]
         UserTableName:
@@ -362,10 +377,8 @@ Resources:
           Fn::GetAtt: [Data, Outputs.StreamCommentTable]
         UserInteractionTableName:
           Fn::GetAtt: [Data, Outputs.UserInteractionTable]
-        FlagTableName:
-          Fn::GetAtt: [Data, Outputs.FlagTable]
-        UncloggerPromptTableName:
-          Fn::GetAtt: [Data, Outputs.UncloggerPromptTable]
+        ApprovalDbClusterIdentifier: approvalcluster-1
+        AuroraMysqlAppCredentialSecretStoreArn: !Ref AuroraMysqlAppCredentialSecretStore
         RecaptchaTokenResolverFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         ResourceSearcherFunctionArn:
