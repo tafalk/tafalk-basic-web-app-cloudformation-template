@@ -1,6 +1,6 @@
 ## See https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-dynamodb-resolvers.html
 {
-  "version": "2017-02-28",
+  "version": "2018-05-29",
   "operation": "PutItem",
   "key": {
     "id": { "S" : "$utils.autoId()" },
