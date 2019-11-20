@@ -1,0 +1,9 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update Flags 
+    Set Category='$ctx.args.input.category', Type='$ctx.args.input.type', Detail='$ctx.args.input.detail', LastContentUpdateTime=NOW()
+    Where Id='$ctx.args.input.id'",
+    "Select * from Flags Where Id = '$ctx.args.input.id'"
+  ]
+}

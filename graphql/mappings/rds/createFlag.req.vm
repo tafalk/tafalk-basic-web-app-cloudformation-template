@@ -1,0 +1,12 @@
+#set($id=$utils.autoId())
+{
+    "version": "2018-05-29",
+    "statements": [
+        "Insert Into Flags 
+        (Id, ContentType, ContentId, FlaggerUserId, Category, Type, Detail, CreateTime)
+        Values
+        ('$id', '$ctx.args.input.contentType', $ctx.args.input.contentId, $ctx.args.input.flaggerUserId, $ctx.args.input.category, $ctx.args.input.type, $ctx.args.input.detail, NOW())
+        ",
+        "Select * From Flags Where Id = '$id'"
+    ]
+}

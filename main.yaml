@@ -322,15 +322,15 @@ Resources:
         SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
         SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
 
-  # RDSBootstrap:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
-  #     Parameters:
-  #       # Common
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
+  RDSBootstrap:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
+      Parameters:
+        # Common
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
 
   CognitoAuth:
     Type: AWS::CloudFormation::Stack

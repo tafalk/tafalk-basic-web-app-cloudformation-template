@@ -264,8 +264,8 @@ Resources:
       TypeName: Query
       FieldName: listFlags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listContentFlags.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listFlags.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
 
   ListCantoLikesResolver:
     Type: AWS::AppSync::Resolver
@@ -314,8 +314,8 @@ Resources:
       TypeName: Query
       FieldName: listUncloggerPrompts
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/listPaginated.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listUncloggerPrompts.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
 
   # Cantos
   ListCantosResolver:
@@ -466,8 +466,8 @@ Resources:
       TypeName: Mutation
       FieldName: createFlag
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/createFlag.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
 
   UpdateFlagContentResolver:
     Type: AWS::AppSync::Resolver
@@ -476,8 +476,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateFlagContent
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateFlagContent.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
 
   UpdateFlagReviewResolver:
     Type: AWS::AppSync::Resolver
@@ -486,8 +486,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateFlagReview
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateFlagReviewer.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
 
   DeleteFlagResolver:
     Type: AWS::AppSync::Resolver
@@ -496,8 +496,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteFlag
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/deleteFlag.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnFirstSingleItem.resp.vm"
 
   CreateUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -506,8 +506,8 @@ Resources:
       TypeName: Mutation
       FieldName: createUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createInputIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/createUncloggerPrompt.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
 
   UpdateUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -516,8 +516,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateUncloggerPromptApproval.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
 
   DeleteUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -526,8 +526,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/deleteUncloggerPrompt.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnFirstSingleItem.resp.vm"
 
   # In-type resolvers
   UserOfCommentResolver:
@@ -547,8 +547,8 @@ Resources:
       TypeName: Comment
       FieldName: flags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getCommentFlags.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listContentFlags.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
 
   StreamOfLikeResolver:
     Type: AWS::AppSync::Resolver
@@ -617,8 +617,8 @@ Resources:
       TypeName: Stream
       FieldName: flags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getFlagsOfStream.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listContentFlags.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
 
   StreamsOfUserResolver:
     Type: AWS::AppSync::Resolver

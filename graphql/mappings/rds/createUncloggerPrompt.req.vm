@@ -1,0 +1,12 @@
+#set($id=$utils.autoId())
+{
+    "version": "2018-05-29",
+    "statements": [
+        "Insert Into UncloggerPrompts 
+        (Id, Category, Body, Language, CreatorUserId, CreateTime)
+        Values
+        ('$id', $ctx.args.input.category, '$ctx.args.input.body', $ctx.args.input.language, $ctx.args.input.creatorUserId, NOW())
+        ",
+        "Select * From UncloggerPrompts Where Id = '$id'"
+    ]
+}

@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * From Flags Where Id='$ctx.args.input.id'",
+    "Delete From Flags Where Id='$ctx.args.input.id'"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update UncloggerPrompts 
+    Set State='$ctx.args.input.state', ApproverUserId='$ctx.args.input.approverUserId', ApproveTime=NOW()
+    Where Id='$ctx.args.input.id'",
+    "Select * from UncloggerPrompts Where Id = '$ctx.args.input.id'"
+  ]
+}
