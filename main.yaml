@@ -149,7 +149,7 @@ Parameters:
   AuroraMysqlEngineVersion:
     Description: The version of the AWS Aurora Engine for MySql
     Type: String
-    Default: '5.6'
+    Default: '5.6.10a'
   AuroraMysqlMasterUsername:
     Description: The username for the AWS Aurora DB
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]*$
