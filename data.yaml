@@ -22,7 +22,7 @@ Resources:
   UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Users
+      TableName: Users-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -57,7 +57,7 @@ Resources:
     DependsOn: UserTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Cantos
+      TableName: Cantos-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -96,7 +96,7 @@ Resources:
     DependsOn: CantoTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Streams
+      TableName: Streams-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -159,7 +159,7 @@ Resources:
     DependsOn: StreamTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: UserInteractions
+      TableName: UserInteractions-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -201,11 +201,11 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  StreamCommentTable:
+  CommentTable:
     DependsOn: UserInteractionTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: StreamComments
+      TableName: Comments-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -241,17 +241,17 @@ Resources:
         WriteCapacityUnits: 1
       Tags:
         - Key: Name
-          Value: StreamComments
+          Value: Comments
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  StreamLikeTable:
-    DependsOn: StreamCommentTable
+  LikeTable:
+    DependsOn: CommentTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: StreamLikes
+      TableName: StreamLikes-${EnvironmentName}
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -298,92 +298,11 @@ Resources:
         WriteCapacityUnits: 1
       Tags:
         - Key: Name
-          Value: StreamLikes
+          Value: Likes
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
           Value: !Ref ProjectIdentifierName
-
-  # FlagTable:
-  #   DependsOn: StreamLikeTable
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     TableName: ContentFlags
-  #     BillingMode: PROVISIONED
-  #     AttributeDefinitions:
-  #       - AttributeName: "id"
-  #         AttributeType: "S"
-  #       - AttributeName: "contentId"
-  #         AttributeType: "S"
-  #       - AttributeName: "flaggerUserId"
-  #         AttributeType: "S"
-  #     KeySchema:
-  #       - AttributeName: id
-  #         KeyType: HASH
-  #     GlobalSecondaryIndexes:
-  #       - IndexName: contentId-index
-  #         KeySchema:
-  #           - AttributeName: contentId
-  #             KeyType: HASH
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #       - IndexName: flaggerUserId-index
-  #         KeySchema:
-  #           - AttributeName: flaggerUserId
-  #             KeyType: HASH
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 1
-  #       WriteCapacityUnits: 1
-  #     Tags:
-  #       - Key: Name
-  #         Value: ContentFlags
-  #       - Key: Environment
-  #         Value: !Ref EnvironmentName
-  #       - Key: Application
-  #         Value: !Ref ProjectIdentifierName
-
-  # UncloggerPromptTable:
-  #   DependsOn: FlagTable
-  #   Type: AWS::DynamoDB::Table
-  #   Properties:
-  #     TableName: UncloggerPrompts
-  #     BillingMode: PROVISIONED
-  #     AttributeDefinitions:
-  #       - AttributeName: "id"
-  #         AttributeType: "S"
-  #       - AttributeName: "category"
-  #         AttributeType: "S"
-  #     KeySchema:
-  #       - AttributeName: id
-  #         KeyType: HASH
-  #     GlobalSecondaryIndexes:
-  #       - IndexName: category-index
-  #         KeySchema:
-  #           - AttributeName: category
-  #             KeyType: HASH
-  #         Projection:
-  #           ProjectionType: ALL
-  #         ProvisionedThroughput:
-  #           ReadCapacityUnits: 1
-  #           WriteCapacityUnits: 1
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 1
-  #       WriteCapacityUnits: 1
-  #     Tags:
-  #       - Key: Name
-  #         Value: UncloggerPrompts
-  #       - Key: Environment
-  #         Value: !Ref EnvironmentName
-  #       - Key: Application
-  #         Value: !Ref ProjectIdentifierName
 
   # DBSubnet Group
   ApprovalDBSubnetGroup:
@@ -404,7 +323,7 @@ Resources:
       Engine: aurora
       EngineMode: serverless
       EngineVersion: !Ref AuroraMysqlEngineVersion
-      DatabaseName: Approval
+      DatabaseName: Approval-${EnvironmentName}
       MasterUsername: !Ref AuroraMysqlMasterUsername
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier
@@ -438,12 +357,12 @@ Outputs:
   UserInteractionTable:
     Description: A reference to the created UserInteractionTable
     Value: !Ref UserInteractionTable
-  StreamCommentTable:
-    Description: A reference to the created StreamCommentTable
-    Value: !Ref StreamCommentTable
-  StreamLikeTable:
-    Description: A reference to the created StreamLikeTable
-    Value: !Ref StreamLikeTable
+  CommentTable:
+    Description: A reference to the created CommentTable
+    Value: !Ref CommentTable
+  LikeTable:
+    Description: A reference to the created LikeTable
+    Value: !Ref LikeTable
   UserTableArn:
     Description: A reference to the created UserTable ARN
     Value: !GetAtt UserTable.Arn
@@ -456,12 +375,12 @@ Outputs:
   UserInteractionTableArn:
     Description: A reference to the created UserInteractionTable ARN
     Value: !GetAtt UserInteractionTable.Arn
-  StreamCommentTableArn:
-    Description: A reference to the created StreamCommentTable ARN
-    Value: !GetAtt StreamCommentTable.Arn
-  StreamLikeTableArn:
-    Description: A reference to the created StreamLikeTable ARN
-    Value: !GetAtt StreamLikeTable.Arn
+  CommentTableArn:
+    Description: A reference to the created CommentTable ARN
+    Value: !GetAtt CommentTable.Arn
+  LikeTableArn:
+    Description: A reference to the created LikeTable ARN
+    Value: !GetAtt LikeTable.Arn
   # Relational
   ApprovalDbCluster:
     Description: A reference to the created ApprovalDbCluster i.e. its name
@@ -472,15 +391,4 @@ Outputs:
   ApprovalDbClusterEndpointPort:
     Description: A reference to the created ApprovalDbCluster endpoint port
     Value: !GetAtt ApprovalDbCluster.Endpoint.Port
-  # FlagTable:
-  #   Description: A reference to the created FlagTable
-  #   Value: !Ref FlagTable
-  # UncloggerPromptTable:
-  #   Description: A reference to the created UncloggerPromptTable
-  #   Value: !Ref UncloggerPromptTable
-  # FlagTableArn:
-  #   Description: A reference to the created FlagTable ARN
-  #   Value: !GetAtt FlagTable.Arn
-  # UncloggerPromptTableArn:
-  #   Description: A reference to the created UncloggerPromptTable ARN
-  #   Value: !GetAtt UncloggerPromptTable.Arn
+

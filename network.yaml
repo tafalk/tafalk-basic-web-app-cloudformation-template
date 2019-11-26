@@ -4,7 +4,9 @@ Description:
 Mappings:
   RegionMap:
     eu-central-1:
-      NatInstanceAMI: "ami-06a5303d47fbd8c60"
+      NatInstanceAMI: ami-06a5303d47fbd8c60
+    eu-west-1:
+      NatInstanceAMI: ami-024107e3e3217a248
 
 Parameters:
   ProjectIdentifierName:

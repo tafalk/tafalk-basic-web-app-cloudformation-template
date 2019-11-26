@@ -118,7 +118,7 @@ Parameters:
   TemplateS3Bucket:
     Description: The bucket address at which the templates reside
     Type: String
-    Default: https://s3.eu-central-1.amazonaws.com/tafalk-cf-templates
+    Default: https://s3.eu-west-1.amazonaws.com/tafalk-cloudformation-templates
   RecaptchaSecret:
     Description: The Recaptcha V3 Secret of the application
     Type: String
@@ -362,9 +362,9 @@ Resources:
         StreamTableName:
           Fn::GetAtt: [Data, Outputs.StreamTable]
         LikeTableName:
-          Fn::GetAtt: [Data, Outputs.StreamLikeTable]
+          Fn::GetAtt: [Data, Outputs.LikeTable]
         CommentTableName:
-          Fn::GetAtt: [Data, Outputs.StreamCommentTable]
+          Fn::GetAtt: [Data, Outputs.CommentTable]
         UserInteractionTableName:
           Fn::GetAtt: [Data, Outputs.UserInteractionTable]
         ApprovalDbClusterIdentifier: approvalcluster-1

@@ -21,7 +21,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-cognito-sns-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-sns-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -42,7 +42,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-lambdamanager-cfn-role"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-lambdamanager-cfn-role"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -68,7 +68,7 @@ Resources:
             Action: "sts:AssumeRole"
       Path: /
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-internal-codepipeline-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codepipeline-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -121,7 +121,7 @@ Resources:
           Action:
           - "sts:AssumeRole"
       Policies:
-      - PolicyName: !Sub "${ProjectIdentifierName}-internal-codebuild-policy"
+      - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-policy"
         PolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -156,7 +156,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-logs-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-logs-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -180,7 +180,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-dynamodb-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-dynamodb-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -207,7 +207,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-aurora-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-aurora-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -229,7 +229,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-appsync-lambda-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-lambda-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
