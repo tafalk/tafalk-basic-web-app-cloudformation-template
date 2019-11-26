@@ -182,28 +182,18 @@ Resources:
       Type: String
       Value: !Ref RecaptchaSecret
       Description: "The Recaptcha Secret"
-  AuroraMysqlMasterUsernameParam:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: AuroraMysqlMasterUsername
-      Type: String
-      Value: !Ref AuroraMysqlMasterUsername
-      Description: "The Aurora Mysql Master Username Secret"
-  AuroraMysqlMasterUserPasswordParam:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: AuroraMysqlMasterUserPassword
-      Type: String
-      Value: !Ref AuroraMysqlMasterUserPassword
-      Description: "The Aurora Mysql Master User Password Secret"
+
   AuroraMysqlAppCredentialSecretStore:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: AuroraMysqlAppCredentialSecretStore
       Description: This secret has a hardcoded password in SecretString (use GenerateSecretString instead)
-      GenerateSecretString:
-        GenerateSecretString
       SecretString: !Sub '{"username":"${AuroraMysqlMasterUsername}","password":"${AuroraMysqlMasterUserPassword}"}'
+      # GenerateSecretString:
+      #   SecretStringTemplate: '{"username": "${AuroraMysqlMasterUsername}"}'
+      #   GenerateStringKey: "password"
+      #   PasswordLength: 30
+      #   ExcludeCharacters: '"@/\'
       Tags:
         - Key: Name
           Value: AuroraMysqlAppCredentialSecretStore
@@ -316,14 +306,14 @@ Resources:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
         FlagTableName: Flags
         UncloggerPromptTableName: UncloggerPrompts
-        AuroraMysqlMasterUsernameSecretName: !Ref AuroraMysqlMasterUsernameParam
-        AuroraMysqlMasterUserPasswordSecretName: !Ref AuroraMysqlMasterUserPasswordParam
+        AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
         # Site Policies
         SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
         SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-site-policies"
 
   RDSBootstrap:
     Type: AWS::CloudFormation::Stack
+    DependsOn: [LambdaFunctionCICDPipeline, Data]
     Properties:
       TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
       Parameters:
@@ -378,7 +368,7 @@ Resources:
         UserInteractionTableName:
           Fn::GetAtt: [Data, Outputs.UserInteractionTable]
         ApprovalDbClusterIdentifier: approvalcluster-1
-        AuroraMysqlAppCredentialSecretStoreArn: !Ref AuroraMysqlAppCredentialSecretStore
+        AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
         RecaptchaTokenResolverFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         ResourceSearcherFunctionArn:

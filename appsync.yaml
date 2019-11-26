@@ -28,7 +28,7 @@ Parameters:
     Type: String
   ApprovalDbClusterIdentifier:
     Type: String
-  AuroraMysqlAppCredentialSecretStoreArn:
+  AuroraMysqlCredentialsSecret:
     Type: String
   ResourceSearcherFunctionArn:
     Type: String
@@ -141,7 +141,7 @@ Resources:
         RdsHttpEndpointConfig:
           AwsRegion: !Sub ${AWS::Region}
           DbClusterIdentifier: !Ref ApprovalDbClusterIdentifier
-          AwsSecretStoreArn: !Ref AuroraMysqlAppCredentialSecretStoreArn
+          AwsSecretStoreArn: !Ref AuroraMysqlCredentialsSecret
 
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource
