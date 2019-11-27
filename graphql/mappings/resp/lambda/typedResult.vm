@@ -1,0 +1,6 @@
+#foreach ($result in $context.result)
+  ## Extract type name from the id field.
+  #set( $typeName = $result.typename )
+  #set( $ignore = $result.put("__typename", $typeName))
+#end
+$util.toJson($context.result)

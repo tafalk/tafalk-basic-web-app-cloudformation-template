@@ -1,16 +1,17 @@
+
 {
   "version": "2018-05-29",
   "operation": "Query",
-  "index": "status-lastUpdateTime-index",
   "query": {
-    "expression": "#status = :status",
+    "expression": "#userId = :userId",
     "expressionNames": {
-      "#status": "status",
+      "#userId": "userId",
     },
     "expressionValues": {
-      ":status": { "S" : "OK" }
+      ":userId": $util.dynamodb.toDynamoDBJson($ctx.args.userId),
     },
   },
+  "index": "userId-index",
   "limit": $util.defaultIfNull($ctx.args.first, 20),
   "nextToken": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.after, null)),
   "scanIndexForward": true,

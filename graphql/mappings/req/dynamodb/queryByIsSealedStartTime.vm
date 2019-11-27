@@ -1,12 +1,12 @@
 {
   "version" : "2018-05-29",
   "operation" : "Query",
-  "index" : "streamId-index",
+  "index" : "isSealed-startTime-index",
   "query" : {
-    "expression": "streamId = :streamId",
+    "expression": "isSealed = :isSealed",
     "expressionValues" : {
-      ":streamId" : {
-        "S" : "${ctx.args.streamId}"
+      ":isSealed" : {
+        "N" : 0
       }
     }
   },

@@ -1,3 +1,4 @@
+
 {
   "version" : "2018-05-29",
   "operation" : "Query",
@@ -10,7 +11,5 @@
       }
     }
   },
-  "scanIndexForward": false,
-  "limit": $util.defaultIfNull(${ctx.args.first}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.after, null))
+  "scanIndexForward": false
 }

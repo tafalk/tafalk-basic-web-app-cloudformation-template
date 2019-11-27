@@ -16,7 +16,9 @@ It has a [main stack](main.yaml) and the rest are nested stacks which are:
 
 6. [AppSync configuration](appsync.yaml) for Appsync API and schemas
 
-7. [Serving](webserving.yaml) for hosting S3 buckets, CloudFormation and Route53 hosted zones and record sets.
+7. [RDS Bootstrapping](rds-bootstrap.yaml) for creating RDS tables
+
+8. [Serving](webserving.yaml) for hosting S3 buckets, CloudFormation and Route53 hosted zones and record sets.
 
 ## Prework
 

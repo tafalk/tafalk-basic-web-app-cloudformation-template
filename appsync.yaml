@@ -53,7 +53,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191112-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191120-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -174,8 +174,8 @@ Resources:
       TypeName: Query
       FieldName: getUserByUsername
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getUserByUsername.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByUserName.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/firstItemOfList.vm"
 
   ListStreamsByUserResolver:
     Type: AWS::AppSync::Resolver
@@ -184,8 +184,8 @@ Resources:
       TypeName: Query
       FieldName: listStreamsByUser
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamsByUser.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/paginateByUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListLikesByUserResolver:
     Type: AWS::AppSync::Resolver
@@ -194,8 +194,8 @@ Resources:
       TypeName: Query
       FieldName: listLikesByUser
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listLikesByUser.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/paginateByUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListUserInteractionsByActorUserIdIndexResolver:
     Type: AWS::AppSync::Resolver
@@ -204,8 +204,8 @@ Resources:
       TypeName: Query
       FieldName: listUserInteractionsByActorUserIdIndex
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listUserInteractionsByActorUserIdIndex.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/paginateByActorUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   GetStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -214,8 +214,8 @@ Resources:
       TypeName: Query
       FieldName: getStream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getStream.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListSealedStreamsResolver:
     Type: AWS::AppSync::Resolver
@@ -224,8 +224,8 @@ Resources:
       TypeName: Query
       FieldName: listSealedStreams
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listSealedStreams.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByIsSealedSealTime.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListLiveStreamsResolver:
     Type: AWS::AppSync::Resolver
@@ -234,8 +234,8 @@ Resources:
       TypeName: Query
       FieldName: listLiveStreams
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listLiveStreams.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByIsSealedStartTime.req.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   QueryUserInteractionsBetweenUsersByUserIdIndicesResolver:
     Type: AWS::AppSync::Resolver
@@ -244,8 +244,8 @@ Resources:
       TypeName: Query
       FieldName: queryUserInteractionsBetweenUsersByUserIdIndices
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/queryUserInteractionsBetweenUsersByUserIdIndices.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByActorUserIdFilterTargetUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   ListStreamLikesResolver:
     Type: AWS::AppSync::Resolver
@@ -254,8 +254,8 @@ Resources:
       TypeName: Query
       FieldName: listStreamLikes
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listStreamLikes.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByStreamId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   ListContentFlagsResolver:
     Type: AWS::AppSync::Resolver
@@ -264,8 +264,8 @@ Resources:
       TypeName: Query
       FieldName: listFlags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listFlags.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/listFlags.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   ListCantoLikesResolver:
     Type: AWS::AppSync::Resolver
@@ -274,8 +274,8 @@ Resources:
       TypeName: Query
       FieldName: listCantoLikes
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listCantoLikes.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByCantoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   ListPaginatedStreamCommentsResolver:
     Type: AWS::AppSync::Resolver
@@ -284,8 +284,8 @@ Resources:
       TypeName: Query
       FieldName: listPaginatedStreamComments
       DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listPaginatedStreamComments.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/paginateByStreamId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   SearchResolver:
     Type: AWS::AppSync::Resolver
@@ -294,8 +294,8 @@ Resources:
       TypeName: Query
       FieldName: search
       DataSourceName: !GetAtt AppSyncResourceSearcherFunctionDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/search.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/lambda/invoke.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/lambda/typedResult.vm"
 
   GetRecaptchaTokenResultResolver:
     Type: AWS::AppSync::Resolver
@@ -304,8 +304,8 @@ Resources:
       TypeName: Query
       FieldName: getRecaptchaTokenResult
       DataSourceName: !GetAtt AppSyncRecaptchaTokenResolverFunctionDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/lambda.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/lambda/invoke.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/lambda/rawResult.vm"
 
   ListUncloggerPromptsResolver:
     Type: AWS::AppSync::Resolver
@@ -314,10 +314,9 @@ Resources:
       TypeName: Query
       FieldName: listUncloggerPrompts
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listUncloggerPrompts.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/listUncloggerPrompts.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
-  # Cantos
   ListCantosResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -325,8 +324,8 @@ Resources:
       TypeName: Query
       FieldName: listCantos
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/listPaginatedCantos.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/paginateByStatusLastUpdateTime.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   GetCantoResolver:
     Type: AWS::AppSync::Resolver
@@ -335,9 +334,10 @@ Resources:
       TypeName: Query
       FieldName: getCanto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getById.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
+  #TODO: Continue moving to new req/resp folders here
   # Mutations
   UpdateUserResolver:
     Type: AWS::AppSync::Resolver
