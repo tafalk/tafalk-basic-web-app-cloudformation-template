@@ -22,7 +22,7 @@ Resources:
   UserTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Users-${EnvironmentName}
+      TableName: ${EnvironmentName}_Users
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -57,7 +57,7 @@ Resources:
     DependsOn: UserTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Cantos-${EnvironmentName}
+      TableName: ${EnvironmentName}_Cantos
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -96,7 +96,7 @@ Resources:
     DependsOn: CantoTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Streams-${EnvironmentName}
+      TableName: ${EnvironmentName}_Streams
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -159,7 +159,7 @@ Resources:
     DependsOn: StreamTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: UserInteractions-${EnvironmentName}
+      TableName: ${EnvironmentName}_UserInteractions
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -205,7 +205,7 @@ Resources:
     DependsOn: UserInteractionTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: Comments-${EnvironmentName}
+      TableName: ${EnvironmentName}_Comments
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -251,7 +251,7 @@ Resources:
     DependsOn: CommentTable
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: StreamLikes-${EnvironmentName}
+      TableName: ${EnvironmentName}_Likes
       BillingMode: PROVISIONED
       AttributeDefinitions:
         - AttributeName: "id"
@@ -323,7 +323,7 @@ Resources:
       Engine: aurora
       EngineMode: serverless
       EngineVersion: !Ref AuroraMysqlEngineVersion
-      DatabaseName: Approval-${EnvironmentName}
+      DatabaseName: ${EnvironmentName}_ApprovalDb
       MasterUsername: !Ref AuroraMysqlMasterUsername
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier

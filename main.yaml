@@ -111,6 +111,10 @@ Parameters:
     Description: CodeCommit repository for site policies
     Type: String
     Default: site-policies
+  RdsBootstrapFunctionRepositoryName:
+    Description: CodeCommit repository for RDS Bootstrap function
+    Type: String
+    Default: rds-bootstrap-function
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -165,16 +169,13 @@ Parameters:
     MinLength: 8
     MaxLength: 41
     NoEcho: true
-  RdsBootstrapFunctionRepositoryName:
-    Description: CodeCommit repository for RDS Bootstrap function
-    Type: String
-    Default: rds-bootstrap-function
 
 Conditions:
   CreateWebServing: !Equals [ !Ref WebServingRequirement, "true" ]
 
 Resources:
-  # Parameter Store
+  ## Parameter Store
+  # Recaptcha
   RecaptchaSecretParam:
     Type: AWS::SSM::Parameter
     Properties:
@@ -183,17 +184,14 @@ Resources:
       Value: !Ref RecaptchaSecret
       Description: "The Recaptcha Secret"
 
+  ## Secrets Mangager
+  # RDS
   AuroraMysqlAppCredentialSecretStore:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: AuroraMysqlAppCredentialSecretStore
       Description: This secret has a hardcoded password in SecretString (use GenerateSecretString instead)
       SecretString: !Sub '{"username":"${AuroraMysqlMasterUsername}","password":"${AuroraMysqlMasterUserPassword}"}'
-      # GenerateSecretString:
-      #   SecretStringTemplate: '{"username": "${AuroraMysqlMasterUsername}"}'
-      #   GenerateStringKey: "password"
-      #   PasswordLength: 30
-      #   ExcludeCharacters: '"@/\'
       Tags:
         - Key: Name
           Value: AuroraMysqlAppCredentialSecretStore
