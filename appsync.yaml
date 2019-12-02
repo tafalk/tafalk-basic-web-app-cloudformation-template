@@ -53,7 +53,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191120-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191202-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -234,7 +234,7 @@ Resources:
       TypeName: Query
       FieldName: listLiveStreams
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByIsSealedStartTime.req.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryByIsSealedStartTime.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   QueryUserInteractionsBetweenUsersByUserIdIndicesResolver:
@@ -337,7 +337,6 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getById.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
-  #TODO: Continue moving to new req/resp folders here
   # Mutations
   UpdateUserResolver:
     Type: AWS::AppSync::Resolver
@@ -346,8 +345,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/updateById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   DeleteUserResolver:
     Type: AWS::AppSync::Resolver
@@ -356,8 +355,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/deleteById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -366,8 +365,8 @@ Resources:
       TypeName: Mutation
       FieldName: createStream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createInputIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/createById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UpdateStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -376,8 +375,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateStream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/updateById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateCantoResolver:
     Type: AWS::AppSync::Resolver
@@ -386,8 +385,8 @@ Resources:
       TypeName: Mutation
       FieldName: createCanto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createInputIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/createById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UpdateCantoResolver:
     Type: AWS::AppSync::Resolver
@@ -396,8 +395,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateCanto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/updateById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateUserInteractionResolver:
     Type: AWS::AppSync::Resolver
@@ -406,8 +405,8 @@ Resources:
       TypeName: Mutation
       FieldName: createUserInteraction
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/createUserInteraction.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/createByAutoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   DeleteUserInteractionResolver:
     Type: AWS::AppSync::Resolver
@@ -416,8 +415,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUserInteraction
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/deleteById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateLikeResolver:
     Type: AWS::AppSync::Resolver
@@ -426,8 +425,8 @@ Resources:
       TypeName: Mutation
       FieldName: createLike
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/createByAutoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UpdateLikeIndicesResolver:
     Type: AWS::AppSync::Resolver
@@ -436,8 +435,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateLikeIndices
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/update.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/updateById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   DeleteLikeResolver:
     Type: AWS::AppSync::Resolver
@@ -446,8 +445,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteLike
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/deleteInputId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/deleteById.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateCommentResolver:
     Type: AWS::AppSync::Resolver
@@ -456,8 +455,8 @@ Resources:
       TypeName: Mutation
       FieldName: createComment
       DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/createAutoIdItem.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/createByAutoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateFlagResolver:
     Type: AWS::AppSync::Resolver
@@ -466,8 +465,8 @@ Resources:
       TypeName: Mutation
       FieldName: createFlag
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/createFlag.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/createFlag.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateFlagContentResolver:
     Type: AWS::AppSync::Resolver
@@ -476,8 +475,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateFlagContent
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateFlagContent.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateFlagContent.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateFlagReviewResolver:
     Type: AWS::AppSync::Resolver
@@ -486,8 +485,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateFlagReview
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateFlagReviewer.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateFlagReviewer.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteFlagResolver:
     Type: AWS::AppSync::Resolver
@@ -496,8 +495,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteFlag
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/deleteFlag.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnFirstSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/deleteFlag.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CreateUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -506,8 +505,8 @@ Resources:
       TypeName: Mutation
       FieldName: createUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/createUncloggerPrompt.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/createUncloggerPrompt.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -516,8 +515,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/updateUncloggerPromptApproval.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnSecondSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateUncloggerPromptApproval.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteUncloggerPromptResolver:
     Type: AWS::AppSync::Resolver
@@ -526,8 +525,8 @@ Resources:
       TypeName: Mutation
       FieldName: deleteUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/deleteUncloggerPrompt.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnFirstSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/deleteUncloggerPrompt.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   # In-type resolvers
   UserOfCommentResolver:
@@ -537,8 +536,8 @@ Resources:
       TypeName: Comment
       FieldName: user
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   FlagsOfCommentResolver:
     Type: AWS::AppSync::Resolver
@@ -547,8 +546,8 @@ Resources:
       TypeName: Comment
       FieldName: flags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listContentFlags.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/listContentFlags.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   StreamOfLikeResolver:
     Type: AWS::AppSync::Resolver
@@ -557,8 +556,8 @@ Resources:
       TypeName: Like
       FieldName: stream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceStreamId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceStreamId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CantoOfLikeResolver:
     Type: AWS::AppSync::Resolver
@@ -567,8 +566,8 @@ Resources:
       TypeName: Like
       FieldName: canto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceCantoId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceCantoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UserOfStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -577,8 +576,8 @@ Resources:
       TypeName: Stream
       FieldName: user
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CommentsOfStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -587,8 +586,8 @@ Resources:
       TypeName: Stream
       FieldName: comments
       DataSourceName: !GetAtt AppSyncCommentTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getCommentsOfStream.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsStreamId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   LikesOfStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -597,8 +596,8 @@ Resources:
       TypeName: Stream
       FieldName: likes
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getLikesOfStream.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsStreamId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   LikesOfCantoResolver:
     Type: AWS::AppSync::Resolver
@@ -607,8 +606,8 @@ Resources:
       TypeName: Canto
       FieldName: likes
       DataSourceName: !GetAtt AppSyncLikeTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getLikesOfCanto.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsCantoId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/resultItems.vm"
 
   FlagsOfStreamResolver:
     Type: AWS::AppSync::Resolver
@@ -617,8 +616,8 @@ Resources:
       TypeName: Stream
       FieldName: flags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/listContentFlags.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/rds/returnList.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/listContentFlags.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   StreamsOfUserResolver:
     Type: AWS::AppSync::Resolver
@@ -627,8 +626,8 @@ Resources:
       TypeName: User
       FieldName: streams
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/queryBySourceUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UserInteractionsOfUserResolver:
     Type: AWS::AppSync::Resolver
@@ -637,8 +636,8 @@ Resources:
       TypeName: User
       FieldName: userInteractions
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/queryBySourceUserIdAsActorId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/queryBySourceIdAsActorUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   TargetUserOfUserInteractionResolver:
     Type: AWS::AppSync::Resolver
@@ -647,8 +646,8 @@ Resources:
       TypeName: UserInteraction
       FieldName: targetUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceTargetUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceTargetUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CantoOfUserResolver:
     Type: AWS::AppSync::Resolver
@@ -657,8 +656,8 @@ Resources:
       TypeName: User
       FieldName: canto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceIdAsId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceIdAsId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UserOfCantoResolver:
     Type: AWS::AppSync::Resolver
@@ -667,8 +666,8 @@ Resources:
       TypeName: Canto
       FieldName: user
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/getBySourceIdAsId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceIdAsId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   FlaggerUserOfFlagResolver:
     Type: AWS::AppSync::Resolver
@@ -677,8 +676,8 @@ Resources:
       TypeName: Flag
       FieldName: flaggerUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getBySourceFlaggerUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceFlaggerUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ReviewerUserOfFlagResolver:
     Type: AWS::AppSync::Resolver
@@ -687,8 +686,8 @@ Resources:
       TypeName: Flag
       FieldName: reviewerUser
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/getBySourceReviewerUserId.req.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/common/returnSingleItem.resp.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceReviewerUserId.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   # API key
   AppSyncApiKey:
