@@ -72,6 +72,11 @@ Parameters:
     Type: String
   SitePoliciesBucketName:
     Type: String
+  # Site Files
+  SiteFilesRepositoryName:
+    Type: String
+  SiteFilesBucketName:
+    Type: String
 
 Resources:
   # CodeBuild projects
