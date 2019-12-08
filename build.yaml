@@ -463,12 +463,12 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrap-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-rdsbootstrap-deploy-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "DBBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "CredentialsSecret": "${AuroraMysqlCredentialsSecret}", "Endpoint": "${ApprovalDbClusterEndpointAddress}", "Port": "${ApprovalDbClusterEndpointPort}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTableName": "${FlagTableName}", "UncloggerPromptTableName": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "CredentialsSecret": "${AuroraMysqlCredentialsSecret}", "Endpoint": "${ApprovalDbClusterEndpointAddress}", "Port": "${ApprovalDbClusterEndpointPort}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTable": "${FlagTableName}", "UncloggerPromptTable": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: DBBuild
               RunOrder: 1
@@ -509,7 +509,46 @@ Resources:
               Configuration:
                 BucketName: !Ref SitePoliciesBucketName
                 Extract: true
-                # ObjectKey: "{datetime}.zip"
               InputArtifacts:
                 - Name: SPSource
+              RunOrder: 1
+
+  SiteFilesPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-site-files-pipeline"
+      RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: FetchSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeCommit
+              OutputArtifacts:
+                - Name: SFSource
+              Configuration:
+                RepositoryName: !Ref SiteFilesRepositoryName
+                BranchName: !Ref BranchName
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: S3
+                Version: "1"
+              Configuration:
+                BucketName: !Ref SiteFilesBucketName
+                Extract: true
+              InputArtifacts:
+                - Name: SFSource
               RunOrder: 1

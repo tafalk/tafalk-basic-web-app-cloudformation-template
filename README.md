@@ -95,6 +95,12 @@ aws cloudformation validate-template --template-body file://{yaml_file_name}
 
 ### Manual work
 
+#### Creating RDS resources
+
+Manually run `tafalk-prod-rdsbootstrap` with empty json object (`{}`) as body.
+
+This will create UncloggerPrompt and Flag tables
+
 #### Registered Domain Nameservers
 
 The created Route 53 hosted zone may arbitrarily create the name servers (NS). And this may lead to problems in certificate validation.

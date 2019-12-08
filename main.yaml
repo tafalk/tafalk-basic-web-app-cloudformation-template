@@ -117,7 +117,7 @@ Parameters:
   SiteFilesRepositoryName:
     Description: CodeCommit repository for site files
     Type: String
-    Default: site-policies
+    Default: site-files
   RdsBootstrapFunctionRepositoryName:
     Description: CodeCommit repository for RDS Bootstrap function
     Type: String
@@ -264,91 +264,80 @@ Resources:
         SiteFileBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sitefiles"
         SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-site-policies"
 
-  # LambdaFunctionCICDPipeline:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "build.yaml"]]
-  #     Parameters:
-  #       # Common
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       BranchName: !Ref RepositoryBranchName
-  #       LambdaArtifactStoreBucket:
-  #         Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
-  #       CodeCommitRepoCodeBuildRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
-  #       CodeCommitRepoCodePipelineRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
-  #       LambdaManagerCloudFormationRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
-  #       # CognitoUserExporter
-  #       CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
-  #       CognitoUserExporterFunctionRepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
-  #       UserTable:
-  #         Fn::GetAtt: [Data, Outputs.UserTable]
-  #       UserGroup: !Sub "${ProjectIdentifierName}-default-ug"
-  #       # Token Resolver
-  #       RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
-  #       RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
-  #       RecaptchaSecretName: !Ref RecaptchaSecretParam
-  #       RecaptchaVerifyEndpoint: !Ref RecaptchaVerifyEndpoint
-  #       # Resource Searcher
-  #       ResourceSearcherFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
-  #       ResourceSearcherFunctionRepositoryName: !Ref ResourceSearcherFunctionRepositoryName
-  #       StreamTable:
-  #         Fn::GetAtt: [Data, Outputs.StreamTable]
-  #       CantoTable:
-  #         Fn::GetAtt: [Data, Outputs.CantoTable]
-  #       # Certificate Delegating
-  #       CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
-  #       CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
-  #       AcmCertRegion: !Ref CertificateRegion
-  #       # RDS
-  #       RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
-  #       RdsBootstrapFunctionRepositoryName: !Ref RdsBootstrapFunctionRepositoryName
-  #       ApprovalDbCluster:
-  #         Fn::GetAtt: [Data, Outputs.ApprovalDbCluster]
-  #       ApprovalDbClusterEndpointAddress:
-  #         Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
-  #       ApprovalDbClusterEndpointPort:
-  #         Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
-  #       FlagTableName: Flags
-  #       UncloggerPromptTableName: UncloggerPrompts
-  #       AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
-  #       # Site Policies
-  #       SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
-  #       SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-site-policies"
-  #       # Site Files
-  #       SiteFilesRepositoryName: !Ref SiteFilesRepositoryName
-  #       SiteFilesBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sitefiles"
+  LambdaFunctionCICDPipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "build.yaml"]]
+      Parameters:
+        # Common
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        BranchName: !Ref RepositoryBranchName
+        LambdaArtifactStoreBucket:
+          Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
+        CodeCommitRepoCodeBuildRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
+        CodeCommitRepoCodePipelineRoleArn:
+          Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
+        LambdaManagerCloudFormationRoleArn:
+          Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
+        # CognitoUserExporter
+        CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
+        CognitoUserExporterFunctionRepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
+        UserTable:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+        UserGroup: !Sub "${ProjectIdentifierName}-default-ug"
+        # Token Resolver
+        RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
+        RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
+        RecaptchaSecretName: !Ref RecaptchaSecretParam
+        RecaptchaVerifyEndpoint: !Ref RecaptchaVerifyEndpoint
+        # Resource Searcher
+        ResourceSearcherFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
+        ResourceSearcherFunctionRepositoryName: !Ref ResourceSearcherFunctionRepositoryName
+        StreamTable:
+          Fn::GetAtt: [Data, Outputs.StreamTable]
+        CantoTable:
+          Fn::GetAtt: [Data, Outputs.CantoTable]
+        # Certificate Delegating
+        CertificateDelegatingFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
+        CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
+        AcmCertRegion: !Ref CertificateRegion
+        # RDS
+        RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rdsbootstrap"
+        RdsBootstrapFunctionRepositoryName: !Ref RdsBootstrapFunctionRepositoryName
+        ApprovalDbCluster:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbCluster]
+        ApprovalDbClusterEndpointAddress:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
+        ApprovalDbClusterEndpointPort:
+          Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
+        FlagTableName: Flags
+        UncloggerPromptTableName: UncloggerPrompts
+        AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
+        # Site Policies
+        SitePoliciesRepositoryName: !Ref SitePoliciesRepositoryName
+        SitePoliciesBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-site-policies"
+        # Site Files
+        SiteFilesRepositoryName: !Ref SiteFilesRepositoryName
+        SiteFilesBucketName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-sitefiles"
 
-  # RDSBootstrap:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn: [LambdaFunctionCICDPipeline, Data]
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "rds-bootstrap.yaml"]]
-  #     Parameters:
-  #       # Common
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrap"
-
-  # CognitoAuth:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn: LambdaFunctionCICDPipeline
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
-  #     Parameters:
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       # Should be the same as FunctionName of LambdaFunctionCICDPipeline Stack
-  #       CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
-  #       SNSRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
-  #       # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
-  #       DefaultUserGroupName: !Sub "${ProjectIdentifierName}-default-ug"
-  #       UserFilesBucketArn:
-  #         Fn::GetAtt: [Storage, Outputs.UserFilesBucketArn]
+  CognitoAuth:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: LambdaFunctionCICDPipeline
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        # Should be the same as FunctionName of LambdaFunctionCICDPipeline Stack
+        CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
+        SNSRoleArn:
+          Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
+        # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
+        DefaultUserGroupName: !Sub "${ProjectIdentifierName}-default-ug"
+        UserFilesBucketArn:
+          Fn::GetAtt: [Storage, Outputs.UserFilesBucketArn]
 
   # AppSync:
   #   Type: AWS::CloudFormation::Stack

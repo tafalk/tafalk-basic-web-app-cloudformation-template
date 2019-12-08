@@ -329,6 +329,7 @@ Resources:
       DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier
       BackupRetentionPeriod: 35
       DeletionProtection: false
+      EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
         MaxCapacity: 8
