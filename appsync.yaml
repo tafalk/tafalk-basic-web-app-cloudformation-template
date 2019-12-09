@@ -53,7 +53,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191202-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191209-2.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -556,7 +556,7 @@ Resources:
       TypeName: Like
       FieldName: stream
       DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceStreamId.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceStreamId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CantoOfLikeResolver:
@@ -566,7 +566,7 @@ Resources:
       TypeName: Like
       FieldName: canto
       DataSourceName: !GetAtt AppSyncCantoTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceCantoId.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceCantoId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UserOfStreamResolver:
@@ -576,7 +576,7 @@ Resources:
       TypeName: Stream
       FieldName: user
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/getBySourceUserId.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceUserId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CommentsOfStreamResolver:
@@ -636,7 +636,7 @@ Resources:
       TypeName: User
       FieldName: userInteractions
       DataSourceName: !GetAtt AppSyncUserInteractionTableDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dyanmodb/queryBySourceIdAsActorUserId.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsActorUserId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   TargetUserOfUserInteractionResolver:

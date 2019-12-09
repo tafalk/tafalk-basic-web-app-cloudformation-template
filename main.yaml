@@ -339,40 +339,40 @@ Resources:
         UserFilesBucketArn:
           Fn::GetAtt: [Storage, Outputs.UserFilesBucketArn]
 
-  # AppSync:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "appsync.yaml"]]
-  #     Parameters:
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       ResourceBucketName: !Ref TemplateS3BucketName
-  #       AppSyncLogRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
-  #       AppSyncResourceDynamoDbRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.AppSyncResourceDynamoDbRoleArn]
-  #       AppSyncResourceAuroraRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.AppSyncResourceAuroraRoleArn]
-  #       AppSyncResourceLambdaRoleArn:
-  #         Fn::GetAtt: [IAM, Outputs.AppSyncResourceLambdaRoleArn]
-  #       UserTableName:
-  #         Fn::GetAtt: [Data, Outputs.UserTable]
-  #       CantoTableName:
-  #         Fn::GetAtt: [Data, Outputs.CantoTable]
-  #       StreamTableName:
-  #         Fn::GetAtt: [Data, Outputs.StreamTable]
-  #       LikeTableName:
-  #         Fn::GetAtt: [Data, Outputs.LikeTable]
-  #       CommentTableName:
-  #         Fn::GetAtt: [Data, Outputs.CommentTable]
-  #       UserInteractionTableName:
-  #         Fn::GetAtt: [Data, Outputs.UserInteractionTable]
-  #       ApprovalDbClusterIdentifier: approvalcluster-1
-  #       AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
-  #       RecaptchaTokenResolverFunctionArn:
-  #         !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
-  #       ResourceSearcherFunctionArn:
-  #         !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
+  AppSync:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "appsync.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        ResourceBucketName: !Ref TemplateS3BucketName
+        AppSyncLogRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
+        AppSyncResourceDynamoDbRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceDynamoDbRoleArn]
+        AppSyncResourceAuroraRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceAuroraRoleArn]
+        AppSyncResourceLambdaRoleArn:
+          Fn::GetAtt: [IAM, Outputs.AppSyncResourceLambdaRoleArn]
+        UserTableName:
+          Fn::GetAtt: [Data, Outputs.UserTable]
+        CantoTableName:
+          Fn::GetAtt: [Data, Outputs.CantoTable]
+        StreamTableName:
+          Fn::GetAtt: [Data, Outputs.StreamTable]
+        LikeTableName:
+          Fn::GetAtt: [Data, Outputs.LikeTable]
+        CommentTableName:
+          Fn::GetAtt: [Data, Outputs.CommentTable]
+        UserInteractionTableName:
+          Fn::GetAtt: [Data, Outputs.UserInteractionTable]
+        ApprovalDbClusterIdentifier: approvalcluster-1
+        AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
+        RecaptchaTokenResolverFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
+        ResourceSearcherFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
   # WebServing:
   #   Type: AWS::CloudFormation::Stack

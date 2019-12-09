@@ -320,18 +320,19 @@ type Canto {
 }
 
 type UserInteraction {
-  actorUserId: String!
   id: ID!
+  actorUserId: String!
+  actorUser: User
+  targetUserId: String!
+  targetUser: User
   interactionType: UserInteractionType
   lastChangeTime: String!
-  targetUser: User
-  targetUserId: String!
 }
 
 type Like implements CommunityReaction {
   id: ID!
-  stream: Stream!
-  streamId: String!
+  stream: Stream
+  streamId: String
   canto: Canto
   cantoId: String  
   time: String
