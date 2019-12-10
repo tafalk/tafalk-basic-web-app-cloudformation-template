@@ -374,15 +374,15 @@ Resources:
         ResourceSearcherFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
-  # WebServing:
-  #   Type: AWS::CloudFormation::Stack
-  #   Condition: CreateWebServing
-  #   Properties:
-  #     TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
-  #     Parameters:
-  #       ProjectIdentifierName: !Ref ProjectIdentifierName
-  #       EnvironmentName: !Ref EnvironmentName
-  #       DomainName: !Ref DomainName
-  #       ZohoCname: !Ref ZohoCname
-  #       CertificateDelegatingFunctionArn:
-  #         !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
+  WebServing:
+    Type: AWS::CloudFormation::Stack
+    Condition: CreateWebServing
+    Properties:
+      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
+      Parameters:
+        ProjectIdentifierName: !Ref ProjectIdentifierName
+        EnvironmentName: !Ref EnvironmentName
+        DomainName: !Ref DomainName
+        ZohoCname: !Ref ZohoCname
+        CertificateDelegatingFunctionArn:
+          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"

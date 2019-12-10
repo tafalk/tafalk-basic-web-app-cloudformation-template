@@ -111,7 +111,7 @@ Not to encounter such cases, from the AWS Console, you have to update *Registere
 
 - From the left pane, click *Hosted Zones*.
 
-- In the next window, click on your domain. Note down the value for the *record set* with type `NS` -typically four name servers.
+- In the next window, click on your domain. **Note down** the value for the *record set* with type `NS` -typically four name servers.
 
 - From the left pane, click *Registered Domains*.
 
