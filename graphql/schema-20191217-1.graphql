@@ -7,7 +7,7 @@ schema {
 # Q U E R I E S
 type Query {
   # User
-  getUserByUsername(username: String!): [User]
+  getUserByUsername(username: String!): User
   listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
   listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
   listUserInteractionsByActorUserIdIndex(actorUserId: String!, first: Int, after: String): UserInteractionConnection
