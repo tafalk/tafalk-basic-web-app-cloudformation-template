@@ -6,6 +6,8 @@ Parameters:
     Type: String
   ResourceBucketName:
     Type: String
+  UserPoolId:
+    Type: String
   AppSyncLogRoleArn:
     Type: String
   AppSyncResourceDynamoDbRoleArn:
@@ -41,9 +43,12 @@ Resources:
     Type: AWS::AppSync::GraphQLApi
     Properties:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-api"
-      AuthenticationType: API_KEY
-      # UserPoolConfig: UserPoolConfig
-      # OpenIDConnectConfig : OpenIDConnectConfig
+      # AuthenticationType: API_KEY
+      AuthenticationType: AMAZON_COGNITO_USER_POOLS
+      UserPoolConfig:
+        UserPoolId: !Ref UserPoolId
+        AwsRegion: !Sub ${AWS::Region}
+        DefaultAction: ALLOW
       LogConfig:
         FieldLogLevel: ERROR
         CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn
@@ -689,10 +694,10 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceReviewerUserId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
-  # API key
-  AppSyncApiKey:
-    Type: AWS::AppSync::ApiKey
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      # To expire in 2020, May 20th
-      Expires: 1590004800
+  # # API key
+  # AppSyncApiKey:
+  #   Type: AWS::AppSync::ApiKey
+  #   Properties:
+  #     ApiId: !GetAtt AppSyncApi.ApiId
+  #     # To expire in 2020, May 20th
+  #     Expires: 1590004800

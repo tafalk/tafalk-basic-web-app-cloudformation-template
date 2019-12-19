@@ -347,6 +347,8 @@ Resources:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
         ResourceBucketName: !Ref TemplateS3BucketName
+        UserPoolId:
+          Fn::GetAtt: [CognitoAuth, Outputs.UserPoolId]
         AppSyncLogRoleArn:
           Fn::GetAtt: [IAM, Outputs.AppSyncLogRoleArn]
         AppSyncResourceDynamoDbRoleArn:
