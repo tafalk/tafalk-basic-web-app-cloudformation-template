@@ -254,7 +254,6 @@ input UpdateUncloggerPromptInput {
   body: String
   language: String
   state: String
-  creatorUserId: String
   approverUserId: String
   approveTime: String
 }

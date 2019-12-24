@@ -246,6 +246,7 @@ Resources:
         AuroraMysqlMasterUsername: !Ref AuroraMysqlMasterUsername
         AuroraMysqlMasterUserPassword: !Ref AuroraMysqlMasterUserPassword
         ApprovalDbClusterIdentifier: approvalcluster-1
+        ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
         AuroraMysqlDBSubnetGroupNames:
           !Join
             - ","
@@ -304,14 +305,14 @@ Resources:
         CertificateDelegatingFunctionRepositoryName: !Ref CertificateDelegatingFunctionRepositoryName
         AcmCertRegion: !Ref CertificateRegion
         # RDS
-        RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rdsbootstrap"
+        RdsBootstrapFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-rds-bootstrapper"
         RdsBootstrapFunctionRepositoryName: !Ref RdsBootstrapFunctionRepositoryName
-        ApprovalDbCluster:
-          Fn::GetAtt: [Data, Outputs.ApprovalDbCluster]
+        ApprovalDbClusterArn: !Sub arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${Data.Outputs.ApprovalDbCluster}
         ApprovalDbClusterEndpointAddress:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointAddress]
         ApprovalDbClusterEndpointPort:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
+        ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
         FlagTableName: Flags
         UncloggerPromptTableName: UncloggerPrompts
         AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore

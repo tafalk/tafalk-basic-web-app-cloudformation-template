@@ -8,6 +8,8 @@ Parameters:
     Type: String
   ApprovalDbClusterIdentifier:
     Type: String
+  ApprovalDbName:
+    Type: String
   AuroraMysqlEngineVersion:
     Type: String
   AuroraMysqlMasterUsername:
@@ -323,7 +325,7 @@ Resources:
       Engine: aurora
       EngineMode: serverless
       EngineVersion: !Ref AuroraMysqlEngineVersion
-      DatabaseName: !Sub ${EnvironmentName}_ApprovalDb
+      DatabaseName: !Ref ApprovalDbName
       MasterUsername: !Ref AuroraMysqlMasterUsername
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier

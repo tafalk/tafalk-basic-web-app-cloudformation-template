@@ -57,11 +57,13 @@ Parameters:
     Type: String
   AuroraMysqlCredentialsSecret:
     Type: String
-  ApprovalDbCluster:
+  ApprovalDbClusterArn:
     Type: String
   ApprovalDbClusterEndpointAddress:
     Type: String
   ApprovalDbClusterEndpointPort:
+    Type: String
+  ApprovalDbName:
     Type: String
   FlagTableName:
     Type: String
@@ -158,10 +160,10 @@ Resources:
 
     # Build Project
 
-  RdsBootstrapFunctionBuildProject:
+  RDSBootstrapperFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-func-build-proj"
       Description: Used to build RDS Bootstrap function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -414,10 +416,10 @@ Resources:
                 - Name: CDBuild
               RunOrder: 1
 
-  RdsBootstrapFunctionPipeline:
+  RDSBootstrapperFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-rds-bootstrap-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-pipeline"
       RoleArn: !Ref CodeCommitRepoCodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -448,7 +450,7 @@ Resources:
                 Provider: CodeBuild
                 Version: "1"
               Configuration:
-                ProjectName: !Ref RdsBootstrapFunctionBuildProject
+                ProjectName: !Ref RDSBootstrapperFunctionBuildProject
               InputArtifacts:
                 - Name: DBSource
               OutputArtifacts:
@@ -463,12 +465,12 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-rdsbootstrap-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrapper-deploy-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "DBBuild::output-template.yaml"
                 RoleArn: !Ref LambdaManagerCloudFormationRoleArn
-                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "CredentialsSecret": "${AuroraMysqlCredentialsSecret}", "Endpoint": "${ApprovalDbClusterEndpointAddress}", "Port": "${ApprovalDbClusterEndpointPort}", "ApprovalDbName": "${ApprovalDbCluster}", "FlagTable": "${FlagTableName}", "UncloggerPromptTable": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
+                ParameterOverrides: !Sub '{"FunctionName": "${RdsBootstrapFunctionName}", "CredentialsSecret": "${AuroraMysqlCredentialsSecret}", "Endpoint": "${ApprovalDbClusterEndpointAddress}", "Port": "${ApprovalDbClusterEndpointPort}", "ApprovalDbClusterArn": "${ApprovalDbClusterArn}", "ApprovalDbName": "${ApprovalDbName}", "FlagTable": "${FlagTableName}", "UncloggerPromptTable": "${UncloggerPromptTableName}", "Environment": "${EnvironmentName}", "Application": "${ProjectIdentifierName}"}'
               InputArtifacts:
                 - Name: DBBuild
               RunOrder: 1
