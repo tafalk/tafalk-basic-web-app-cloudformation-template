@@ -38,7 +38,7 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(contentId: ID!): [Flag]
+  listFlags(first: Int, after: String): FlagConnection
 
   # UncloggerPrompt
   listUncloggerPrompts(first: Int, after: String): UncloggerPromptConnection
@@ -410,6 +410,11 @@ type LikeConnection {
 
 type CommentConnection {
   items: [Comment]
+  nextToken: String
+}
+
+type FlagConnection {
+  items: [Flag]
   nextToken: String
 }
 
