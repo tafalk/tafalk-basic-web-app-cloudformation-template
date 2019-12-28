@@ -240,7 +240,7 @@ input DeleteFlagInput {
 
 # UncloggerPrompt
 input CreateUncloggerPromptInput {
-  category: String!
+  category: UncloggerHintCategory!
   body: String!
   language: String
   state: String
@@ -250,7 +250,7 @@ input CreateUncloggerPromptInput {
 
 input UpdateUncloggerPromptInput {
   id: ID!
-  category: String
+  category: UncloggerHintCategory
   body: String
   language: String
   state: String
@@ -375,7 +375,7 @@ type RecaptchaV3Result {
 
 type UncloggerPrompt {
   id: ID!
-  category: String!
+  category: UncloggerHintCategory!
   body: String!
   language: String
   state: String
