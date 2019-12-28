@@ -240,7 +240,7 @@ input DeleteFlagInput {
 
 # UncloggerPrompt
 input CreateUncloggerPromptInput {
-  category: UncloggerHintCategory!
+  category: UncloggerPromptCategory!
   body: String!
   language: String
   state: String
@@ -250,7 +250,7 @@ input CreateUncloggerPromptInput {
 
 input UpdateUncloggerPromptInput {
   id: ID!
-  category: UncloggerHintCategory
+  category: UncloggerPromptCategory
   body: String
   language: String
   state: String
@@ -302,7 +302,7 @@ type Stream {
   startTime: String!
   title: String
   track: String
-  uncloggerHintId: String
+  uncloggerPromptId: String
   user: User
   userId: String!
 }
@@ -375,7 +375,7 @@ type RecaptchaV3Result {
 
 type UncloggerPrompt {
   id: ID!
-  category: UncloggerHintCategory!
+  category: UncloggerPromptCategory!
   body: String!
   language: String
   state: String
@@ -451,7 +451,7 @@ enum StreamPrivacy {
   Public
 }
 
-enum UncloggerHintCategory {
+enum UncloggerPromptCategory {
   Default
   DidYouKnow
   HistoricalEvent
