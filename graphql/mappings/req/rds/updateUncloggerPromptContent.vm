@@ -1,0 +1,13 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update UncloggerPrompts Set 
+      Category='$ctx.args.input.category',
+      Body='$ctx.args.input.body',
+      Language='$ctx.args.input.language',
+      ReviewTime=NOW(),
+      LastUpdateTime=NOW()
+    Where Id='$ctx.args.input.id'",
+    "Select * from UncloggerPrompts Where Id = '$ctx.args.input.id'"
+  ]
+}

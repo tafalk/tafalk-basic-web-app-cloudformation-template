@@ -58,7 +58,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191228-3.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20191228-12.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -490,7 +490,7 @@ Resources:
       TypeName: Mutation
       FieldName: updateFlagReview
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateFlagReviewer.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateFlagReview.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteFlagResolver:
@@ -513,14 +513,24 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/createUncloggerPrompt.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
-  UpdateUncloggerPromptResolver:
+  UpdateUncloggerPromptContentResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Mutation
-      FieldName: updateUncloggerPrompt
+      FieldName: updateUncloggerPromptContent
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateUncloggerPromptApproval.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateUncloggerPromptContent.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
+
+  UpdateUncloggerPromptReviewResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Mutation
+      FieldName: updateUncloggerPromptReview
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/updateUncloggerPromptReview.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteUncloggerPromptResolver:
@@ -693,11 +703,3 @@ Resources:
       DataSourceName: !GetAtt AppSyncUserTableDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceReviewerUserId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
-
-  # # API key
-  # AppSyncApiKey:
-  #   Type: AWS::AppSync::ApiKey
-  #   Properties:
-  #     ApiId: !GetAtt AppSyncApi.ApiId
-  #     # To expire in 2020, May 20th
-  #     Expires: 1590004800

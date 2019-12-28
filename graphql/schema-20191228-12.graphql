@@ -76,7 +76,8 @@ type Mutation {
 
   # UncloggerPrompt
   createUncloggerPrompt(input: CreateUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateUncloggerPrompt(input: UpdateUncloggerPromptInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUncloggerPromptContent(input: UpdateUncloggerPromptContentInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUncloggerPromptReview(input: UpdateUncloggerPromptReviewInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-admin-ug"])
   deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
@@ -229,9 +230,9 @@ input UpdateFlagContentInput {
 input UpdateFlagReviewInput {
   id: ID!
   reviewerUserId: String
-  reviewStatus: ApprovalStatus
+  status: ApprovalStatus
   reviewNote: String
-  lastUpdateTime: String
+  reviewTime: String
 }
 
 input DeleteFlagInput {
@@ -248,14 +249,20 @@ input CreateUncloggerPromptInput {
   createTime: String
 }
 
-input UpdateUncloggerPromptInput {
+input UpdateUncloggerPromptContentInput {
   id: ID!
   category: UncloggerPromptCategory
   body: String
   language: Language
   status: ApprovalStatus
-  approverUserId: String
-  approveTime: String
+}
+
+input UpdateUncloggerPromptReviewInput {
+  id: ID!
+  reviewerUserId: String
+  status: ApprovalStatus
+  reviewNote: String
+  reviewTime: String
 }
 
 input DeleteUncloggerPromptInput {
@@ -360,7 +367,7 @@ type Flag {
   detail: String
   reviewerUserId: String
   reviewerUser: User
-  reviewStatus: String
+  status: String
   reviewNote: String
   createTime: String
   lastUpdateTime: String
@@ -381,10 +388,11 @@ type UncloggerPrompt {
   status: ApprovalStatus
   creatorUserId: String
   creatorUser: User
-  approverUserId: String
-  approverUser: User
   createTime: String
-  approveTime: String
+  reviewerUserId: String
+  reviewerUser: User
+  reviewNote: String
+  reviewTime: String
 }
 
 # C O N N E C T I O N   T Y P E S
