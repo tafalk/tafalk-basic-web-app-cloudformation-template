@@ -113,7 +113,7 @@ input UpdateUserInput {
   lastAccess: String
   location: String
   preferredName: String
-  language: String
+  language: Language
   profilePictureKey: String
   site: String
   theme: String
@@ -229,7 +229,7 @@ input UpdateFlagContentInput {
 input UpdateFlagReviewInput {
   id: ID!
   reviewerUserId: String
-  reviewStatus: String
+  reviewStatus: ApprovalStatus
   reviewNote: String
   lastUpdateTime: String
 }
@@ -242,8 +242,8 @@ input DeleteFlagInput {
 input CreateUncloggerPromptInput {
   category: UncloggerPromptCategory!
   body: String!
-  language: String
-  state: String
+  language: Language
+  status: ApprovalStatus
   creatorUserId: String
   createTime: String
 }
@@ -252,8 +252,8 @@ input UpdateUncloggerPromptInput {
   id: ID!
   category: UncloggerPromptCategory
   body: String
-  language: String
-  state: String
+  language: Language
+  status: ApprovalStatus
   approverUserId: String
   approveTime: String
 }
@@ -277,7 +277,7 @@ type User {
   likedStreams: LikeConnection
   location: String
   preferredName: String
-  language: String
+  language: Language
   profilePictureKey: String
   site: String
   canto: Canto
@@ -377,8 +377,8 @@ type UncloggerPrompt {
   id: ID!
   category: UncloggerPromptCategory!
   body: String!
-  language: String
-  state: String
+  language: Language
+  status: ApprovalStatus
   creatorUserId: String
   creatorUser: User
   approverUserId: String
@@ -452,14 +452,26 @@ enum StreamPrivacy {
 }
 
 enum UncloggerPromptCategory {
-  Default
-  DidYouKnow
+  Trivia
   HistoricalEvent
-  News
-  PhilosophicalSchool
+  NewsNEWS
+  PhilosophySchools
+  Other
 }
 
 enum UserInteractionType {
   Block
   Watch
+}
+
+enum Language {
+  en
+  tr
+}
+
+enum ApprovalStatus {
+  Pending
+  Declined
+  Accepted
+  OnHold
 }
