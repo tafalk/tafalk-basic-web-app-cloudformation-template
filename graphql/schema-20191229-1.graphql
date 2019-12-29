@@ -215,8 +215,6 @@ input CreateFlagInput {
   category: String!
   type: String!
   detail: String
-  createTime: String
-  lastUpdateTime: String
 }
 
 input UpdateFlagContentInput {
@@ -246,7 +244,6 @@ input CreateUncloggerPromptInput {
   language: Language
   status: ApprovalStatus
   creatorUserId: String
-  createTime: String
 }
 
 input UpdateUncloggerPromptContentInput {
