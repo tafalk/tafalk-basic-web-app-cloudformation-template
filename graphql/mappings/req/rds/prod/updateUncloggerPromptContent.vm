@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update prod_ApprovalDb.UncloggerPrompts Set Category='$ctx.args.input.category', Body='$ctx.args.input.body', Language='$ctx.args.input.language', LastUpdateTime=NOW() Where Id='$ctx.args.input.id'",
+    "Select * from prod_ApprovalDb.UncloggerPrompts Where Id = '$ctx.args.input.id'"
+  ]
+}

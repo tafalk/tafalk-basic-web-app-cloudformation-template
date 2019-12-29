@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * From prod_ApprovalDb.Flags Where Id='$ctx.args.input.id'",
+    "Delete From prod_ApprovalDb.Flags Where Id='$ctx.args.input.id'"
+  ]
+}

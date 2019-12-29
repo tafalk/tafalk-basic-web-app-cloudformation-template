@@ -1,7 +1,0 @@
-{
-  "version": "2018-05-29",
-  "statements": [
-    "Select * From UncloggerPrompts Where Id='$ctx.args.input.id'",
-    "Delete From UncloggerPrompts Where Id='$ctx.args.input.id'"
-  ]
-}

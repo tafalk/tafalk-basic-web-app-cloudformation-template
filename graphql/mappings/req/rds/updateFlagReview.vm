@@ -1,7 +1,0 @@
-{
-  "version": "2018-05-29",
-  "statements": [
-    "Update Flags Set Status='$ctx.args.input.status', ReviewerUserId='$ctx.args.input.reviewerUserId', ReviewNote='$ctx.args.input.reviewNote', ReviewTime=NOW() Where Id='$ctx.args.input.id'",
-    "Select * from Flags Where Id = '$ctx.args.input.id'"
-  ]
-}

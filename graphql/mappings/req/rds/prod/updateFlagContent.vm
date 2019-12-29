@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update prod_ApprovalDb.Flags Set Category='$ctx.args.input.category', Type='$ctx.args.input.type', Detail='$ctx.args.input.detail', LastUpdateTime=NOW() Where Id='$ctx.args.input.id'",
+    "Select * from prod_ApprovalDb.Flags Where Id = '$ctx.args.input.id'"
+  ]
+}

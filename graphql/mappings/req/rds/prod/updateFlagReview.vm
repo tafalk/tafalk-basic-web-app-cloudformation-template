@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update prod_ApprovalDb.Flags Set Status='$ctx.args.input.status', ReviewerUserId='$ctx.args.input.reviewerUserId', ReviewNote='$ctx.args.input.reviewNote', ReviewTime=NOW() Where Id='$ctx.args.input.id'",
+    "Select * from prod_ApprovalDb.Flags Where Id = '$ctx.args.input.id'"
+  ]
+}
