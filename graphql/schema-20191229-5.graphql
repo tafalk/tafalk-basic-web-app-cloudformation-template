@@ -38,10 +38,10 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(first: Int, after: String): [Flag]
+  listFlags(limit: Int, offset: Int): [Flag]
 
   # UncloggerPrompt
-  listUncloggerPrompts(first: Int, after: String): [UncloggerPrompt]
+  listUncloggerPrompts(limit: Int, offset: Int): [UncloggerPrompt]
 }
 
 # M U T A T I O N S
@@ -449,7 +449,7 @@ enum StreamPrivacy {
 enum UncloggerPromptCategory {
   Trivia
   HistoricalEvent
-  NewsNEWS
+  News
   PhilosophySchools
   Other
 }
