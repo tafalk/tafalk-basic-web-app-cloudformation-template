@@ -363,8 +363,9 @@ type Flag {
   reviewerUser: User
   status: String
   reviewNote: String
-  createTime: AWSTimestamp
-  lastUpdateTime: AWSTimestamp
+  createTime: String
+  reviewTime: String
+  lastUpdateTime: String
 }
 
 type RecaptchaV3Result {
@@ -382,11 +383,11 @@ type UncloggerPrompt {
   status: ApprovalStatus
   creatorUserId: String
   creatorUser: User
-  createTime: AWSTimestamp
+  createTime: String
   reviewerUserId: String
   reviewerUser: User
   reviewNote: String
-  reviewTime: AWSTimestamp
+  reviewTime: String
 }
 
 # C O N N E C T I O N   T Y P E S
