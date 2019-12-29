@@ -222,7 +222,6 @@ input UpdateFlagContentInput {
   category: String
   type: String
   detail: String
-  lastUpdateTime: String
 }
 
 input UpdateFlagReviewInput {
@@ -230,7 +229,6 @@ input UpdateFlagReviewInput {
   reviewerUserId: String
   status: ApprovalStatus
   reviewNote: String
-  reviewTime: String
 }
 
 input DeleteFlagInput {
@@ -259,7 +257,6 @@ input UpdateUncloggerPromptReviewInput {
   reviewerUserId: String
   status: ApprovalStatus
   reviewNote: String
-  reviewTime: String
 }
 
 input DeleteUncloggerPromptInput {
@@ -366,8 +363,8 @@ type Flag {
   reviewerUser: User
   status: String
   reviewNote: String
-  createTime: String
-  lastUpdateTime: String
+  createTime: AWSTimestamp
+  lastUpdateTime: AWSTimestamp
 }
 
 type RecaptchaV3Result {
@@ -385,11 +382,11 @@ type UncloggerPrompt {
   status: ApprovalStatus
   creatorUserId: String
   creatorUser: User
-  createTime: String
+  createTime: AWSTimestamp
   reviewerUserId: String
   reviewerUser: User
   reviewNote: String
-  reviewTime: String
+  reviewTime: AWSTimestamp
 }
 
 # C O N N E C T I O N   T Y P E S
