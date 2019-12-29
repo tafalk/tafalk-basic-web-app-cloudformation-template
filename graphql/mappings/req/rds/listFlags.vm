@@ -4,7 +4,7 @@
     "Select * from Flags Order By Id Limit :limit Offset :offset"
   ],
   "variableMap": {
-    "limit": $util.defaultIfNull(${ctx.args.first}, 20),
-    "offset": $util.toJson($util.defaultIfNullOrBlank($ctx.args.offset, null))
+    ":limit": $util.defaultIfNull(${ctx.args.first}, 20),
+    ":offset": $util.toJson($util.defaultIfNullOrBlank($ctx.args.offset, null))
   }
 }
