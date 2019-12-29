@@ -1,11 +1,7 @@
 {
     "version": "2018-05-29",
     "statements": [
-        "Insert Into UncloggerPrompts 
-        (Category, Body, Language, CreatorUserId, CreateTime, Status)
-        Values
-        ($ctx.args.input.category, $ctx.args.input.body, $ctx.args.input.language, $ctx.args.input.creatorUserId, NOW(), 'Pending')
-        ",
+        "Insert Into UncloggerPrompts (Category, Body, Language, CreatorUserId, CreateTime, Status) Values ($ctx.args.input.category, $ctx.args.input.body, $ctx.args.input.language, $ctx.args.input.creatorUserId, NOW(), 'Pending')",
         "Select * From UncloggerPrompts Where Category='$ctx.args.input.category' And Body='$ctx.args.input.body'"
     ]
 }
