@@ -1,6 +1,6 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from prod_ApprovalDb.Flags Where ContentId='$ctx.args.contentId'"
+    "Select * from Flags Where ContentId='$ctx.args.contentId'"
   ]
 }

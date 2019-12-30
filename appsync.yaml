@@ -30,6 +30,10 @@ Parameters:
     Type: String
   ApprovalDbClusterIdentifier:
     Type: String
+  ApprovalDbName:
+    Type: String
+  ApprovalDbSchemaName:
+    Type: String
   AuroraMysqlCredentialsSecret:
     Type: String
   ResourceSearcherFunctionArn:
@@ -147,6 +151,8 @@ Resources:
           AwsRegion: !Sub ${AWS::Region}
           DbClusterIdentifier: !Ref ApprovalDbClusterIdentifier
           AwsSecretStoreArn: !Ref AuroraMysqlCredentialsSecret
+          DatabaseName: !Ref ApprovalDbName
+          Schema: !Ref ApprovalDbSchemaName
 
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource

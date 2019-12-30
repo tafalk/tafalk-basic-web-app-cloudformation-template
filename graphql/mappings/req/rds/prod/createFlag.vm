@@ -2,7 +2,7 @@
 {
     "version": "2018-05-29",
     "statements": [
-        "Insert Into prod_ApprovalDb.Flags (ContentType, ContentId, FlaggerUserId, Category, Type, Detail, CreateTime, Status) Values ('$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
-        "Select * From prod_ApprovalDb.Flags Where ContentType='$ctx.args.input.contentType' And ContentId='$ctx.args.input.contentId' And FlaggerUserId='$ctx.args.input.flaggerUserId'"
+        "Insert Into Flags (ContentType, ContentId, FlaggerUserId, Category, Type, Detail, CreateTime, Status) Values ('$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
+        "Select * From Flags Where ContentType='$ctx.args.input.contentType' And ContentId='$ctx.args.input.contentId' And FlaggerUserId='$ctx.args.input.flaggerUserId'"
     ]
 }

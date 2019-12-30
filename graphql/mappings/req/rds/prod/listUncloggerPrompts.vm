@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from prod_ApprovalDb.UncloggerPrompts Order By Id Limit :limit Offset :offset"
+    "Select * from UncloggerPrompts Order By Id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.first}, 20),

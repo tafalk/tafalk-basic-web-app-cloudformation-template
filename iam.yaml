@@ -6,6 +6,8 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  ApprovalDbClusterIdentifier:
+    Type: String
 
 Resources:
   SNSRole:
@@ -219,7 +221,9 @@ Resources:
                   - "rds-data:GetItems"
                   - "rds-data:InsertItems"
                   - "rds-data:UpdateItems"
-                Resource: "*"
+                Resource:
+                  - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${ApprovalDbClusterIdentifier}"
+                  - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${ApprovalDbClusterIdentifier}:*"
               - Effect: "Allow"
                 Action:
                   - "secretsmanager:GetSecretValue"

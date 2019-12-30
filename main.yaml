@@ -199,7 +199,7 @@ Resources:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: AuroraMysqlAppCredentialSecretStore
-      Description: This secret has a hardcoded password in SecretString (use GenerateSecretString instead)
+      Description: Secret Store for RDS
       SecretString: !Sub '{"username":"${AuroraMysqlMasterUsername}","password":"${AuroraMysqlMasterUserPassword}"}'
       Tags:
         - Key: Name
@@ -217,6 +217,7 @@ Resources:
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
+        ApprovalDbClusterIdentifier: approvalcluster-1
 
   Network:
     Type: AWS::CloudFormation::Stack
@@ -313,6 +314,7 @@ Resources:
         ApprovalDbClusterEndpointPort:
           Fn::GetAtt: [Data, Outputs.ApprovalDbClusterEndpointPort]
         ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
+        ApprovalDbSchemaName: Review
         FlagTableName: Flags
         UncloggerPromptTableName: UncloggerPrompts
         AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
@@ -371,6 +373,8 @@ Resources:
         UserInteractionTableName:
           Fn::GetAtt: [Data, Outputs.UserInteractionTable]
         ApprovalDbClusterIdentifier: approvalcluster-1
+        ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
+        ApprovalDbSchemaName: Review
         AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
         RecaptchaTokenResolverFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
