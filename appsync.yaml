@@ -149,10 +149,10 @@ Resources:
         RelationalDatabaseSourceType: RDS_HTTP_ENDPOINT
         RdsHttpEndpointConfig:
           AwsRegion: !Sub ${AWS::Region}
-          DbClusterIdentifier: !Ref ApprovalDbClusterIdentifier
+          DbClusterIdentifier: !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${ApprovalDbClusterIdentifier}"
           AwsSecretStoreArn: !Ref AuroraMysqlCredentialsSecret
           DatabaseName: !Ref ApprovalDbName
-          Schema: !Ref ApprovalDbSchemaName
+          # Schema: !Ref ApprovalDbSchemaName
 
   AppSyncResourceSearcherFunctionDataSource:
     Type: AWS::AppSync::DataSource
