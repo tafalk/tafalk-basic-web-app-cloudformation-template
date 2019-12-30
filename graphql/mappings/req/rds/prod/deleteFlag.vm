@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * From Flags Where Id='$ctx.args.input.id'",
-    "Delete From Flags Where Id='$ctx.args.input.id'"
+    "Select * From Flags Where id='$ctx.args.input.id'",
+    "Delete From Flags Where id='$ctx.args.input.id'"
   ]
 }

@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from UncloggerPrompts Order By Id Limit :limit Offset :offset"
+    "Select * from UncloggerPrompts Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 20),

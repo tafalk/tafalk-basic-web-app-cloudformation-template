@@ -1,8 +1,9 @@
+#set($id=$utils.autoId())
 #set($nowTime=$util.time.nowISO8601())
 {
     "version": "2018-05-29",
     "statements": [
-        "Insert Into Flags (ContentType, ContentId, FlaggerUserId, Category, Type, Detail, CreateTime, Status) Values ('$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
-        "Select * From Flags Where ContentType='$ctx.args.input.contentType' And ContentId='$ctx.args.input.contentId' And FlaggerUserId='$ctx.args.input.flaggerUserId'"
+        "Insert Into Flags (id, contentType, contentId, flaggerUserId, category, type, detail, createTime, status) Values ('$id', '$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
+        "Select * From Flags Where id='$id'"
     ]
 }

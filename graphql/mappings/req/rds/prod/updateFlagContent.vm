@@ -2,7 +2,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Update Flags Set Category='$ctx.args.input.category', Type='$ctx.args.input.type', Detail='$ctx.args.input.detail', LastUpdateTime='$nowTime' Where Id='$ctx.args.input.id'",
-    "Select * from Flags Where Id = '$ctx.args.input.id'"
+    "Update Flags Set category='$ctx.args.input.category', type='$ctx.args.input.type', detail='$ctx.args.input.detail', lastUpdateTime='$nowTime' Where id='$ctx.args.input.id'",
+    "Select * from Flags Where id = '$ctx.args.input.id'"
   ]
 }

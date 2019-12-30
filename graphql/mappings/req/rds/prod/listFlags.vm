@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from Flags Order By Id Limit :limit Offset :offset"
+    "Select * from Flags Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 20),
