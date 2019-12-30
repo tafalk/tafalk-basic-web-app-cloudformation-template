@@ -207,13 +207,22 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-aurora-policy"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-aurora-rds-data-policy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Effect: "Allow"
                 Action:
-                  - "rds:*"
+                  - "rds-data:DeleteItems"
+                  - "rds-data:ExecuteSql"
+                  - "rds-data:ExecuteStatement"
+                  - "rds-data:GetItems"
+                  - "rds-data:InsertItems"
+                  - "rds-data:UpdateItems"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "secretsmanager:GetSecretValue"
                 Resource: "*"
 
   AppSyncResourceLambdaRole:
