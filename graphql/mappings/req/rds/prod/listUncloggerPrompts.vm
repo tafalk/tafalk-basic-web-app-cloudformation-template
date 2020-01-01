@@ -1,7 +1,12 @@
+#if("$!ctx.args.searchText" == "")
+  #set($whereCluse = "Where category Like '%${ctx.args.searchText}%' Or body Like '%${ctx.args.searchText}%'")
+#else
+  #set($whereCluse = "")
+#end
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from UncloggerPrompts Order By id Limit :limit Offset :offset"
+    "Select * from UncloggerPrompts ${whereCluse} Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 20),

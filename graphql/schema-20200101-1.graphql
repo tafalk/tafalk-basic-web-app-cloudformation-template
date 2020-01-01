@@ -38,10 +38,10 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(limit: Int, offset: Int): [Flag]
+  listFlags(limit: Int, offset: Int, searchText: String): [Flag]
 
   # UncloggerPrompt
-  listUncloggerPrompts(limit: Int, offset: Int): [UncloggerPrompt]
+  listUncloggerPrompts(limit: Int, offset: Int, searchText: String): [UncloggerPrompt]
 }
 
 # M U T A T I O N S

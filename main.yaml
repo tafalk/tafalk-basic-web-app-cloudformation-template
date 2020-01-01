@@ -374,7 +374,6 @@ Resources:
           Fn::GetAtt: [Data, Outputs.UserInteractionTable]
         ApprovalDbClusterIdentifier: approvalcluster-1
         ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
-        ApprovalDbSchemaName: Review
         AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
         RecaptchaTokenResolverFunctionArn:
           !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"

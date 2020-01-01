@@ -1,7 +1,12 @@
+#if("$!ctx.args.searchText" == "")
+  #set($whereCluse = "Where category Like '%${ctx.args.searchText}%' Or type Like '%${ctx.args.searchText}%'")
+#else
+  #set($whereCluse = "")
+#end
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from Flags Order By id Limit :limit Offset :offset"
+    "Select * from Flags ${whereCluse} Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 20),
