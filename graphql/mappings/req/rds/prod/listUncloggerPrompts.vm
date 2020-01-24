@@ -1,3 +1,5 @@
+## If you modify where clause, please make sure you have modified the query in "countUncloggerPrompts.vm", too
+
 #if("$!ctx.args.searchText" == "")
   #set($whereCluse = "Where category Like '%${ctx.args.searchText}%' Or body Like '%${ctx.args.searchText}%'")
 #else

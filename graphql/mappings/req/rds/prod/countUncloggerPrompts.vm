@@ -1,0 +1,13 @@
+## If you modify where clause, please make sure you have modified the query in "listUncloggerPrompts.vm", too
+
+#if("$!ctx.args.searchText" == "")
+  #set($whereCluse = "Where category Like '%${ctx.args.searchText}%' Or body Like '%${ctx.args.searchText}%'")
+#else
+  #set($whereCluse = "")
+#end
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select COUNT(*) from UncloggerPrompts ${whereCluse}"
+  ]
+}

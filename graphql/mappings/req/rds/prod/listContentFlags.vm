@@ -1,3 +1,5 @@
+## If you modify where clause, please make sure you have modified the query in "countContentFlags.vm", too
+
 {
   "version": "2018-05-29",
   "statements": [

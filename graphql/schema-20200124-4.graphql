@@ -39,9 +39,11 @@ type Query {
 
   # Flag
   listFlags(limit: Int, offset: Int, searchText: String): [Flag]
+  countFlags(searchText: String): ResultCount
 
   # UncloggerPrompt
   listUncloggerPrompts(limit: Int, offset: Int, searchText: String): [UncloggerPrompt]
+  countUncloggerPrompts(searchText: String): ResultCount
 }
 
 # M U T A T I O N S
@@ -388,6 +390,10 @@ type UncloggerPrompt {
   reviewerUser: User
   reviewNote: String
   reviewTime: String
+}
+
+type ResultCount {
+  count: Int
 }
 
 # C O N N E C T I O N   T Y P E S
