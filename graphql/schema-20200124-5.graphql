@@ -38,12 +38,12 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(limit: Int, offset: Int, searchText: String): [Flag]
-  countFlags(searchText: String): ResultCount
+  listFlags(limit: Int, offset: Int, searchText: String, status: String): [Flag]
+  countFlags(searchText: String, status: String): ResultCount
 
   # UncloggerPrompt
-  listUncloggerPrompts(limit: Int, offset: Int, searchText: String): [UncloggerPrompt]
-  countUncloggerPrompts(searchText: String): ResultCount
+  listUncloggerPrompts(limit: Int, offset: Int, searchText: String, status: String): [UncloggerPrompt]
+  countUncloggerPrompts(searchText: String, status: String): ResultCount
 }
 
 # M U T A T I O N S
