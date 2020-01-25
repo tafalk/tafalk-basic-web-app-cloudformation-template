@@ -38,12 +38,12 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(limit: Int, offset: Int, searchText: String, status: String): [Flag]
-  countFlags(searchText: String, status: String): ResultCount
+  listFlags(limit: Int, offset: Int, searchText: String, status: FlagApprovalStatus): [Flag]
+  countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
 
   # UncloggerPrompt
-  listUncloggerPrompts(limit: Int, offset: Int, searchText: String, status: String): [UncloggerPrompt]
-  countUncloggerPrompts(searchText: String, status: String): ResultCount
+  listUncloggerPrompts(limit: Int, offset: Int, searchText: String, status: UncloggerPromptApprovalStatus): [UncloggerPrompt]
+  countUncloggerPrompts(searchText: String, status: UncloggerPromptApprovalStatus): ResultCount
 }
 
 # M U T A T I O N S
@@ -229,7 +229,7 @@ input UpdateFlagContentInput {
 input UpdateFlagReviewInput {
   id: ID!
   reviewerUserId: String
-  status: ApprovalStatus
+  status: FlagApprovalStatus
   reviewNote: String
 }
 
@@ -242,7 +242,7 @@ input CreateUncloggerPromptInput {
   category: UncloggerPromptCategory!
   body: String!
   language: Language
-  status: ApprovalStatus
+  status: UncloggerPromptApprovalStatus
   creatorUserId: String
 }
 
@@ -251,13 +251,13 @@ input UpdateUncloggerPromptContentInput {
   category: UncloggerPromptCategory
   body: String
   language: Language
-  status: ApprovalStatus
+  status: UncloggerPromptApprovalStatus
 }
 
 input UpdateUncloggerPromptReviewInput {
   id: ID!
   reviewerUserId: String
-  status: ApprovalStatus
+  status: UncloggerPromptApprovalStatus
   reviewNote: String
 }
 
@@ -363,7 +363,7 @@ type Flag {
   detail: String
   reviewerUserId: String
   reviewerUser: User
-  status: String
+  status: FlagApprovalStatus
   reviewNote: String
   createTime: String
   reviewTime: String
@@ -382,7 +382,7 @@ type UncloggerPrompt {
   category: UncloggerPromptCategory!
   body: String!
   language: Language
-  status: ApprovalStatus
+  status: UncloggerPromptApprovalStatus
   creatorUserId: String
   creatorUser: User
   createTime: String
@@ -468,7 +468,14 @@ enum Language {
   tr
 }
 
-enum ApprovalStatus {
+enum UncloggerPromptApprovalStatus {
+  Pending
+  Declined
+  Accepted
+  OnHold
+}
+
+enum FlagApprovalStatus {
   Pending
   Declined
   Accepted
