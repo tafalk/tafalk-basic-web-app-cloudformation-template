@@ -6,7 +6,7 @@
   #set($searchLike = "1=1")
 #end
 #if("$!ctx.args.status" == "")
-  #set($statusEquals = "status='%${ctx.args.status}%'")
+  #set($statusEquals = "status='${ctx.args.status}'")
 #else
   #set($statusEquals = "1=1")
 #end
