@@ -1,23 +1,13 @@
 ## If you modify where clause, please make sure you have modified the query in "countFlags.vm", too
-
-#if("$!ctx.args.searchText" == "")
-  #set($searchLike = "category Like '%${ctx.args.searchText}%' Or type Like '%${ctx.args.searchText}%'")
-#else
-  #set($searchLike = "1=1")
-#end
-
-#if("$!ctx.args.status" == "")
-  #set($statusEquals = "status='${ctx.args.status}'")
-#else
-  #set($statusEquals = "1=1")
-#end
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from Flags Where ${searchLike} And ${statusEquals} Order By id Limit :limit Offset :offset"
+    "Select * from Flags Where (:searchText='' Or (category Like Concat('%', :searchText, '%') Or type Like Concat('%', :searchText, '%'))) And (:status='' Or status=':status' ) Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
-    ":offset": $util.defaultIfNull(${ctx.args.offset}, 0)
+    ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
+    ":searchText": $util.defaultIfNull(${ctx.args.searchText}, ""),
+    ":status": $util.defaultIfNull(${ctx.args.status}, "")
   }
 }
