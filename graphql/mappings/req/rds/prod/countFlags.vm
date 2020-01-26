@@ -2,10 +2,10 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from Flags Where Where (:searchText='' Or (category Like Concat('%', :searchText, '%') Or type Like Concat('%', :searchText, '%'))) And (:status='' Or status=':status' )"
+    "Select * from Flags Where Where (IsNull(:searchText, '')='' Or (category Like Concat('%', :searchText, '%') Or type Like Concat('%', :searchText, '%'))) And (:status='' Or status=:status)"
   ],
   "variableMap": {
-    ":searchText": $util.defaultIfNull(${ctx.args.searchText}, ""),
-    ":status": $util.defaultIfNull(${ctx.args.status}, "")
+    ":searchText": "$ctx.args.searchText",
+    ":status": "$ctx.args.status"
   }
 }

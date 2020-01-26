@@ -2,12 +2,12 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from UncloggerPrompts Where (:searchText='' Or (category Like Concat('%', :searchText, '%') Or body Like Concat('%', :searchText, '%'))) And (:status='' Or status=':status' ) Order By id Limit :limit Offset :offset"
+    "Select * from UncloggerPrompts Where (IsNull(:searchText, '')='' Or (category Like Concat('%', :searchText, '%') Or body Like Concat('%', :searchText, '%'))) And (:status='' Or status=:status) Order By id Limit :limit Offset :offset"
   ],
   "variableMap": {
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
     ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
-    ":searchText": $util.defaultIfNull(${ctx.args.searchText}, ""),
-    ":status": $util.defaultIfNull(${ctx.args.status}, "")
+    ":searchText": "$ctx.args.searchText",
+    ":status": "$ctx.args.status"
   }
 }
