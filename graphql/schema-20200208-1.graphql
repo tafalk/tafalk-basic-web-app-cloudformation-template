@@ -242,7 +242,6 @@ input CreateUncloggerPromptInput {
   category: UncloggerPromptCategory!
   body: String!
   language: Language
-  status: UncloggerPromptApprovalStatus
   creatorUserId: String
 }
 
@@ -251,7 +250,6 @@ input UpdateUncloggerPromptContentInput {
   category: UncloggerPromptCategory
   body: String
   language: Language
-  status: UncloggerPromptApprovalStatus
 }
 
 input UpdateUncloggerPromptReviewInput {
