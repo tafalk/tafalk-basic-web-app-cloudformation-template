@@ -11,6 +11,8 @@ Parameters:
     Type: String
   DefaultUserGroupName:
     Type: String
+  AdminUserGroupName:
+    Type: String
   UserFilesBucketArn:
     Type: String
 
@@ -79,12 +81,37 @@ Resources:
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess"
 
+  AdminUserGroupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref UserPool
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSAppSyncInvokeFullAccess"
+
   UserPoolDefaultUserGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
       Description: Default User Group
       GroupName: !Ref DefaultUserGroupName
       RoleArn: !GetAtt DefaultUserGroupRole.Arn
+      UserPoolId: !Ref UserPool
+
+  UserPoolAdminUserGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Admin User Group
+      GroupName: !Ref AdminUserGroupName
+      RoleArn: !GetAtt AdminUserGroupRole.Arn
       UserPoolId: !Ref UserPool
 
   # Creates a federeated Identity pool

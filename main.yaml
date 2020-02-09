@@ -339,6 +339,7 @@ Resources:
           Fn::GetAtt: [IAM, Outputs.SNSRoleArn]
         # Should be the same as UserGroup of LambdaFunctionCICDPipeline Stack
         DefaultUserGroupName: !Sub "${ProjectIdentifierName}-default-ug"
+        AdminUserGroupName: !Sub "${ProjectIdentifierName}-admin-ug"
         UserFilesBucketArn:
           Fn::GetAtt: [Storage, Outputs.UserFilesBucketArn]
 
