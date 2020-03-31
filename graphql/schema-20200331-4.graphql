@@ -10,22 +10,35 @@ type Query {
   getUserByUsername(username: String!): User
   listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
   listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
-  listUserInteractionsByActorUserIdIndex(actorUserId: String!, first: Int, after: String): UserInteractionConnection
+  listUserInteractionsByActorUserIdIndex(
+    actorUserId: String!
+    first: Int
+    after: String
+  ): UserInteractionConnection
 
   # Stream
   getStream(id: ID!): Stream
   listSealedStreams(first: Int, after: String): StreamConnection
-  listLiveStreams(first: Int, after: String): StreamConnection @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  listLiveStreams(first: Int, after: String): StreamConnection
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # User interaction
-  queryUserInteractionsBetweenUsersByUserIdIndices(actorUserId: String!, targetUserId: String!): [UserInteraction]
+  queryUserInteractionsBetweenUsersByUserIdIndices(
+    actorUserId: String!
+    targetUserId: String!
+  ): [UserInteraction]
 
   # Stream reaction
   listStreamLikes(streamId: ID!): [Like]
-  listPaginatedStreamComments(streamId: ID!, first: Int, after: String): CommentConnection
+  listPaginatedStreamComments(
+    streamId: ID!
+    first: Int
+    after: String
+  ): CommentConnection
 
   # Search
-  search(query: String!): [SearchResult] @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  search(query: String!): [SearchResult]
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Recaptcha V3 token
   getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
@@ -38,57 +51,97 @@ type Query {
   listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
-  listFlags(limit: Int, offset: Int, searchText: String, status: FlagApprovalStatus): [Flag]
+  listFlags(
+    limit: Int
+    offset: Int
+    searchText: String
+    status: FlagApprovalStatus
+  ): [Flag]
   countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
 
   # UncloggerPrompt
-  listUncloggerPrompts(limit: Int, offset: Int, searchText: String, status: UncloggerPromptApprovalStatus): [UncloggerPrompt]
-  countUncloggerPrompts(searchText: String, status: UncloggerPromptApprovalStatus): ResultCount
+  listUncloggerPrompts(
+    limit: Int
+    offset: Int
+    searchText: String
+    status: UncloggerPromptApprovalStatus
+  ): [UncloggerPrompt]
+  countUncloggerPrompts(
+    searchText: String
+    status: UncloggerPromptApprovalStatus
+  ): ResultCount
+  getRandomUncloggerPrompt(
+    category: UncloggerPromptCategory
+    language: Language
+  ): UncloggerPrompt
 }
 
 # M U T A T I O N S
 type Mutation {
   # User
-  updateUser(input: UpdateUserInput!): User @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUser(input: UpdateUserInput!): User
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   deleteUser(input: DeleteUserInput!): User
 
   # Stream
-  createStream(input: CreateStreamInput!): Stream @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateStream(input: UpdateStreamInput!): Stream  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createStream(input: CreateStreamInput!): Stream
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateStream(input: UpdateStreamInput!): Stream
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # User interaction
-  createUserInteraction(input: CreateUserInteractionInput!): UserInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createUserInteraction(input: CreateUserInteractionInput!): UserInteraction
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Stream reaction
-  createLike(input: CreateLikeInput!): Like @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateLikeIndices(input: UpdateLikeIndicesInput): Like @aws_auth(cognito_groups: ["tafalk-default-ug"]) 
-  createComment(input: CreateCommentInput!): Comment @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  deleteLike(input: DeleteLikeInput!): Like @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createLike(input: CreateLikeInput!): Like
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateLikeIndices(input: UpdateLikeIndicesInput): Like
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createComment(input: CreateCommentInput!): Comment
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  deleteLike(input: DeleteLikeInput!): Like
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Flag
-  createFlag(input: CreateFlagInput!): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateFlagContent(input: UpdateFlagContentInput): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateFlagReview(input: UpdateFlagReviewInput): Flag @aws_auth(cognito_groups: ["tafalk-admin-ug"])
-  deleteFlag(input: DeleteFlagInput!): Flag @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createFlag(input: CreateFlagInput!): Flag
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateFlagContent(input: UpdateFlagContentInput): Flag
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateFlagReview(input: UpdateFlagReviewInput): Flag
+    @aws_auth(cognito_groups: ["tafalk-admin-ug"])
+  deleteFlag(input: DeleteFlagInput!): Flag
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Canto
-  createCanto(input: CreateCantoInput!): Canto @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateCanto(input: UpdateCantoInput!): Canto  @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createCanto(input: CreateCantoInput!): Canto
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateCanto(input: UpdateCantoInput!): Canto
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # UncloggerPrompt
-  createUncloggerPrompt(input: CreateUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateUncloggerPromptContent(input: UpdateUncloggerPromptContentInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateUncloggerPromptReview(input: UpdateUncloggerPromptReviewInput!): UncloggerPrompt  @aws_auth(cognito_groups: ["tafalk-admin-ug"])
-  deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  createUncloggerPrompt(input: CreateUncloggerPromptInput!): UncloggerPrompt
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUncloggerPromptContent(
+    input: UpdateUncloggerPromptContentInput!
+  ): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateUncloggerPromptReview(
+    input: UpdateUncloggerPromptReviewInput!
+  ): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-admin-ug"])
+  deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
 # S U B S C R I P T I O N S
 type Subscription {
-  onUpdateStream(id: ID!): Stream @aws_subscribe(mutations : ["updateStream"])
-  onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations : ["updateCanto"])
-  onCreateOrDeleteLike(streamId: String cantoId: String): Like @aws_subscribe(mutations : ["createLike", "deleteLike", "updateLikeIndices"])
-  onCreateOrDeleteFlag(contentId: String): Flag @aws_subscribe(mutations : ["createFlag", "deleteFlag"])
+  onUpdateStream(id: ID!): Stream @aws_subscribe(mutations: ["updateStream"])
+  onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations: ["updateCanto"])
+  onCreateOrDeleteLike(streamId: String, cantoId: String): Like
+    @aws_subscribe(mutations: ["createLike", "deleteLike", "updateLikeIndices"])
+  onCreateOrDeleteFlag(contentId: String): Flag
+    @aws_subscribe(mutations: ["createFlag", "deleteFlag"])
 }
 
 # I N T E R F A C E S
@@ -334,7 +387,7 @@ type Like implements CommunityReaction {
   stream: Stream
   streamId: String
   canto: Canto
-  cantoId: String  
+  cantoId: String
   time: String
   indices: String
   userId: String!

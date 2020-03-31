@@ -1,0 +1,10 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from UncloggerPrompts Where (:category='' Or category=:category) And (:language='' Or language=:language) Order By RAND()"
+  ],
+  "variableMap": {
+    ":category": "$util.defaultIfNullOrEmpty($ctx.args.category, '')",
+    ":language": "$util.defaultIfNullOrEmpty($ctx.args.language, '')"
+  }
+}

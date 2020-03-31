@@ -60,7 +60,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200208-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200331-4.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -157,7 +157,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       Name: resource_searcher_ds
       Description: "The Resource-Searcher Function AppSync Data Source"
-      Type:  AWS_LAMBDA
+      Type: AWS_LAMBDA
       ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
       LambdaConfig:
         LambdaFunctionArn: !Ref ResourceSearcherFunctionArn
@@ -168,7 +168,7 @@ Resources:
       ApiId: !GetAtt AppSyncApi.ApiId
       Name: recaptcha_token_resolver_ds
       Description: "The Recaptcha-Token-Resolver Function AppSync Data Source"
-      Type:  AWS_LAMBDA
+      Type: AWS_LAMBDA
       ServiceRoleArn: !Ref AppSyncResourceLambdaRoleArn
       LambdaConfig:
         LambdaFunctionArn: !Ref RecaptchaTokenResolverFunctionArn
@@ -343,6 +343,16 @@ Resources:
       FieldName: countUncloggerPrompts
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countUncloggerPrompts.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+
+  GetRandomUncloggerPromptResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getRandomUncloggerPrompt
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getRandomUncloggerPrompt.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   ListCantosResolver:
