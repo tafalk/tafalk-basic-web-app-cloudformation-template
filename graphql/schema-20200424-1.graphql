@@ -323,7 +323,7 @@ type User {
   bio: String
   birthDate: String!
   cognitoIdentityId: String
-  comments: CommentConnection
+  committedComments: CommentConnection
   createdAt: String
   email: String
   id: ID!
