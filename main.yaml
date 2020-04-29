@@ -32,10 +32,6 @@ Parameters:
     Description: The bucket name at which the templates reside
     Type: String
     Default: tafalk-cloudformation-templates
-  TemplateS3Bucket:
-    Description: The bucket address at which the templates reside
-    Type: String
-    Default: https://s3.eu-west-1.amazonaws.com/tafalk-cloudformation-templates
   # Networking
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -94,32 +90,42 @@ Parameters:
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
   # Repositories
+  GitHubOwner:
+    Type: String
+    Default: tafalk
+    Description: The name of the GitHub user or organization who owns the GitHub repository.
+  GitHubOAuthToken:
+    Type: String
+    NoEcho: true
+    MinLength: 40
+    MaxLength: 40
+    AllowedPattern: "[a-z0-9]*"
   CognitoUserExporterFunctionRepositoryName:
-    Description: CodeCommit repository for post-confirm user importer function
+    Description: Repository name for post-confirm user importer function
     Type: String
     Default: cognito-user-exporter-function
   TokenResolverFunctionRepositoryName:
-    Description: CodeCommit repository for token resolver function
+    Description: Repository name for token resolver function
     Type: String
     Default: recaptcha-token-resolver-function
   ResourceSearcherFunctionRepositoryName:
-    Description: CodeCommit repository for resource searcher function
+    Description: Repository name for resource searcher function
     Type: String
     Default: resource-searcher-function
   CertificateDelegatingFunctionRepositoryName:
-    Description: CodeCommit repository for ACM certificate delegating function
+    Description: Repository name for ACM certificate delegating function
     Type: String
     Default: certificate-delegating-function
   SitePoliciesRepositoryName:
-    Description: CodeCommit repository for site policies
+    Description: Repository name for site policies
     Type: String
-    Default: site-files
+    Default: site-policies
   SiteFilesRepositoryName:
-    Description: CodeCommit repository for site files
+    Description: Repository name for site files
     Type: String
     Default: site-files
   RdsBootstrapFunctionRepositoryName:
-    Description: CodeCommit repository for RDS Bootstrap function
+    Description: Repository name for RDS Bootstrap function
     Type: String
     Default: rds-bootstrap-function
   RepositoryBranchName:
@@ -194,6 +200,18 @@ Resources:
       Description: "The Recaptcha Secret"
 
   ## Secrets Manager
+  # Github
+  FunctionGithubOauthTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '/${Environment}/FunctionGithubOauthTokenSecret'
+      Description: This is a secret for the Github Personal Access Token
+      SecretString: !Sub '{"token":"${GitHubOAuthToken}"}'
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: !Ref Project
   # RDS
   AuroraMysqlAppCredentialSecretStore:
     Type: AWS::SecretsManager::Secret
@@ -213,7 +231,7 @@ Resources:
   IAM:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "iam.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/iam.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -222,7 +240,7 @@ Resources:
   Network:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "network.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/network.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -239,7 +257,7 @@ Resources:
   Data:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "data.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/data.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -257,7 +275,7 @@ Resources:
   Storage:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "storage.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/storage.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -269,7 +287,7 @@ Resources:
   LambdaFunctionCICDPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "build.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/build.yaml
       Parameters:
         # Common
         ProjectIdentifierName: !Ref ProjectIdentifierName
@@ -277,12 +295,14 @@ Resources:
         BranchName: !Ref RepositoryBranchName
         LambdaArtifactStoreBucket:
           Fn::GetAtt: [Storage, Outputs.FunctionDeploymentsBucket]
-        CodeCommitRepoCodeBuildRoleArn:
+        CodeBuildRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodeBuildRoleArn]
-        CodeCommitRepoCodePipelineRoleArn:
+        CodePipelineRoleArn:
           Fn::GetAtt: [IAM, Outputs.CodePipelineRoleArn]
         LambdaManagerCloudFormationRoleArn:
           Fn::GetAtt: [IAM, Outputs.LambdaManagerCloudFormationRoleArn]
+        GitHubOwner: !Ref GitHubOwner
+        FunctionGithubOauthTokenSecret: !Ref FunctionGithubOauthTokenSecret
         # CognitoUserExporter
         CognitoUserExporterFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-user-exporter"
         CognitoUserExporterFunctionRepositoryName: !Ref CognitoUserExporterFunctionRepositoryName
@@ -329,7 +349,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     DependsOn: LambdaFunctionCICDPipeline
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "cognito-auth.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/cognito-auth.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -346,7 +366,7 @@ Resources:
   AppSync:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "appsync.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/appsync.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
@@ -385,7 +405,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: CreateWebServing
     Properties:
-      TemplateURL: !Join ["/", [ !Ref TemplateS3Bucket, "webserving.yaml"]]
+      TemplateURL: !Sub https://${TemplateS3BucketName}.s3.${AWS::Region}.amazonaws.com/webserving.yaml
       Parameters:
         ProjectIdentifierName: !Ref ProjectIdentifierName
         EnvironmentName: !Ref EnvironmentName
