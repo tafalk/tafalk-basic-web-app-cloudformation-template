@@ -1,5 +1,4 @@
-Description:
-  Root level stack
+Description: Root level stack
 Parameters:
   ProjectIdentifierName:
     Description: An prefix that will be added to resource names (e.g. project name)
@@ -40,7 +39,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PublicSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
     Type: String
@@ -48,7 +47,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PublicSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
     Type: String
@@ -56,7 +55,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PrivateSupportSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the support private subnet (DB, cache etc.) in the first Availability Zone
     Type: String
@@ -64,7 +63,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PrivateSupportSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the support private subnet (DB, cache etc.) in the second Availability Zone
     Type: String
@@ -72,7 +71,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PrivateComputeSubnet1CIDR:
     Description: Please enter the IP range (CIDR notation) for the compute private subnet (Lambda, EC2 etc.) in the first Availability Zone
     Type: String
@@ -80,7 +79,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   PrivateComputeSubnet2CIDR:
     Description: Please enter the IP range (CIDR notation) for the compute private subnet (Lambda, EC2 etc.) in the second Availability Zone
     Type: String
@@ -88,7 +87,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
-    ConstraintDescription : Must be a valid CIDR range of the form x.x.x.x/x.
+    ConstraintDescription: Must be a valid CIDR range of the form x.x.x.x/x.
   # Repositories
   GitHubOwner:
     Type: String
@@ -163,12 +162,12 @@ Parameters:
     AllowedValues:
       - us-east-1
     Default: us-east-1
-    ConstraintDescription : AWS needs cert to be strictly in N.Virgina for Cloudfront usage
+    ConstraintDescription: AWS needs cert to be strictly in N.Virgina for Cloudfront usage
   # RDS
   AuroraMysqlEngineVersion:
     Description: The version of the AWS Aurora Engine for MySql
     Type: String
-    Default: '5.6.10a'
+    Default: "5.6.10a"
   AuroraMysqlMasterUsername:
     Description: The username for the AWS Aurora DB
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]*$
@@ -186,7 +185,7 @@ Parameters:
     NoEcho: true
 
 Conditions:
-  CreateWebServing: !Equals [ !Ref WebServingRequirement, "true" ]
+  CreateWebServing: !Equals [!Ref WebServingRequirement, "true"]
 
 Resources:
   ## Parameter Store
@@ -204,14 +203,14 @@ Resources:
   FunctionGithubOauthTokenSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub '/${Environment}/FunctionGithubOauthTokenSecret'
+      Name: !Sub "/${Environment}/FunctionGithubOauthTokenSecret"
       Description: This is a secret for the Github Personal Access Token
       SecretString: !Sub '{"token":"${GitHubOAuthToken}"}'
       Tags:
         - Key: Environment
-          Value: !Ref Environment
+          Value: !Ref EnvironmentName
         - Key: Application
-          Value: !Ref Project
+          Value: !Ref ProjectIdentifierName
   # RDS
   AuroraMysqlAppCredentialSecretStore:
     Type: AWS::SecretsManager::Secret
@@ -266,11 +265,10 @@ Resources:
         AuroraMysqlMasterUserPassword: !Ref AuroraMysqlMasterUserPassword
         ApprovalDbClusterIdentifier: approvalcluster-1
         ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
-        AuroraMysqlDBSubnetGroupNames:
-          !Join
-            - ","
-            - - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
-              - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet2]
+        AuroraMysqlDBSubnetGroupNames: !Join
+          - ","
+          - - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet1]
+            - Fn::GetAtt: [Network, Outputs.PrivateSupportSubnet2]
 
   Storage:
     Type: AWS::CloudFormation::Stack
@@ -396,10 +394,8 @@ Resources:
         ApprovalDbClusterIdentifier: approvalcluster-1
         ApprovalDbName: !Sub ${EnvironmentName}_ApprovalDb
         AuroraMysqlCredentialsSecret: !Ref AuroraMysqlAppCredentialSecretStore
-        RecaptchaTokenResolverFunctionArn:
-          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
-        ResourceSearcherFunctionArn:
-          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
+        RecaptchaTokenResolverFunctionArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
+        ResourceSearcherFunctionArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-resource-searcher"
 
   WebServing:
     Type: AWS::CloudFormation::Stack
@@ -411,5 +407,4 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         DomainName: !Ref DomainName
         ZohoCname: !Ref ZohoCname
-        CertificateDelegatingFunctionArn:
-          !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
+        CertificateDelegatingFunctionArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProjectIdentifierName}-${EnvironmentName}-certificate-delegate"
