@@ -50,6 +50,12 @@ The user is expected to supply some parameters and some of those parameters requ
 
 13. Create an S3 bucket and copy all the `yaml` files and the graphql folder (the bucket also should have a `graphql` folder) within this repository. We are going to address that location for stack creation.
 
+14. [Create](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line#creating-a-token) and note down a Github personal access token: we will use it for `GitHubOAuthToken`. The token should have scopes:
+
+    - repo
+    - repo:status
+    - admin:repo_hook
+
 ## Creating the stack
 
 ### Console
