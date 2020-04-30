@@ -32,17 +32,17 @@ The user is expected to supply some parameters and some of those parameters requ
 
 4. Create an EC2 key-pair for assigning to the NAT instance.
 
-5. Create a AWS CodeCommit repository for the Lambda function triggered when a user confirms his/her authentication. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/cognito-user-exporter-function/browse?region=eu-west-1)
+5. Create a GitHub repository for the Lambda function triggered when a user confirms his/her authentication. A sample is [here](https://github.com/tafalk/cognito-user-exporter-function/)
 
-6. Create a AWS CodeCommit repository for the Lambda function used for getting Google Recaptcha V3 token. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/recaptcha-token-resolver-function/browse?region=eu-west-1)
+6. Create a GitHub repository for the Lambda function used for getting Google Recaptcha V3 token. A sample is [here](https://github.com/tafalk/recaptcha-token-resolver-function/)
 
-7. Create a AWS CodeCommit repository for the Lambda function for achieving complex queries for resources. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/resource-searcher-function/browse?region=eu-west-1)
+7. Create a GitHub repository for the Lambda function for achieving complex queries for resources. A sample is [here](https://github.com/tafalk/resource-searcher-function/)
 
-8. Create a AWS CodeCommit repository for the static html files for keeping privacy policy and terms of use html files. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/site-policies/browse?region=eu-west-1)
+8. Create a GitHub repository for the static html files for keeping privacy policy and terms of use html files. A sample is [here](https://github.com/tafalk/site-policies/)
 
-9. Create a AWS CodeCommit repository for creating RDS tables. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/rds-bootstrap-function/browse?region=eu-west-1)
+9. Create a GitHub repository for creating RDS tables. A sample is [here](https://github.com/tafalk/rds-bootstrap-function/)
 
-10. Create a AWS CodeCommit repository for handling certificate validation. A sample is [here](https://eu-west-1.console.aws.amazon.com/codesuite/codecommit/repositories/certificate-delegating-function/browse?region=eu-west-1)
+10. Create a GitHub repository for handling certificate validation. A sample is [here](https://github.com/tafalk/certificate-delegating-function/)
 
 11. Get a domain for your website. [Amazon Route53](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) can be used to do that
 
@@ -55,12 +55,12 @@ The user is expected to supply some parameters and some of those parameters requ
 ### Console
 
 - Sign in to AWS Console.
-  
+
 - Go to CloudFormation page and click **Create Stack** button.
 
-  - Choose **Template is ready** option for *Prerequisite - Prepare template*
+  - Choose **Template is ready** option for _Prerequisite - Prepare template_
 
-  - Choose **Amazon S3** for *Template Source*.
+  - Choose **Amazon S3** for _Template Source_.
 
 - We are going to enter the HTTP URL of the `main.yaml` file we have uploaded among the other ones. It should look like:
 
@@ -105,15 +105,15 @@ This will create UncloggerPrompt and Flag tables
 
 The created Route 53 hosted zone may arbitrarily create the name servers (NS). And this may lead to problems in certificate validation.
 
-Not to encounter such cases, from the AWS Console, you have to update *Registered Domain name servers*:
+Not to encounter such cases, from the AWS Console, you have to update _Registered Domain name servers_:
 
 - Sign in to the [console](https://console.aws.amazon.com) and go to **Route 53** service.
 
-- From the left pane, click *Hosted Zones*.
+- From the left pane, click _Hosted Zones_.
 
-- In the next window, click on your domain. **Note down** the value for the *record set* with type `NS` -typically four name servers.
+- In the next window, click on your domain. **Note down** the value for the _record set_ with type `NS` -typically four name servers.
 
-- From the left pane, click *Registered Domains*.
+- From the left pane, click _Registered Domains_.
 
 - In the next window, click on your domain.
 
@@ -127,7 +127,7 @@ See the [docs](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/migrate
 
 #### [Not anymore] ACM certificate validation
 
-Thanks to rhboyd's great  [Custom Resource ACM](https://github.com/rhboyd/CustomResourceACM/) certificae validation (i.e. adding CNAME to domain) can be done automatically now.
+Thanks to rhboyd's great [Custom Resource ACM](https://github.com/rhboyd/CustomResourceACM/) certificae validation (i.e. adding CNAME to domain) can be done automatically now.
 
 ## See also
 
