@@ -203,7 +203,7 @@ Resources:
   FunctionGithubOauthTokenSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub "/${Environment}/FunctionGithubOauthTokenSecret"
+      Name: !Sub "/${EnvironmentName}/FunctionGithubOauthTokenSecret"
       Description: This is a secret for the Github Personal Access Token
       SecretString: !Sub '{"token":"${GitHubOAuthToken}"}'
       Tags:
