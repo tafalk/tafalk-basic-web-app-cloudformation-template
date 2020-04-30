@@ -91,7 +91,7 @@ Resources:
   CognitoUserExporterFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-bld"
       Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -110,7 +110,7 @@ Resources:
   RecaptchaResolverFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-recaptcha-resolver-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-recaptcha-resolver-func-bld"
       Description: Used to build recaptcha resolver function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -129,7 +129,7 @@ Resources:
   ResourceSearcherFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-resource-searcher-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-resource-searcher-func-bld"
       Description: Used to build resource searcher function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -148,7 +148,7 @@ Resources:
   CertificateDelegatingFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-cert-delegate-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-cert-delegate-func-bld"
       Description: Used to build certificate delegating function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -167,7 +167,7 @@ Resources:
   RDSBootstrapperFunctionBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-func-build-proj"
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-func-bld"
       Description: Used to build RDS Bootstrap function from the CodeCommit Repo
       Source:
         Type: CODEPIPELINE
@@ -187,7 +187,7 @@ Resources:
   CognitoUserExporterFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-user-exporter-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-user-exporter-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -235,7 +235,7 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-user-exporter-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-user-exporter-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "UEBuild::output-template.yaml"
@@ -256,7 +256,7 @@ Resources:
   RecaptchaResolverFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-recaptcha-resolver-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-recaptcha-resolver-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -304,7 +304,7 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-recaptcha-resolver-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-recaptcha-resolver-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "RRBuild::output-template.yaml"
@@ -325,7 +325,7 @@ Resources:
   ResourceSearcherFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-resource-searcher-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-resource-searcher-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -373,7 +373,7 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-resource-searcher-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-resource-searcher-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "RSBuild::output-template.yaml"
@@ -395,7 +395,7 @@ Resources:
   CertificateDelegatingFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-cert-delegating-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-cert-delegating-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -443,7 +443,7 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-cert-delegate-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-cert-delegate-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "CDBuild::output-template.yaml"
@@ -463,7 +463,7 @@ Resources:
   RDSBootstrapperFunctionPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -511,7 +511,7 @@ Resources:
                 Provider: CloudFormation
                 Version: "1"
               Configuration:
-                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrapper-deploy-stack"
+                StackName: !Sub "${ProjectIdentifierName}-rds-bootstrapper-stack"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: "DBBuild::output-template.yaml"
@@ -538,7 +538,7 @@ Resources:
   SitePoliciesPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-site-policies-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-site-policies-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -580,7 +580,7 @@ Resources:
   SiteFilesPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: !Sub "${ProjectIdentifierName}-site-files-pipeline"
+      Name: !Sub "${ProjectIdentifierName}-site-files-pl"
       RoleArn: !Ref CodePipelineRoleArn
       ArtifactStore:
         Type: S3
@@ -591,8 +591,8 @@ Resources:
           Actions:
             - Name: FetchSource
               ActionTypeId:
-                Category: ThirdParty
-                Owner: AWS
+                Category: Source
+                Owner: ThirdParty
                 Version: "1"
                 Provider: GitHub
               OutputArtifacts:

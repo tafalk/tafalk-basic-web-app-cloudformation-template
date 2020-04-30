@@ -45,7 +45,6 @@ Resources:
     Type: AWS::AppSync::GraphQLApi
     Properties:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-api"
-      # AuthenticationType: API_KEY
       AuthenticationType: AMAZON_COGNITO_USER_POOLS
       UserPoolConfig:
         UserPoolId: !Ref UserPoolId
@@ -60,7 +59,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200424-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200430-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
