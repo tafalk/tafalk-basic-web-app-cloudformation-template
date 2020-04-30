@@ -32,29 +32,31 @@ The user is expected to supply some parameters and some of those parameters requ
 
 4. Create an EC2 key-pair for assigning to the NAT instance.
 
-5. Create a GitHub repository for the Lambda function triggered when a user confirms his/her authentication. A sample is [here](https://github.com/tafalk/cognito-user-exporter-function/)
+5. [Create](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line#creating-a-token) and note down a Github personal access token: we will use it for `GitHubOAuthToken`. The token should have scopes:
 
-6. Create a GitHub repository for the Lambda function used for getting Google Recaptcha V3 token. A sample is [here](https://github.com/tafalk/recaptcha-token-resolver-function/)
+   - repo
+   - repo:status
+   - admin:repo_hook
 
-7. Create a GitHub repository for the Lambda function for achieving complex queries for resources. A sample is [here](https://github.com/tafalk/resource-searcher-function/)
+6. Create:
 
-8. Create a GitHub repository for the static html files for keeping privacy policy and terms of use html files. A sample is [here](https://github.com/tafalk/site-policies/)
+   1. A GitHub repository for the Lambda function triggered when a user confirms xer authentication. A sample is [here](https://github.com/tafalk/cognito-user-exporter-function/)
 
-9. Create a GitHub repository for creating RDS tables. A sample is [here](https://github.com/tafalk/rds-bootstrap-function/)
+   2. A GitHub repository for the Lambda function used for getting Google Recaptcha V3 token. A sample is [here](https://github.com/tafalk/recaptcha-token-resolver-function/)
 
-10. Create a GitHub repository for handling certificate validation. A sample is [here](https://github.com/tafalk/certificate-delegating-function/)
+   3. A GitHub repository for the Lambda function for achieving complex queries for resources. A sample is [here](https://github.com/tafalk/resource-searcher-function/)
 
-11. Get a domain for your website. [Amazon Route53](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) can be used to do that
+   4. A GitHub repository for the static html files for keeping privacy policy and terms of use html files. A sample is [here](https://github.com/tafalk/site-policies/)
 
-12. Get a site-specific email address from ZohoMail. [CNAME for mail verification](https://www.zoho.com/mail/help/adminconsole/domain-verification.html#alink4) is also needed in parameters
+   5. A GitHub repository for creating RDS tables. A sample is [here](https://github.com/tafalk/rds-bootstrap-function/)
 
-13. Create an S3 bucket and copy all the `yaml` files and the graphql folder (the bucket also should have a `graphql` folder) within this repository. We are going to address that location for stack creation.
+   6. A GitHub repository for handling certificate validation. A sample is [here](https://github.com/tafalk/certificate-delegating-function/)
 
-14. [Create](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line#creating-a-token) and note down a Github personal access token: we will use it for `GitHubOAuthToken`. The token should have scopes:
+7. Get a domain for your website. [Amazon Route53](https://aws.amazon.com/getting-started/tutorials/get-a-domain/) can be used to do that
 
-    - repo
-    - repo:status
-    - admin:repo_hook
+8. Get a site-specific email address from ZohoMail. [CNAME for mail verification](https://www.zoho.com/mail/help/adminconsole/domain-verification.html#alink4) is also needed in parameters
+
+9. Create an S3 bucket and copy all the `yaml` files and the graphql folder (the bucket also should have a `graphql` folder) within this repository. We are going to address that location for stack creation.
 
 ## Creating the stack
 
