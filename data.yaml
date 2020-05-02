@@ -352,7 +352,7 @@ Resources:
         MinCapacity: 2
         SecondsUntilAutoPause: 300
       DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
-      Tags:InteractionDBSubnetGroup
+      Tags:
         - Key: Name
           Value: Approval
         - Key: Environment
