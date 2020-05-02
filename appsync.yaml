@@ -783,7 +783,7 @@ Resources:
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: Canto
-      FieldName: flags
+      FieldName: flagCount
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countFlagsOfCanto.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
