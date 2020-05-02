@@ -1,0 +1,13 @@
+## If you modify where clause, please make sure you have modified the query in "countFlags.vm", too
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from Comments Where (:contentId='' Or contentId=:contentId) And (:contentType='' Or contentType=:contentType) Order By time Desc Limit :limit Offset :offset"
+  ],
+  "variableMap": {
+    ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
+    ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
+    ":contentId": "$util.defaultIfNullOrEmpty($ctx.args.contentId, '')",
+    ":contentType": "$util.defaultIfNullOrEmpty($ctx.args.contentType, '')"
+  }
+}

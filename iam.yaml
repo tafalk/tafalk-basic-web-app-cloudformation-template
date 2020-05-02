@@ -1,5 +1,4 @@
-Description:
-  This template deploys IAM roles for the application
+Description: This template deploys IAM roles for the application
 
 Parameters:
   ProjectIdentifierName:
@@ -7,6 +6,8 @@ Parameters:
   EnvironmentName:
     Type: String
   ApprovalDbClusterIdentifier:
+    Type: String
+  InteractionDbClusterIdentifier:
     Type: String
 
 Resources:
@@ -116,34 +117,34 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - "codebuild.amazonaws.com"
-          Action:
-          - "sts:AssumeRole"
+          - Effect: Allow
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
       Policies:
-      - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-policy"
-        PolicyDocument:
-          Version: "2012-10-17"
-          Statement:
-          - Effect: Allow
-            Action:
-              - "logs:CreateLogGroup"
-              - "logs:CreateLogStream"
-              - "logs:PutLogEvents"
-            Resource: "*"
-          - Effect: Allow
-            Action: "codecommit:GitPull"
-            Resource: "*"
-          - Effect: Allow
-            Action:
-              - "s3:GetObject"
-              - "s3:GetObjectVersion"
-            Resource: "*"
-          - Effect: "Allow"
-            Action: "s3:PutObject"
-            Resource: "*"
+        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-internal-codebuild-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codecommit:GitPull"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:GetObjectVersion"
+                Resource: "*"
+              - Effect: "Allow"
+                Action: "s3:PutObject"
+                Resource: "*"
 
   AppSyncLogRole:
     Type: AWS::IAM::Role
@@ -224,6 +225,8 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${ApprovalDbClusterIdentifier}"
                   - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${ApprovalDbClusterIdentifier}:*"
+                  - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${InteractionDbClusterIdentifier}"
+                  - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:${InteractionDbClusterIdentifier}:*"
               - Effect: "Allow"
                 Action:
                   - "secretsmanager:GetSecretValue"

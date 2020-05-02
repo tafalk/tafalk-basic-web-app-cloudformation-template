@@ -1,5 +1,4 @@
-Description:
-  This template deploys Datasources for the app
+Description: This template deploys Datasources for the app
 
 Parameters:
   ProjectIdentifierName:
@@ -9,6 +8,10 @@ Parameters:
   ApprovalDbClusterIdentifier:
     Type: String
   ApprovalDbName:
+    Type: String
+  InteractionDbClusterIdentifier:
+    Type: String
+  InteractionDbName:
     Type: String
   AuroraMysqlEngineVersion:
     Type: String
@@ -157,160 +160,171 @@ Resources:
         - Key: Application
           Value: !Ref ProjectIdentifierName
 
-  UserInteractionTable:
-    DependsOn: StreamTable
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub ${EnvironmentName}_UserInteractions
-      BillingMode: PROVISIONED
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "targetUserId"
-          AttributeType: "S"
-        - AttributeName: "actorUserId"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: targetUserId-index
-          KeySchema:
-            - AttributeName: targetUserId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: actorUserId-index
-          KeySchema:
-            - AttributeName: actorUserId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      Tags:
-        - Key: Name
-          Value: UserInteractions
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+  # UserInteractionTable:
+  #   DependsOn: StreamTable
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: !Sub ${EnvironmentName}_UserInteractions
+  #     BillingMode: PROVISIONED
+  #     AttributeDefinitions:
+  #       - AttributeName: "id"
+  #         AttributeType: "S"
+  #       - AttributeName: "targetUserId"
+  #         AttributeType: "S"
+  #       - AttributeName: "actorUserId"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: targetUserId-index
+  #         KeySchema:
+  #           - AttributeName: targetUserId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #       - IndexName: actorUserId-index
+  #         KeySchema:
+  #           - AttributeName: actorUserId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
+  #     Tags:
+  #       - Key: Name
+  #         Value: UserInteractions
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
 
-  CommentTable:
-    DependsOn: UserInteractionTable
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub ${EnvironmentName}_Comments
-      BillingMode: PROVISIONED
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "streamId"
-          AttributeType: "S"
-        - AttributeName: "userId"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: streamId-index
-          KeySchema:
-            - AttributeName: streamId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: userId-index
-          KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      Tags:
-        - Key: Name
-          Value: Comments
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+  # CommentTable:
+  #   DependsOn: UserInteractionTable
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: !Sub ${EnvironmentName}_Comments
+  #     BillingMode: PROVISIONED
+  #     AttributeDefinitions:
+  #       - AttributeName: "id"
+  #         AttributeType: "S"
+  #       - AttributeName: "streamId"
+  #         AttributeType: "S"
+  #       - AttributeName: "userId"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: streamId-index
+  #         KeySchema:
+  #           - AttributeName: streamId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #       - IndexName: userId-index
+  #         KeySchema:
+  #           - AttributeName: userId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
+  #     Tags:
+  #       - Key: Name
+  #         Value: Comments
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
 
-  LikeTable:
-    DependsOn: CommentTable
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub ${EnvironmentName}_Likes
-      BillingMode: PROVISIONED
-      AttributeDefinitions:
-        - AttributeName: "id"
-          AttributeType: "S"
-        - AttributeName: "streamId"
-          AttributeType: "S"
-        - AttributeName: "cantoId"
-          AttributeType: "S"
-        - AttributeName: "userId"
-          AttributeType: "S"
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: streamId-index
-          KeySchema:
-            - AttributeName: streamId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: cantoId-index
-          KeySchema:
-            - AttributeName: cantoId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: userId-index
-          KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      Tags:
-        - Key: Name
-          Value: Likes
-        - Key: Environment
-          Value: !Ref EnvironmentName
-        - Key: Application
-          Value: !Ref ProjectIdentifierName
+  # LikeTable:
+  #   DependsOn: CommentTable
+  #   Type: AWS::DynamoDB::Table
+  #   Properties:
+  #     TableName: !Sub ${EnvironmentName}_Likes
+  #     BillingMode: PROVISIONED
+  #     AttributeDefinitions:
+  #       - AttributeName: "id"
+  #         AttributeType: "S"
+  #       - AttributeName: "streamId"
+  #         AttributeType: "S"
+  #       - AttributeName: "cantoId"
+  #         AttributeType: "S"
+  #       - AttributeName: "userId"
+  #         AttributeType: "S"
+  #     KeySchema:
+  #       - AttributeName: id
+  #         KeyType: HASH
+  #     GlobalSecondaryIndexes:
+  #       - IndexName: streamId-index
+  #         KeySchema:
+  #           - AttributeName: streamId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #       - IndexName: cantoId-index
+  #         KeySchema:
+  #           - AttributeName: cantoId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #       - IndexName: userId-index
+  #         KeySchema:
+  #           - AttributeName: userId
+  #             KeyType: HASH
+  #         Projection:
+  #           ProjectionType: ALL
+  #         ProvisionedThroughput:
+  #           ReadCapacityUnits: 1
+  #           WriteCapacityUnits: 1
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
+  #     Tags:
+  #       - Key: Name
+  #         Value: Likes
+  #       - Key: Environment
+  #         Value: !Ref EnvironmentName
+  #       - Key: Application
+  #         Value: !Ref ProjectIdentifierName
 
   # DBSubnet Group
   ApprovalDBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: Approval DB Subnet Group
+      SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  InteractionDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Interaction DB Subnet Group
       SubnetIds: !Ref AuroraMysqlDBSubnetGroupNames
       Tags:
         - Key: Environment
@@ -338,9 +352,36 @@ Resources:
         MinCapacity: 2
         SecondsUntilAutoPause: 300
       DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
-      Tags:
+      Tags:InteractionDBSubnetGroup
         - Key: Name
           Value: Approval
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ProjectIdentifierName
+
+  InteractionDbCluster:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora
+      EngineMode: serverless
+      EngineVersion: !Ref AuroraMysqlEngineVersion
+      DatabaseName: !Ref InteractionDbName
+      MasterUsername: !Ref AuroraMysqlMasterUsername
+      MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
+      DBClusterIdentifier: !Ref InteractionDbClusterIdentifier
+      BackupRetentionPeriod: 35
+      DeletionProtection: false
+      EnableHttpEndpoint: true
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 8
+        MinCapacity: 2
+        SecondsUntilAutoPause: 300
+      DBSubnetGroupName: !Ref InteractionDBSubnetGroup
+      Tags:
+        - Key: Name
+          Value: Interaction
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application
@@ -357,15 +398,6 @@ Outputs:
   StreamTable:
     Description: A reference to the created StreamTable
     Value: !Ref StreamTable
-  UserInteractionTable:
-    Description: A reference to the created UserInteractionTable
-    Value: !Ref UserInteractionTable
-  CommentTable:
-    Description: A reference to the created CommentTable
-    Value: !Ref CommentTable
-  LikeTable:
-    Description: A reference to the created LikeTable
-    Value: !Ref LikeTable
   UserTableArn:
     Description: A reference to the created UserTable ARN
     Value: !GetAtt UserTable.Arn
@@ -375,15 +407,25 @@ Outputs:
   StreamTableArn:
     Description: A reference to the created StreamTable ARN
     Value: !GetAtt StreamTable.Arn
-  UserInteractionTableArn:
-    Description: A reference to the created UserInteractionTable ARN
-    Value: !GetAtt UserInteractionTable.Arn
-  CommentTableArn:
-    Description: A reference to the created CommentTable ARN
-    Value: !GetAtt CommentTable.Arn
-  LikeTableArn:
-    Description: A reference to the created LikeTable ARN
-    Value: !GetAtt LikeTable.Arn
+  # UserInteractionTable:
+  #   Description: A reference to the created UserInteractionTable
+  #   Value: !Ref UserInteractionTable
+  # CommentTable:
+  #   Description: A reference to the created CommentTable
+  #   Value: !Ref CommentTable
+  # LikeTable:
+  #   Description: A reference to the created LikeTable
+  #   Value: !Ref LikeTable
+  # UserInteractionTableArn:
+  #   Description: A reference to the created UserInteractionTable ARN
+  #   Value: !GetAtt UserInteractionTable.Arn
+  # CommentTableArn:
+  #   Description: A reference to the created CommentTable ARN
+  #   Value: !GetAtt CommentTable.Arn
+  # LikeTableArn:
+  #   Description: A reference to the created LikeTable ARN
+  #   Value: !GetAtt LikeTable.Arn
+
   # Relational
   ApprovalDbCluster:
     Description: A reference to the created ApprovalDbCluster i.e. its name
@@ -394,4 +436,12 @@ Outputs:
   ApprovalDbClusterEndpointPort:
     Description: A reference to the created ApprovalDbCluster endpoint port
     Value: !GetAtt ApprovalDbCluster.Endpoint.Port
-
+  InteractionDbCluster:
+    Description: A reference to the created InteractionDbCluster i.e. its name
+    Value: !Ref InteractionDbCluster
+  InteractionDbClusterEndpointAddress:
+    Description: A reference to the created InteractionDbCluster endpoint address
+    Value: !GetAtt InteractionDbCluster.Endpoint.Address
+  InteractionDbClusterEndpointPort:
+    Description: A reference to the created InteractionDbCluster endpoint port
+    Value: !GetAtt InteractionDbCluster.Endpoint.Port

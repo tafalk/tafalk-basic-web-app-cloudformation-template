@@ -1,0 +1,9 @@
+#set($id=$utils.autoId())
+#set($nowTime=$util.time.nowISO8601())
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Insert Into ContentInteractions (id, userId, interactionType, contentType, contentId, indices, time) Values ('$id', '$ctx.args.input.userId', '$ctx.args.input.interactionType', '$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.indices', '$nowTime')",
+    "Select * From ContentInteractions Where id='$id'"
+  ]
+}

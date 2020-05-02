@@ -1,0 +1,10 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from UserInteractions Where actorUserId=:actorUserId And targetUserId=:targetUserId Order By id"
+  ],
+  "variableMap": {
+    ":targetUserId": "$util.defaultIfNullOrEmpty($ctx.args.targetUserId, '')",
+    ":actorUserId": "$util.defaultIfNullOrEmpty($ctx.args.actorUserId, '')"
+  }
+}

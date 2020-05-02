@@ -1,0 +1,10 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select COUNT(*) from Comments Where (:contentId='' Or contentId=:contentId) And (:contentType='' Or contentType=:contentType)"
+  ],
+  "variableMap": {
+    ":contentId": "$util.defaultIfNullOrEmpty($ctx.args.contentId, '')",
+    ":contentType": "$util.defaultIfNullOrEmpty($ctx.args.contentType, '')"
+  }
+}

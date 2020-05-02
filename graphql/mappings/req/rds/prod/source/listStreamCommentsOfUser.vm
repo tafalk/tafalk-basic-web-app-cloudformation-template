@@ -1,0 +1,9 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from Comments Where userId=:userId And contentType='stream' Order By time Desc Limit 10 Offset 0"
+  ],
+  "variableMap": {
+    ":userId": "$util.defaultIfNullOrEmpty($ctx.source.id, '')"
+  }
+}

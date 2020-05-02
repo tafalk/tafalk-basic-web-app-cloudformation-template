@@ -1,0 +1,9 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select COUNT(*) from Comments Where contentType='stream' And contentId=:contentId"
+  ],
+  "variableMap": {
+    ":contentId": "$util.defaultIfNullOrEmpty($ctx.source.id, '')"
+  }
+}

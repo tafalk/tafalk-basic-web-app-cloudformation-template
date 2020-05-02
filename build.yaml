@@ -75,6 +75,22 @@ Parameters:
     Type: String
   UncloggerPromptTableName:
     Type: String
+  InteractionDbClusterArn:
+    Type: String
+  InteractionDbClusterEndpointAddress:
+    Type: String
+  InteractionDbClusterEndpointPort:
+    Type: String
+  InteractionDbName:
+    Type: String
+  InteractionDbSchemaName:
+    Type: String
+  UserInteractionTableName:
+    Type: String
+  ContentInteractionTableName:
+    Type: String
+  CommentTableName:
+    Type: String
   # Site Policies
   SitePoliciesRepositoryName:
     Type: String
@@ -520,13 +536,21 @@ Resources:
                   {
                     "FunctionName": "${RdsBootstrapFunctionName}",
                     "CredentialsSecret": "${AuroraMysqlCredentialsSecret}",
-                    "Endpoint": "${ApprovalDbClusterEndpointAddress}",
-                    "Port": "${ApprovalDbClusterEndpointPort}",
+                    "ApprovalDbClusterAddress": "${ApprovalDbClusterEndpointAddress}",
+                    "ApprovalDbClusterPort": "${ApprovalDbClusterEndpointPort}",
+                    "InteractionDbClusterAddress": "${InteractionDbClusterEndpointAddress}",
+                    "InteractionDbClusterPort": "${InteractionDbClusterEndpointPort}",
                     "ApprovalDbClusterArn": "${ApprovalDbClusterArn}",
                     "ApprovalDbName": "${ApprovalDbName}",
                     "ApprovalDbSchemaName": "${ApprovalDbSchemaName}",
                     "FlagTable": "${FlagTableName}",
                     "UncloggerPromptTable": "${UncloggerPromptTableName}",
+                    "InteractionDbClusterArn": "${InteractionDbClusterArn}",
+                    "InteractionDbName": "${InteractionDbName}",
+                    "InteractionDbSchemaName": "${InteractionDbSchemaName}",
+                    "UserInteractionTable": "${UserInteractionTableName}",
+                    "ContentInteractionTable": "${ContentInteractionTableName}",
+                    "CommentTable": "${CommentTableName}",
                     "Environment": "${EnvironmentName}",
                     "Application": "${ProjectIdentifierName}"
                   }

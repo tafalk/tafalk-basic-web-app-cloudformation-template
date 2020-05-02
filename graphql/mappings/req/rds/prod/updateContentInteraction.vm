@@ -1,0 +1,8 @@
+#set($nowTime=$util.time.nowISO8601())
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Update ContentInteractions Set indices='$ctx.args.input.indices', time='$nowTime' Where id='$ctx.args.input.id'",
+    "Select * from ContentInteractions Where id = '$ctx.args.input.id'"
+  ]
+}

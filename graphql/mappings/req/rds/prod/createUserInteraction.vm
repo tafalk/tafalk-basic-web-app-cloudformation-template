@@ -1,0 +1,9 @@
+#set($id=$utils.autoId())
+#set($nowTime=$util.time.nowISO8601())
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Insert Into UserInteractions (id, actorUserId, type, targetUserId, createTime) Values ('$id', '$ctx.args.input.actorUserId', '$ctx.args.input.interactionType', '$ctx.args.input.targetUserId', '$nowTime')",
+    "Select * From UserInteractions Where id='$id'"
+  ]
+}

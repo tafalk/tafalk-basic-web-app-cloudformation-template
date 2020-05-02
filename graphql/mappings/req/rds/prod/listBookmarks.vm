@@ -1,0 +1,12 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from ContentInteractions Where interactionType='Bookmark' And (:contentId='' Or contentId=:contentId) And (:contentType='' Or contentType=:contentType) Order By time Desc Limit :limit Offset :offset"
+  ],
+  "variableMap": {
+    ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
+    ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
+    ":contentId": "$util.defaultIfNullOrEmpty($ctx.args.contentId, '')",
+    ":contentType": "$util.defaultIfNullOrEmpty($ctx.args.contentType, '')"
+  }
+}

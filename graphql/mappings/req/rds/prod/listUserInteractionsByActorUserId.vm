@@ -1,0 +1,11 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from UserInteractions Where actorUserId=:actorUserId Order By targetUserId Desc Limit :limit Offset :offset"
+  ],
+  "variableMap": {
+    ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
+    ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
+    ":actorUserId": "$util.defaultIfNullOrEmpty($ctx.args.actorUserId, '')"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from UncloggerPrompts Where id=:id Limit 1"
+  ],
+  "variableMap": {
+    ":id": "$util.defaultIfNullOrEmpty($ctx.source.uncloggerPromptId, '')"
+  }
+}

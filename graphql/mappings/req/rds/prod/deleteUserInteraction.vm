@@ -1,0 +1,7 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * From UserInteractions Where id='$ctx.args.input.id'",
+    "Delete From UserInteractions Where id='$ctx.args.input.id'"
+  ]
+}

@@ -1,0 +1,14 @@
+#set($id=$utils.autoId())
+#set($nowTime=$util.time.nowISO8601())
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Insert Into Comments (id, userId, body, contentType, contentId, time) Values ('$id', '$ctx.args.input.userId', '$ctx.args.input.body', '$ctx.args.input.contentType', '$ctx.args.input.contentId', '$nowTime')",
+    "Select * From Comments Where id='$id'"
+  ]
+}
+
+userId
+body
+contentType
+contentId

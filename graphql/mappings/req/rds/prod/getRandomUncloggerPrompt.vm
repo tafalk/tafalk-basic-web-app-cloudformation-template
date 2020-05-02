@@ -2,7 +2,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from UncloggerPrompts Where status='$acceptedStatus' And (:category='' Or category=:category) And (:language='' Or language=:language) Order By RAND()"
+    "Select * from UncloggerPrompts Where status='$acceptedStatus' And (:category='' Or category=:category) And (:language='' Or language=:language) Order By RAND() Limit 1"
   ],
   "variableMap": {
     ":category": "$util.defaultIfNullOrEmpty($ctx.args.category, '')",

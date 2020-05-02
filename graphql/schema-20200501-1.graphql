@@ -8,33 +8,51 @@ schema {
 type Query {
   # User
   getUserByUsername(username: String!): User
-  listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
-  listLikesByUser(first: Int, after: String, userId: ID!): LikeConnection
-  listUserInteractionsByActorUserIdIndex(
-    actorUserId: String!
-    first: Int
-    after: String
-  ): UserInteractionConnection
 
   # Stream
   getStream(id: ID!): Stream
+  listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
   listSealedStreams(first: Int, after: String): StreamConnection
   listLiveStreams(first: Int, after: String): StreamConnection
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # User interaction
-  queryUserInteractionsBetweenUsersByUserIdIndices(
+  getUserInteractions(
     actorUserId: String!
     targetUserId: String!
   ): [UserInteraction]
+  listUserInteractionsByActorUserId(
+    actorUserId: String!
+    limit: Int
+    offset: Int
+  ): [UserInteraction]
 
-  # Stream reaction
-  listStreamLikes(streamId: ID!): [Like]
-  listPaginatedStreamComments(
-    streamId: ID!
-    first: Int
-    after: String
-  ): CommentConnection
+  # Content interaction
+  countContentBookmarks(contentId: ID!, contentType: ContentType): ResultCount
+  countContentBookmarksByUser(
+    userId: ID!
+    contentType: ContentType
+  ): ResultCount
+  countContentComments(contentId: ID!, contentType: ContentType): ResultCount
+
+  listContentBookmarks(
+    contentId: ID!
+    contentType: ContentType
+    limit: Int
+    offset: Int
+  ): [ContentInteraction]
+  listContentComments(
+    contentId: ID!
+    contentType: ContentType
+    limit: Int
+    offset: Int
+  ): [Comment]
+  listContentBookmarksByUser(
+    userId: ID!
+    contentType: ContentType
+    limit: Int
+    offset: Int
+  ): [ContentInteraction]
 
   # Search
   search(query: String!): [SearchResult]
@@ -46,9 +64,6 @@ type Query {
   # Cantos
   getCanto(id: ID!): Canto
   listCantos(first: Int, after: String): CantoConnection
-
-  # Canto Likes
-  listCantoLikes(cantoId: ID!): [Like]
 
   # Flag
   listFlags(
@@ -89,20 +104,31 @@ type Mutation {
   updateStream(input: UpdateStreamInput!): Stream
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
+  # Canto
+  createCanto(input: CreateCantoInput!): Canto
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateCanto(input: UpdateCantoInput!): Canto
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+
   # User interaction
   createUserInteraction(input: CreateUserInteractionInput!): UserInteraction
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
   deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
-  # Stream reaction
-  createLike(input: CreateLikeInput!): Like
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateLikeIndices(input: UpdateLikeIndicesInput): Like
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  # Content interaction
+  createContentInteraction(
+    input: CreateContentInteractionInput!
+  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateContentInteraction(
+    input: UpdateContentInteractionInput
+  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  deleteContentInteraction(
+    input: DeleteContentInteractionInput!
+  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+
+  # Comment
   createComment(input: CreateCommentInput!): Comment
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  deleteLike(input: DeleteLikeInput!): Like
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Flag
@@ -113,12 +139,6 @@ type Mutation {
   updateFlagReview(input: UpdateFlagReviewInput): Flag
     @aws_auth(cognito_groups: ["tafalk-admin-ug"])
   deleteFlag(input: DeleteFlagInput!): Flag
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-
-  # Canto
-  createCanto(input: CreateCantoInput!): Canto
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateCanto(input: UpdateCantoInput!): Canto
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # UncloggerPrompt
@@ -138,8 +158,14 @@ type Mutation {
 type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations: ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations: ["updateCanto"])
-  onCreateOrDeleteLike(streamId: String, cantoId: String): Like
-    @aws_subscribe(mutations: ["createLike", "deleteLike", "updateLikeIndices"])
+  onCreateOrDeleteContentInteraction(contentId: String): ContentInteraction
+    @aws_subscribe(
+      mutations: [
+        "createContentInteraction"
+        "deleteContentInteraction"
+        "updateContentInteraction"
+      ]
+    )
   onCreateOrDeleteFlag(contentId: String): Flag
     @aws_subscribe(mutations: ["createFlag", "deleteFlag"])
 }
@@ -155,7 +181,6 @@ interface CommunityReaction {
 union SearchResult = Stream | Canto | User
 
 # I N P U T S
-# User
 input UpdateUserInput {
   accountStatus: String
   allowDirectMessages: Boolean
@@ -180,7 +205,6 @@ input DeleteUserInput {
   id: ID!
 }
 
-# Stream
 input CreateStreamInput {
   body: String!
   id: ID!
@@ -210,7 +234,6 @@ input UpdateStreamInput {
   track: String
 }
 
-# Canto
 input CreateCantoInput {
   id: ID!
   body: String
@@ -225,7 +248,6 @@ input UpdateCantoInput {
   lastUpdateTime: String!
 }
 
-# User interaction
 input CreateUserInteractionInput {
   actorUserId: String!
   interactionType: UserInteractionType
@@ -236,33 +258,30 @@ input DeleteUserInteractionInput {
   id: ID!
 }
 
-# Stream / Canto reaction
-input CreateLikeInput {
-  streamId: String
-  cantoId: String
-  indices: String
-  time: String
+input CreateContentInteractionInput {
   userId: String!
+  interactionType: ContentInteractionType!
+  contentType: ContentType!
+  contentId: String!
+  indices: String
 }
 
-input UpdateLikeIndicesInput {
+input UpdateContentInteractionInput {
   id: ID!
   indices: String!
-  time: String!
 }
 
 input CreateCommentInput {
-  content: String
-  streamId: String!
-  time: String
   userId: String!
+  body: String!
+  contentType: ContentType!
+  contentId: String!
 }
 
-input DeleteLikeInput {
+input DeleteContentInteractionInput {
   id: ID!
 }
 
-# Flag
 input CreateFlagInput {
   contentType: String!
   contentId: String
@@ -290,7 +309,6 @@ input DeleteFlagInput {
   id: ID!
 }
 
-# UncloggerPrompt
 input CreateUncloggerPromptInput {
   category: UncloggerPromptCategory!
   body: String!
@@ -318,58 +336,68 @@ input DeleteUncloggerPromptInput {
 
 # T Y P E S
 type User {
+  id: ID!
+  username: String!
+  email: String
+  preferredName: String
   accountStatus: String
   allowDirectMessages: Boolean
+  theme: String
   bio: String
   birthDate: String!
   cognitoIdentityId: String
-  committedComments: CommentConnection
   createdAt: String
-  email: String
-  id: ID!
   lastAccess: String
-  likedStreams: LikeConnection
   location: String
-  preferredName: String
   language: Language
   profilePictureKey: String
   site: String
   canto: Canto
   streams: StreamConnection
-  theme: String
-  userInteractions: UserInteractionConnection
-  username: String!
+  userInteractions: [UserInteraction]
+  committedStreamCommentCount: ResultCount
+  committedStreamComments: [Comment]
+  bookmarkedStreamCount: ResultCount
+  bookmarkedStreams: [Stream]
+  bookmarkedCantoCount: ResultCount
+  bookmarkedCantos: [Canto]
 }
 
 type Stream {
-  body: String!
-  comments: [Comment]
-  flags: [Flag]
   id: ID!
+  title: String
+  body: String!
+  userId: String!
+  user: User
   isSealed: Int
-  likes: [Like]
   location: String
   mood: [Mood]
   position: [Position]
   privacy: StreamPrivacy!
-  sealTime: String
   startTime: String!
-  title: String
+  sealTime: String
   track: String
   uncloggerPromptId: String
-  user: User
-  userId: String!
+  uncloggerPrompt: UncloggerPrompt
+  bookmarkCount: ResultCount
+  bookmarks: [ContentInteraction]
+  commentCount: ResultCount
+  comments: [Comment]
+  flagCount: ResultCount
+  flags: [Flag]
 }
 
 type Canto {
   id: ID!
   body: String!
-  flags: [Flag]
-  likes: [Like]
+  user: User
   startTime: String!
   lastUpdateTime: String
   status: String
-  user: User
+  bookmarkCount: ResultCount
+  bookmarks: [ContentInteraction]
+  flagCount: ResultCount
+  flags: [Flag]
 }
 
 type UserInteraction {
@@ -382,25 +410,27 @@ type UserInteraction {
   lastChangeTime: String!
 }
 
-type Like implements CommunityReaction {
+type ContentInteraction implements CommunityReaction {
   id: ID!
-  stream: Stream
-  streamId: String
-  canto: Canto
-  cantoId: String
-  time: String
-  indices: String
   userId: String!
+  user: User
+  interactionType: ContentInteractionType!
+  contentType: ContentType!
+  contentId: String!
+  indices: String
+  time: String
 }
 
 type Comment implements CommunityReaction {
-  content: String
-  flags: [Flag]
   id: ID!
-  streamId: String!
-  time: String
-  user: User
   userId: String!
+  user: User
+  body: String
+  contentType: ContentType!
+  contentId: String!
+  flagCount: ResultCount
+  flags: [Flag]
+  time: String
 }
 
 type Flag {
@@ -458,22 +488,13 @@ type CantoConnection {
   nextToken: String
 }
 
-type UserInteractionConnection {
-  items: [UserInteraction]
-  nextToken: String
-}
-
-type LikeConnection {
-  items: [Like]
-  nextToken: String
-}
-
-type CommentConnection {
-  items: [Comment]
-  nextToken: String
-}
-
 # E N U M S
+enum ContentType {
+  stream
+  canto
+  comment
+}
+
 enum Mood {
   Aroused
   AsUsual
@@ -512,6 +533,10 @@ enum UncloggerPromptCategory {
 enum UserInteractionType {
   Block
   Watch
+}
+
+enum ContentInteractionType {
+  Bookmark
 }
 
 enum Language {
