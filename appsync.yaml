@@ -586,6 +586,17 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/getBySourceIdAsId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
+  # # Postponed this functionality (user.streamCount) since it's no straightforward
+  # StreamCountOfUserResolver:
+  #   Type: AWS::AppSync::Resolver
+  #   Properties:
+  #     ApiId: !GetAtt AppSyncApi.ApiId
+  #     TypeName: User
+  #     FieldName: streamCount
+  #     DataSourceName: !GetAtt AppSyncStreamTableDataSource.Name
+  #     RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsUserId.vm"
+  #     ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
+
   StreamsOfUserResolver:
     Type: AWS::AppSync::Resolver
     Properties:
