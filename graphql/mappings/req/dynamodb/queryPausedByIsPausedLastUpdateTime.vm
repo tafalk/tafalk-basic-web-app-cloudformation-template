@@ -1,0 +1,14 @@
+{
+  "version": "2018-05-29",
+  "operation": "Query",
+  "index": "isPaused-lastUpdateTime-index",
+  "query": {
+    "expression": "isPaused = :isPaused",
+    "expressionValues": {
+      ":isPaused" : { "N" : 1 }
+    },
+  },
+  "limit": $util.defaultIfNull($ctx.args.first, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrEmpty($ctx.args.after, null)),
+  "scanIndexForward": false
+}

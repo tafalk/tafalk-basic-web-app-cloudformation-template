@@ -67,17 +67,17 @@ Resources:
       AttributeDefinitions:
         - AttributeName: "id"
           AttributeType: "S"
-        - AttributeName: "status"
-          AttributeType: "S"
+        - AttributeName: "isPaused"
+          AttributeType: "N"
         - AttributeName: "lastUpdateTime"
           AttributeType: "S"
       KeySchema:
         - AttributeName: id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: status-lastUpdateTime-index
+        - IndexName: isPaused-lastUpdateTime-index
           KeySchema:
-            - AttributeName: status
+            - AttributeName: isPaused
               KeyType: HASH
             - AttributeName: lastUpdateTime
               KeyType: RANGE
@@ -91,7 +91,7 @@ Resources:
         WriteCapacityUnits: 1
       Tags:
         - Key: Name
-          Value: Streams
+          Value: Cantos
         - Key: Environment
           Value: !Ref EnvironmentName
         - Key: Application

@@ -16,6 +16,12 @@ type Query {
   listLiveStreams(first: Int, after: String): StreamConnection
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
+  # Cantos
+  getCanto(id: ID!): Canto
+  listPausedCantos(first: Int, after: String): CantoConnection
+  listLiveCantos(first: Int, after: String): CantoConnection
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+
   # User interaction
   getUserInteractions(
     actorUserId: String!
@@ -60,10 +66,6 @@ type Query {
 
   # Recaptcha V3 token
   getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
-
-  # Cantos
-  getCanto(id: ID!): Canto
-  listCantos(first: Int, after: String): CantoConnection
 
   # Flag
   listFlags(
@@ -237,14 +239,15 @@ input UpdateStreamInput {
 input CreateCantoInput {
   id: ID!
   body: String
+  isPaused: Int
   startTime: String!
   lastUpdateTime: String
-  status: String!
 }
 
 input UpdateCantoInput {
   id: ID!
   body: String!
+  isPaused: Int
   lastUpdateTime: String!
 }
 
@@ -391,9 +394,9 @@ type Canto {
   id: ID!
   body: String!
   user: User
+  isPaused: Int
   startTime: String!
   lastUpdateTime: String
-  status: String
   bookmarkCount: ResultCount
   bookmarks: [ContentInteraction]
   flagCount: ResultCount

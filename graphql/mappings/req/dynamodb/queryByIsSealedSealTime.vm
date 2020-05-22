@@ -10,7 +10,8 @@
       }
     }
   },
-  "scanIndexForward": false,
+  
   "limit": $util.defaultIfNull(${ctx.args.first}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.after, null))
+  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.after, null)),
+  "scanIndexForward": false
 }
