@@ -59,6 +59,12 @@ type Query {
     limit: Int
     offset: Int
   ): [ContentInteraction]
+  listContentCommentsByUser(
+    userId: ID!
+    contentType: ContentType
+    limit: Int
+    offset: Int
+  ): [Comment]
 
   # Search
   search(query: String!): [SearchResult]

@@ -57,7 +57,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200522-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200526-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -180,6 +180,16 @@ Resources:
       FieldName: listContentBookmarksByUser
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/listContentBookmarksByUser.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
+
+  ListContentCommentsByUserResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: listContentCommentsByUser
+      DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/listContentCommentsByUser.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   GetUserInteractionsResolver:
