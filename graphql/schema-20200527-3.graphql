@@ -24,13 +24,13 @@ type Query {
 
   # User interaction
   getUserInteractions(
-    type: UserInteractionType
+    interactionType: UserInteractionType
     actorUserId: ID!
     targetUserId: ID!
   ): [UserInteraction]
     @aws_auth(cognito_groups: ["tafalk-default-ug"])
   listUserInteractionsByActorUserId(
-    type: UserInteractionType
+    interactionType: UserInteractionType
     actorUserId: ID!
     limit: Int
     offset: Int

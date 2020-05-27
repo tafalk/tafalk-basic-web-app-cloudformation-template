@@ -4,7 +4,7 @@
     "Select * from UserInteractions Where actorUserId=:actorUserId And (:type='' Or type=:type) Order By targetUserId Desc Limit :limit Offset :offset"
   ],
   "variableMap": {
-    ":type": "$util.defaultIfNullOrEmpty($ctx.args.type, '')",
+    ":type": "$util.defaultIfNullOrEmpty($ctx.args.interactionType, '')",
     ":limit": $util.defaultIfNull(${ctx.args.limit}, 10),
     ":offset": $util.defaultIfNull(${ctx.args.offset}, 0),
     ":actorUserId": "$util.defaultIfNullOrEmpty($ctx.args.actorUserId, '')"

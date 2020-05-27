@@ -4,7 +4,7 @@
     "Select * from UserInteractions Where actorUserId=:actorUserId And targetUserId=:targetUserId And (:type='' Or type=:type) Order By id"
   ],
   "variableMap": {
-    ":type": "$util.defaultIfNullOrEmpty($ctx.args.type, '')",
+    ":type": "$util.defaultIfNullOrEmpty($ctx.args.interactionType, '')",
     ":targetUserId": "$util.defaultIfNullOrEmpty($ctx.args.targetUserId, '')",
     ":actorUserId": "$util.defaultIfNullOrEmpty($ctx.args.actorUserId, '')"
   }
