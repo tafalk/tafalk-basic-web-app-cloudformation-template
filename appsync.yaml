@@ -57,7 +57,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200526-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200527-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -153,6 +153,7 @@ Resources:
   # R E S O L V E R S
   # Query
   GetUserByUsernameResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -163,6 +164,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/firstItemOfList.vm"
 
   ListStreamsByUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -173,6 +175,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListContentBookmarksByUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -183,6 +186,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   ListContentCommentsByUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -193,6 +197,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   GetUserInteractionsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -203,6 +208,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   ListUserInteractionsByActorUserIdResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -213,6 +219,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   GetStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -223,6 +230,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListSealedStreamsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -233,6 +241,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListLiveStreamsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -243,6 +252,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   GetCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -253,6 +263,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListPausedCantosResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -263,6 +274,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListLiveCantosResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -273,6 +285,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ListContentBookmarksResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -283,6 +296,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   CountContentBookmarksResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -293,6 +307,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CountContentBookmarksByUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -303,6 +318,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CountContentCommentsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -313,6 +329,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   ListFlagsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -323,6 +340,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   CountFlagsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -333,6 +351,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   ListContentCommentsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -343,6 +362,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   SearchResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -353,6 +373,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/lambda/typedResult.vm"
 
   GetRecaptchaTokenResultResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -363,6 +384,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/lambda/rawResult.vm"
 
   ListUncloggerPromptsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -373,6 +395,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   CountUncloggerPromptsResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -383,6 +406,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   GetRandomUncloggerPromptResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -394,6 +418,7 @@ Resources:
 
   # Mutations
   UpdateUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -404,6 +429,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   DeleteUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -414,6 +440,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -424,6 +451,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UpdateStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -434,6 +462,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -444,6 +473,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UpdateCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -454,6 +484,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   CreateUserInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -464,6 +495,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteUserInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -474,6 +506,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CreateContentInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -484,6 +517,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateContentInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -494,6 +528,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteContentInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -504,6 +539,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CreateCommentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -514,6 +550,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   CreateFlagResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -524,6 +561,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateFlagContentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -534,6 +572,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateFlagReviewResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -544,6 +583,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteFlagResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -554,6 +594,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CreateUncloggerPromptResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -564,6 +605,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateUncloggerPromptContentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -574,6 +616,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   UpdateUncloggerPromptReviewResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -584,6 +627,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnSecondSingleItem.vm"
 
   DeleteUncloggerPromptResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -597,6 +641,7 @@ Resources:
 
   # Of User
   CantoOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -607,6 +652,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   StreamsOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -616,17 +662,30 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryBySourceIdAsUserId.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
-  UserInteractionsOfUserResolver:
+  UserWatchInteractionsOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
       TypeName: User
-      FieldName: userInteractions
+      FieldName: userWatchInteractions
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
-      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/listUserInteractionsOfUser.vm"
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/listUserWatchInteractionsOfUser.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
+
+  UserBlockInteractionsOfUserResolver:
+    DependsOn: AppSyncSchema
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: User
+      FieldName: userBlockInteractions
+      DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/listUserBlockInteractionsOfUser.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   CommittedStreamCommentCountOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -637,6 +696,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CommittedStreamCommentsOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -647,6 +707,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   BookmarkedStreamCountOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -657,6 +718,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   BookmarkedStreamsOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -667,6 +729,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   BookmarkedCantoCountOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -677,6 +740,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   BookmarkedCantosOfUserResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -688,6 +752,7 @@ Resources:
 
   # Of Stream
   UserOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -698,6 +763,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   UncloggerPromptOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -708,6 +774,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   BookmarkCountOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -718,6 +785,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   BookmarksOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -728,6 +796,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   CommentCountOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -738,6 +807,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   CommentsOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -748,6 +818,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   FlagCountOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -758,6 +829,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   FlagsOfStreamResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -769,6 +841,7 @@ Resources:
 
   # Of Canto
   UserOfCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -779,6 +852,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   BookmarkCountOfCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -789,6 +863,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   BookmarksOfCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -799,6 +874,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnList.vm"
 
   FlagCountOfCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -809,6 +885,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   FlagsOfCantoResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -820,6 +897,7 @@ Resources:
 
   # Of User Interaction
   TargetUserOfUserInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -830,6 +908,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ActorUserOfUserInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -841,6 +920,7 @@ Resources:
 
   # Of ContentInteraction
   UserOfContentInteractionResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -852,6 +932,7 @@ Resources:
 
   # Of comment
   UserOfCommentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -862,6 +943,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   FlagCountOfCommentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -872,6 +954,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
 
   FlagsOfCommentResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -883,6 +966,7 @@ Resources:
 
   # OF Flag
   FlaggerUserOfFlagResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
@@ -893,6 +977,7 @@ Resources:
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
   ReviewerUserOfFlagResolver:
+    DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId

@@ -24,14 +24,18 @@ type Query {
 
   # User interaction
   getUserInteractions(
+    type: UserInteractionType
     actorUserId: String!
     targetUserId: String!
   ): [UserInteraction]
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   listUserInteractionsByActorUserId(
+    type: UserInteractionType
     actorUserId: String!
     limit: Int
     offset: Int
   ): [UserInteraction]
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Content interaction
   countContentBookmarks(contentId: ID!, contentType: ContentType): ResultCount
@@ -363,7 +367,8 @@ type User {
   site: String
   canto: Canto
   streams: StreamConnection
-  userInteractions: [UserInteraction]
+  userWatchInteractions: [UserInteraction]
+  userBlockInteractions: [UserInteraction]
   committedStreamCommentCount: ResultCount
   committedStreamComments: [Comment]
   bookmarkedStreamCount: ResultCount

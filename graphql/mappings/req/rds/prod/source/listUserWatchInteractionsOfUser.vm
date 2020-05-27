@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select * from UserInteractions Where actorUserId=:actorUserId Order By targetUserId Desc Limit 10 Offset 0"
+    "Select * from UserInteractions Where actorUserId=:actorUserId And type='Watch' Order By targetUserId Desc Limit 10 Offset 0"
   ],
   "variableMap": {
     ":actorUserId": "$util.defaultIfNullOrEmpty($ctx.source.id, '')"
