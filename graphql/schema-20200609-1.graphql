@@ -27,42 +27,46 @@ type Query {
     interactionType: UserInteractionType
     actorUserId: ID!
     targetUserId: ID!
-  ): [UserInteraction]
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction] @aws_auth(cognito_groups: ["tafalk-default-ug"])
   listUserInteractionsByActorUserId(
     interactionType: UserInteractionType
     actorUserId: ID!
     limit: Int
     offset: Int
-  ): [UserInteraction]
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction] @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
-  # Content interaction
+  # Bookmarks
   countContentBookmarks(contentId: ID!, contentType: ContentType): ResultCount
   countContentBookmarksByUser(
     userId: ID!
     contentType: ContentType
   ): ResultCount
-  countContentComments(contentId: ID!, contentType: ContentType): ResultCount
-
   listContentBookmarks(
     contentId: ID!
     contentType: ContentType
     limit: Int
     offset: Int
   ): [ContentInteraction]
-  listContentComments(
-    contentId: ID!
-    contentType: ContentType
-    limit: Int
-    offset: Int
-  ): [Comment]
   listContentBookmarksByUser(
     userId: ID!
     contentType: ContentType
     limit: Int
     offset: Int
   ): [ContentInteraction]
+  getContentBookmarkByUser(
+    userId: ID!
+    contentType: ContentType
+  ): ContentInteraction
+
+
+  # Comments
+  countContentComments(contentId: ID!, contentType: ContentType): ResultCount
+  listContentComments(
+    contentId: ID!
+    contentType: ContentType
+    limit: Int
+    offset: Int
+  ): [Comment]
   listContentCommentsByUser(
     userId: ID!
     contentType: ContentType
@@ -70,21 +74,18 @@ type Query {
     offset: Int
   ): [Comment]
 
-  # Search
-  search(query: String!): [SearchResult]
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-
-  # Recaptcha V3 token
-  getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
-
   # Flag
+  countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
   listFlags(
     limit: Int
     offset: Int
     searchText: String
     status: FlagApprovalStatus
   ): [Flag]
-  countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
+  getFlagByUser(
+    flaggerUserId: ID!
+    contentType: ContentType
+  ): Flag
 
   # UncloggerPrompt
   listUncloggerPrompts(
@@ -101,6 +102,13 @@ type Query {
     category: UncloggerPromptCategory
     language: Language
   ): UncloggerPrompt
+
+  # Search
+  search(query: String!): [SearchResult]
+    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+
+  # Recaptcha V3 token
+  getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
 }
 
 # M U T A T I O N S
@@ -296,7 +304,7 @@ input DeleteContentInteractionInput {
 }
 
 input CreateFlagInput {
-  contentType: String!
+  contentType: ContentType!
   contentId: String
   flaggerUserId: String!
   category: String!
@@ -449,7 +457,7 @@ type Comment implements CommunityReaction {
 
 type Flag {
   id: ID!
-  contentType: String!
+  contentType: ContentType!
   contentId: String
   flaggerUserId: String!
   flaggerUser: User

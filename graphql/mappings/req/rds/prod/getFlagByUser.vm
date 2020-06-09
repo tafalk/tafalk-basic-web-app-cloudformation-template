@@ -1,0 +1,10 @@
+{
+  "version": "2018-05-29",
+  "statements": [
+    "Select * from Flags Where (:flaggerUserId='' Or flaggerUserId=:flaggerUserId) And (:contentType='' Or contentType=:contentType)"
+  ],
+  "variableMap": {
+    ":flaggerUserId": "$util.defaultIfNullOrEmpty($ctx.args.flaggerUserId, '')",
+    ":contentType": "$util.defaultIfNullOrEmpty($ctx.args.contentType, '')"
+  }
+}
