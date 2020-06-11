@@ -3,4 +3,9 @@
     $utils.error($ctx.error.message, $ctx.error.type)
 #end
 
-$utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])
+#set($output = $utils.rds.toJsonObject($ctx.result)[0])
+#if ($output.isEmpty())
+null
+#else 
+$utils.toJson($output[0])
+#end

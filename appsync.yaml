@@ -57,7 +57,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200609-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200611-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -194,7 +194,7 @@ Resources:
       FieldName: getContentBookmarkByUser
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getContentBookmarkByUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   ListContentCommentsByUserResolver:
     DependsOn: AppSyncSchema
@@ -315,7 +315,7 @@ Resources:
       FieldName: countContentBookmarks
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countBookmarks.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CountContentBookmarksByUserResolver:
     DependsOn: AppSyncSchema
@@ -326,7 +326,7 @@ Resources:
       FieldName: countContentBookmarksByUser
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countContentBookmarksByUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CountContentCommentsResolver:
     DependsOn: AppSyncSchema
@@ -337,7 +337,7 @@ Resources:
       FieldName: countContentComments
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countComments.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   ListFlagsResolver:
     DependsOn: AppSyncSchema
@@ -359,7 +359,7 @@ Resources:
       FieldName: getFlagByUser
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getFlagByUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CountFlagsResolver:
     DependsOn: AppSyncSchema
@@ -370,7 +370,7 @@ Resources:
       FieldName: countFlags
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countFlags.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   ListContentCommentsResolver:
     DependsOn: AppSyncSchema
@@ -425,7 +425,7 @@ Resources:
       FieldName: countUncloggerPrompts
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countUncloggerPrompts.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   GetRandomUncloggerPromptResolver:
     DependsOn: AppSyncSchema
@@ -436,7 +436,7 @@ Resources:
       FieldName: getRandomUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getRandomUncloggerPrompt.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   # Mutations
   UpdateUserResolver:
@@ -525,7 +525,7 @@ Resources:
       FieldName: deleteUserInteraction
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/deleteUserInteraction.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CreateContentInteractionResolver:
     DependsOn: AppSyncSchema
@@ -558,7 +558,7 @@ Resources:
       FieldName: deleteContentInteraction
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/deleteContentInteraction.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CreateCommentResolver:
     DependsOn: AppSyncSchema
@@ -613,7 +613,7 @@ Resources:
       FieldName: deleteFlag
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/deleteFlag.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CreateUncloggerPromptResolver:
     DependsOn: AppSyncSchema
@@ -657,7 +657,7 @@ Resources:
       FieldName: deleteUncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/deleteUncloggerPrompt.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   ## In-type resolvers
 
@@ -715,7 +715,7 @@ Resources:
       FieldName: committedStreamCommentCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countStreamCommentsOfUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CommittedStreamCommentsOfUserResolver:
     DependsOn: AppSyncSchema
@@ -737,7 +737,7 @@ Resources:
       FieldName: bookmarkedStreamCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countStreamBookmarksOfUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   BookmarkedStreamsOfUserResolver:
     DependsOn: AppSyncSchema
@@ -759,7 +759,7 @@ Resources:
       FieldName: bookmarkedCantoCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countCantoBookmarksOfUser.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   BookmarkedCantosOfUserResolver:
     DependsOn: AppSyncSchema
@@ -793,7 +793,7 @@ Resources:
       FieldName: uncloggerPrompt
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/getUncloggerPromptOfStream.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   BookmarkCountOfStreamResolver:
     DependsOn: AppSyncSchema
@@ -804,7 +804,7 @@ Resources:
       FieldName: bookmarkCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countBookmarksOfStream.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   BookmarksOfStreamResolver:
     DependsOn: AppSyncSchema
@@ -826,7 +826,7 @@ Resources:
       FieldName: commentCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countCommentsOfStream.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   CommentsOfStreamResolver:
     DependsOn: AppSyncSchema
@@ -848,7 +848,7 @@ Resources:
       FieldName: flagCount
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countFlagsOfStream.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   FlagsOfStreamResolver:
     DependsOn: AppSyncSchema
@@ -882,7 +882,7 @@ Resources:
       FieldName: bookmarkCount
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countBookmarksOfCanto.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   BookmarksOfCantoResolver:
     DependsOn: AppSyncSchema
@@ -904,7 +904,7 @@ Resources:
       FieldName: flagCount
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countFlagsOfCanto.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   FlagsOfCantoResolver:
     DependsOn: AppSyncSchema
@@ -973,7 +973,7 @@ Resources:
       FieldName: flagCount
       DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/source/countFlagsOfComment.vm"
-      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItem.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   FlagsOfCommentResolver:
     DependsOn: AppSyncSchema
