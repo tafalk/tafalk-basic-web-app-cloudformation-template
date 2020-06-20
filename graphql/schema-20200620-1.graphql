@@ -36,6 +36,9 @@ type Query {
   ): [UserInteraction] @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Bookmarks
+  getContentBookmark(
+    id: ID!
+  ): ContentInteraction
   countContentBookmarks(contentId: ID!, contentType: ContentType): ResultCount
   countContentBookmarksByUser(
     userId: ID!
@@ -75,6 +78,9 @@ type Query {
   ): [Comment]
 
   # Flag
+  getFlag(
+    id: ID!
+  ): Flag
   countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
   listFlags(
     limit: Int

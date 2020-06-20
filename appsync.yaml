@@ -57,7 +57,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200611-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200620-1.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:
@@ -295,6 +295,17 @@ Resources:
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/dynamodb/queryLiveByIsPausedLastUpdateTime.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/dynamodb/rawResult.vm"
 
+  GetContentBookmarkResolver:
+    DependsOn: AppSyncSchema
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getContentBookmark
+      DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getBookmark.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
+
   ListContentBookmarksResolver:
     DependsOn: AppSyncSchema
     Type: AWS::AppSync::Resolver
@@ -337,6 +348,17 @@ Resources:
       FieldName: countContentComments
       DataSourceName: !GetAtt AppSyncInteractionDbDataSource.Name
       RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/countComments.vm"
+      ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
+
+  GetFlagResolver:
+    DependsOn: AppSyncSchema
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: Query
+      FieldName: getFlag
+      DataSourceName: !GetAtt AppSyncApprovalDbDataSource.Name
+      RequestMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/req/rds/prod/getFlag.vm"
       ResponseMappingTemplateS3Location: !Sub "s3://${ResourceBucketName}/graphql/mappings/resp/rds/returnFirstSingleItemOrNull.vm"
 
   ListFlagsResolver:
