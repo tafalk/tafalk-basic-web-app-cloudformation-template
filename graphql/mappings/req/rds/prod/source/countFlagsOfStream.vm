@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select COUNT(*) from Flags Where contentType='stream' And contentId=:contentId"
+    "Select COUNT(*) as count from Flags Where contentType='stream' And contentId=:contentId"
   ],
   "variableMap": {
     ":contentId": "$util.defaultIfNullOrEmpty($ctx.source.id, '')"

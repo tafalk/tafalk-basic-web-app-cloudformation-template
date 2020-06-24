@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select COUNT(*) from ContentInteractions Where interactionType='Bookmark' And contentType='stream' And userId=:userId"
+    "Select COUNT(*) as count from ContentInteractions Where interactionType='Bookmark' And contentType='stream' And userId=:userId"
   ],
   "variableMap": {
     ":userId": "$util.defaultIfNullOrEmpty($ctx.source.id, '')"

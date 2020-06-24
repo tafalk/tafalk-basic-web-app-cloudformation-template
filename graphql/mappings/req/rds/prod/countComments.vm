@@ -1,7 +1,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select COUNT(*) from Comments Where (:contentId='' Or contentId=:contentId) And (:contentType='' Or contentType=:contentType)"
+    "Select COUNT(*) as count from Comments Where (:contentId='' Or contentId=:contentId) And (:contentType='' Or contentType=:contentType)"
   ],
   "variableMap": {
     ":contentId": "$util.defaultIfNullOrEmpty($ctx.args.contentId, '')",

@@ -3,6 +3,6 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Select COUNT(*) from Flags Where contentId='$ctx.args.contentId'"
+    "Select COUNT(*) as count from Flags Where contentId='$ctx.args.contentId'"
   ]
 }
