@@ -238,7 +238,6 @@ input CreateStreamInput {
   location: String
   mood: [Mood]
   position: [Position]
-  privacy: StreamPrivacy!
   sealTime: String
   startTime: String!
   title: String
@@ -253,7 +252,6 @@ input UpdateStreamInput {
   location: String
   mood: [Mood]
   position: [Position]
-  privacy: StreamPrivacy
   sealTime: String
   startTime: String
   title: String
@@ -401,7 +399,6 @@ type Stream {
   location: String
   mood: [Mood]
   position: [Position]
-  privacy: StreamPrivacy!
   startTime: String!
   sealTime: String
   track: String
@@ -541,13 +538,6 @@ enum Position {
   Squatting
   Standing
   Walking
-}
-
-enum StreamPrivacy {
-  Private
-  PrivateButWatching
-  Protected
-  Public
 }
 
 enum UncloggerPromptCategory {
