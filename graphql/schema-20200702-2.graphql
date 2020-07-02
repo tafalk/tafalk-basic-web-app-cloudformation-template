@@ -236,8 +236,8 @@ input CreateStreamInput {
   body: String!
   isSealed: Int
   location: String
-  mood: [Mood]
-  position: [Position]
+  mood: Mood
+  position: Position
   sealTime: String
   startTime: String!
   title: String
@@ -250,8 +250,8 @@ input UpdateStreamInput {
   body: String
   isSealed: Int
   location: String
-  mood: [Mood]
-  position: [Position]
+  mood: Mood
+  position: Position
   sealTime: String
   startTime: String
   title: String
@@ -398,8 +398,8 @@ type Stream {
   user: User
   isSealed: Int
   location: String
-  mood: [Mood]
-  position: [Position]
+  mood: Mood
+  position: Position
   startTime: String!
   sealTime: String
   trackId: String
