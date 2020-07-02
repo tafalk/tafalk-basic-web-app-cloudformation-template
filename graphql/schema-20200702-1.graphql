@@ -232,8 +232,8 @@ input DeleteUserInput {
 }
 
 input CreateStreamInput {
-  body: String!
   id: ID!
+  body: String!
   isSealed: Int
   location: String
   mood: [Mood]
@@ -241,13 +241,13 @@ input CreateStreamInput {
   sealTime: String
   startTime: String!
   title: String
-  track: String
+  trackId: String
   userId: String!
 }
 
 input UpdateStreamInput {
-  body: String
   id: ID!
+  body: String
   isSealed: Int
   location: String
   mood: [Mood]
@@ -255,7 +255,8 @@ input UpdateStreamInput {
   sealTime: String
   startTime: String
   title: String
-  track: String
+  uncloggerPromptId: String
+  trackId: String
 }
 
 input CreateCantoInput {
@@ -401,7 +402,7 @@ type Stream {
   position: [Position]
   startTime: String!
   sealTime: String
-  track: String
+  trackId: String
   uncloggerPromptId: String
   uncloggerPrompt: UncloggerPrompt
   bookmarkCount: ResultCount
