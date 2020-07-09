@@ -233,7 +233,7 @@ input DeleteUserInput {
 
 input CreateStreamInput {
   id: ID!
-  body: String!
+  body: String
   isSealed: Int
   location: String
   mood: Mood
@@ -269,7 +269,7 @@ input CreateCantoInput {
 
 input UpdateCantoInput {
   id: ID!
-  body: String!
+  body: String
   isPaused: Int
   lastUpdateTime: String!
 }
