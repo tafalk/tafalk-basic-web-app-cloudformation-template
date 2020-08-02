@@ -92,6 +92,11 @@ type Query {
     flaggerUserId: ID!
     contentType: ContentType
   ): Flag
+  getChildContentFlagsByUser(
+    flaggerUserId: ID!
+    contentType: ContentType
+    parentContentId: String!
+  ): [Flag]
 
   # UncloggerPrompt
   listUncloggerPrompts(
@@ -311,6 +316,7 @@ input DeleteContentInteractionInput {
 input CreateFlagInput {
   contentType: ContentType!
   contentId: String
+  parentContentId: String
   flaggerUserId: String!
   category: String!
   type: String!
@@ -463,6 +469,7 @@ type Flag {
   id: ID!
   contentType: ContentType!
   contentId: String
+  parentContentId: String
   flaggerUserId: String!
   flaggerUser: User
   category: String!
