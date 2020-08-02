@@ -124,23 +124,33 @@ Resources:
             ResponsePagePath: "/"
         DefaultCacheBehavior:
           AllowedMethods:
-            - DELETE
             - GET
             - HEAD
-            - OPTIONS
-            - PATCH
-            - POST
-            - PUT
           Compress: true
-          DefaultTTL: 86400
-          MaxTTL: 31536000
-          MinTTL: 60
+          DefaultTTL: 0
+          MaxTTL: 600
+          MinTTL: 0
           TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
           ViewerProtocolPolicy: "redirect-to-https"
           ForwardedValues:
             QueryString: false
             Cookies:
               Forward: none
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+            Compress: true
+            PathPattern: "static/*"
+            DefaultTTL: 15768000
+            MaxTTL: 31536000
+            MinTTL: 15768000
+            TargetOriginId: !Sub "${ProjectIdentifierName}HostingS3BucketOrigin"
+            ViewerProtocolPolicy: "redirect-to-https"
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !GetAtt SslCertificate.Arn
@@ -250,4 +260,3 @@ Outputs:
         - ""
         - - "https://"
           - !GetAtt HostingCloudFrontDistribution.DomainName
-
