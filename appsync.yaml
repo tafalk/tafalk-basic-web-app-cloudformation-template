@@ -43,13 +43,12 @@ Resources:
     Type: AWS::AppSync::GraphQLApi
     Properties:
       Name: !Sub "${ProjectIdentifierName}-${EnvironmentName}-appsync-api"
-      AuthenticationType: AMAZON_COGNITO_USER_POOLS
-      UserPoolConfig:
-        UserPoolId: !Ref UserPoolId
-        AwsRegion: !Sub ${AWS::Region}
-        DefaultAction: ALLOW
+      AuthenticationType: AWS_IAM
       AdditionalAuthenticationProviders:
-        - AuthenticationType: AWS_IAM
+        - AuthenticationType: AMAZON_COGNITO_USER_POOLS
+          UserPoolConfig:
+            UserPoolId: !Ref UserPoolId
+            AwsRegion: !Sub ${AWS::Region}
       LogConfig:
         FieldLogLevel: ERROR
         CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn
@@ -59,7 +58,7 @@ Resources:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
       ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200804-1.graphql"
+      DefinitionS3Location: !Sub "s3://${ResourceBucketName}/graphql/schema-20200804-5.graphql"
 
   # D A T A   S O U R C E S
   AppSyncUserTableDataSource:

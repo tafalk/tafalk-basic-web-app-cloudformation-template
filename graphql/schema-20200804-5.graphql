@@ -5,9 +5,7 @@ schema {
 }
 
 # Q U E R I E S
-type Query
-  @aws_iam
-  @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
+type Query @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   # User
   getUserByUsername(username: String!): User
 
@@ -29,13 +27,15 @@ type Query
     interactionType: UserInteractionType
     actorUserId: ID!
     targetUserId: ID!
-  ): [UserInteraction] @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction]
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
   listUserInteractionsByActorUserId(
     interactionType: UserInteractionType
     actorUserId: ID!
     limit: Int
     offset: Int
-  ): [UserInteraction] @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction]
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # Bookmarks
   getContentBookmark(id: ID!): ContentInteraction
@@ -110,7 +110,7 @@ type Query
 
   # Search
   search(query: String!): [SearchResult]
-    # @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
+  # @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # Recaptcha V3 token
   getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
@@ -167,9 +167,7 @@ type Mutation @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])  {
 }
 
 # S U B S C R I P T I O N S
-type Subscription
-  @aws_iam
-  @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
+type Subscription {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations: ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations: ["updateCanto"])
   onCreateOrDeleteContentInteraction(contentId: String): ContentInteraction
