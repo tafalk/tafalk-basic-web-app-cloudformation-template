@@ -48,6 +48,8 @@ Resources:
         UserPoolId: !Ref UserPoolId
         AwsRegion: !Sub ${AWS::Region}
         DefaultAction: ALLOW
+      AdditionalAuthenticationProviders:
+        - AuthenticationType: AWS_IAM
       LogConfig:
         FieldLogLevel: ERROR
         CloudWatchLogsRoleArn: !Ref AppSyncLogRoleArn
