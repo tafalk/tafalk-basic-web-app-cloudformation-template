@@ -5,7 +5,9 @@ schema {
 }
 
 # Q U E R I E S
-type Query {
+type Query
+  @aws_iam
+  @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   # User
   getUserByUsername(username: String!): User
 
@@ -14,31 +16,29 @@ type Query {
   listStreamsByUser(first: Int, after: String, userId: ID!): StreamConnection
   listSealedStreams(first: Int, after: String): StreamConnection
   listLiveStreams(first: Int, after: String): StreamConnection
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # Cantos
   getCanto(id: ID!): Canto
   listPausedCantos(first: Int, after: String): CantoConnection
   listLiveCantos(first: Int, after: String): CantoConnection
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # User interaction
   getUserInteractions(
     interactionType: UserInteractionType
     actorUserId: ID!
     targetUserId: ID!
-  ): [UserInteraction] @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction] @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
   listUserInteractionsByActorUserId(
     interactionType: UserInteractionType
     actorUserId: ID!
     limit: Int
     offset: Int
-  ): [UserInteraction] @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): [UserInteraction] @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # Bookmarks
-  getContentBookmark(
-    id: ID!
-  ): ContentInteraction
+  getContentBookmark(id: ID!): ContentInteraction
   countContentBookmarks(contentId: ID!, contentType: ContentType): ResultCount
   countContentBookmarksByUser(
     userId: ID!
@@ -61,7 +61,6 @@ type Query {
     contentType: ContentType
   ): ContentInteraction
 
-
   # Comments
   countContentComments(contentId: ID!, contentType: ContentType): ResultCount
   listContentComments(
@@ -78,9 +77,7 @@ type Query {
   ): [Comment]
 
   # Flag
-  getFlag(
-    id: ID!
-  ): Flag
+  getFlag(id: ID!): Flag
   countFlags(searchText: String, status: FlagApprovalStatus): ResultCount
   listFlags(
     limit: Int
@@ -88,10 +85,7 @@ type Query {
     searchText: String
     status: FlagApprovalStatus
   ): [Flag]
-  getFlagByUser(
-    flaggerUserId: ID!
-    contentType: ContentType
-  ): Flag
+  getFlagByUser(flaggerUserId: ID!, contentType: ContentType): Flag
   getChildContentFlagsByUser(
     flaggerUserId: ID!
     contentType: ContentType
@@ -116,77 +110,66 @@ type Query {
 
   # Search
   search(query: String!): [SearchResult]
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+    # @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])
 
   # Recaptcha V3 token
   getRecaptchaTokenResult(token: String!, ip: String): RecaptchaV3Result
 }
 
 # M U T A T I O N S
-type Mutation {
+type Mutation @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])  {
   # User
   updateUser(input: UpdateUserInput!): User
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   deleteUser(input: DeleteUserInput!): User
 
   # Stream
   createStream(input: CreateStreamInput!): Stream
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   updateStream(input: UpdateStreamInput!): Stream
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Canto
   createCanto(input: CreateCantoInput!): Canto
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   updateCanto(input: UpdateCantoInput!): Canto
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # User interaction
   createUserInteraction(input: CreateUserInteractionInput!): UserInteraction
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   deleteUserInteraction(input: DeleteUserInteractionInput!): UserInteraction
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Content interaction
   createContentInteraction(
     input: CreateContentInteractionInput!
-  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): ContentInteraction
   updateContentInteraction(
     input: UpdateContentInteractionInput
-  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): ContentInteraction
   deleteContentInteraction(
     input: DeleteContentInteractionInput!
-  ): ContentInteraction @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): ContentInteraction
 
   # Comment
   createComment(input: CreateCommentInput!): Comment
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 
   # Flag
   createFlag(input: CreateFlagInput!): Flag
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   updateFlagContent(input: UpdateFlagContentInput): Flag
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
-  updateFlagReview(input: UpdateFlagReviewInput): Flag
-    @aws_auth(cognito_groups: ["tafalk-admin-ug"])
   deleteFlag(input: DeleteFlagInput!): Flag
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  updateFlagReview(input: UpdateFlagReviewInput): Flag
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-admin-ug"])
 
   # UncloggerPrompt
   createUncloggerPrompt(input: CreateUncloggerPromptInput!): UncloggerPrompt
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
   updateUncloggerPromptContent(
     input: UpdateUncloggerPromptContentInput!
-  ): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-default-ug"])
+  ): UncloggerPrompt
   updateUncloggerPromptReview(
     input: UpdateUncloggerPromptReviewInput!
-  ): UncloggerPrompt @aws_auth(cognito_groups: ["tafalk-admin-ug"])
+  ): UncloggerPrompt @aws_cognito_user_pools(cognito_groups: ["tafalk-admin-ug"])
   deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt
-    @aws_auth(cognito_groups: ["tafalk-default-ug"])
 }
 
 # S U B S C R I P T I O N S
-type Subscription {
+type Subscription
+  @aws_iam
+  @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations: ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations: ["updateCanto"])
   onCreateOrDeleteContentInteraction(contentId: String): ContentInteraction
