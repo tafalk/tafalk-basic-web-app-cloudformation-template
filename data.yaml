@@ -22,6 +22,15 @@ Parameters:
   AuroraMysqlDBSubnetGroupNames:
     Type: CommaDelimitedList
 
+Mappings: 
+  SecondaryIndexMap: 
+    UserTable: 
+      UserNameIndex: username-index
+    CantoTable: 
+      Name: Value02
+    StreamTable: 
+      Name: Value03
+
 Resources:
   # DynamoDb
   UserTable:
@@ -38,7 +47,7 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: username-index
+        - IndexName: !FindInMap [SecondaryIndexMap, UserTable, UserNameIndex]
           KeySchema:
             - AttributeName: username
               KeyType: HASH

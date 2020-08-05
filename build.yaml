@@ -29,6 +29,11 @@ Parameters:
     Type: String
   UserGroup:
     Type: String
+  # Empty Content Cleanser
+  EmptyContentCleanserFunctionName:
+    Type: String
+  EmptyContentCleanserFunctionRepositoryName:
+    Type: String
   # Token Resolver
   RecaptchaTokenResolverFunctionName:
     Type: String
@@ -108,7 +113,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${ProjectIdentifierName}-cognito-user-exporter-func-bld"
-      Description: Used to build Cognito Post Confirmation User Import function from the CodeCommit Repo
+      Description: Used to build Cognito Post Confirmation User Import function from the repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -127,7 +132,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${ProjectIdentifierName}-recaptcha-resolver-func-bld"
-      Description: Used to build recaptcha resolver function from the CodeCommit Repo
+      Description: Used to build recaptcha resolver function from the repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -146,7 +151,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${ProjectIdentifierName}-resource-searcher-func-bld"
-      Description: Used to build resource searcher function from the CodeCommit Repo
+      Description: Used to build resource searcher function from the repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -165,7 +170,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${ProjectIdentifierName}-cert-delegate-func-bld"
-      Description: Used to build certificate delegating function from the CodeCommit Repo
+      Description: Used to build certificate delegating function from the repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -184,7 +189,26 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${ProjectIdentifierName}-rds-bootstrapper-func-bld"
-      Description: Used to build RDS Bootstrap function from the CodeCommit Repo
+      Description: Used to build RDS Bootstrap function from the repo
+      Source:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: "aws/codebuild/standard:4.0"
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: LAMBDA_ARTIFACT_STORE_BUCKET
+            Value: !Ref LambdaArtifactStoreBucket
+      ServiceRole: !Ref CodeBuildRoleArn
+
+  EmptyContentCleanserFunctionBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-empty-content-cleanser-func-bld"
+      Description: Used to build empty content cleanser function from the repo
       Source:
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
@@ -559,6 +583,74 @@ Resources:
                 - Name: DBBuild
               RunOrder: 1
 
+  EmptyContentCleanserFunctionPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${ProjectIdentifierName}-empty-cntnt-cln-pl"
+      RoleArn: !Ref CodePipelineRoleArn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref LambdaArtifactStoreBucket
+      RestartExecutionOnUpdate: true
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: FetchSource
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: "1"
+                Provider: GitHub
+              OutputArtifacts:
+                - Name: ECSource
+              Configuration:
+                Owner: !Ref GitHubOwner
+                Repo: !Ref EmptyContentCleanserFunctionRepositoryName
+                Branch: !Ref BranchName
+                OAuthToken: !Sub "{{resolve:secretsmanager:${FunctionGithubOauthTokenSecret}:SecretString:token}}"
+                PollForSourceChanges: false
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildFunction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref EmptyContentCleanserFunctionBuildProject
+              InputArtifacts:
+                - Name: ECSource
+              OutputArtifacts:
+                - Name: ECBuild
+              RunOrder: 1
+        - Name: Pipeline
+          Actions:
+            - Name: DeployPipeline
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              Configuration:
+                StackName: !Sub "${ProjectIdentifierName}-empty-content-cleanser-stack"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: "ECBuild::output-template.yaml"
+                RoleArn: !Ref LambdaManagerCloudFormationRoleArn
+                ParameterOverrides: !Sub '
+                  {
+                    "FunctionName": "${EmptyContentCleanserFunctionName}",
+                    "StreamTableName": "${StreamTable}",
+                    "Environment": "${EnvironmentName}",
+                    "Application": "${ProjectIdentifierName}"
+                  }
+                '
+              InputArtifacts:
+                - Name: ECBuild
+              RunOrder: 1
+
   SitePoliciesPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -712,6 +804,20 @@ Resources:
           MatchEquals: refs/heads/{Branch}
       TargetPipeline: !Ref RDSBootstrapperFunctionPipeline
       TargetPipelineVersion: !GetAtt RDSBootstrapperFunctionPipeline.Version
+      TargetAction: FetchSource
+
+  EmptyContentCleanserFunctionWebhook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: !Sub "{{resolve:secretsmanager:${FunctionGithubOauthTokenSecret}:SecretString:token}}"
+      RegisterWithThirdParty: "true"
+      Filters:
+        - JsonPath: "$.ref"
+          MatchEquals: refs/heads/{Branch}
+      TargetPipeline: !Ref EmptyContentCleanserFunctionPipeline
+      TargetPipelineVersion: !GetAtt EmptyContentCleanserFunctionPipeline.Version
       TargetAction: FetchSource
 
   SitePoliciesWebhook:

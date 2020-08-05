@@ -127,6 +127,10 @@ Parameters:
     Description: Repository name for RDS Bootstrap function
     Type: String
     Default: rds-bootstrap-function
+  EmptyContentCleanserFunctionRepositoryName:
+    Description: Repository name for empty-content cleanser function
+    Type: String
+    Default: empty-content-cleanser-function
   RepositoryBranchName:
     Description: CodeCommit branch name for having builds
     Type: String
@@ -310,6 +314,9 @@ Resources:
         UserTable:
           Fn::GetAtt: [Data, Outputs.UserTable]
         UserGroup: !Sub "${ProjectIdentifierName}-default-ug"
+        # EmptyContentCleanser
+        EmptyContentCleanserFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-empty-content-cleanser"
+        EmptyContentCleanserFunctionRepositoryName: !Ref EmptyContentCleanserFunctionRepositoryName
         # Token Resolver
         RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName
