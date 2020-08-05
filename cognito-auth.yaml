@@ -172,18 +172,18 @@ Resources:
                   - "s3:DeleteObject"
                 Resource:
                   - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
-              - Effect: "Allow"
-                Action:
-                  - "appsync:GraphQL"
-                Resource: "*"
               # - Effect: "Allow"
               #   Action:
               #     - "appsync:GraphQL"
-              #   Resource: !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*"
-              # - Effect: "Deny"
-              #   Action:
-              #     - "appsync:GraphQL"
-              #   Resource: !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*/types/Mutation/*"
+              #   Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "appsync:GraphQL"
+                Resource: !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*"
+              - Effect: "Deny"
+                Action:
+                  - "appsync:GraphQL"
+                Resource: !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*/types/Mutation/*"
 
   CognitoAuthorizedRole:
     Type: AWS::IAM::Role
@@ -240,15 +240,15 @@ Resources:
                   - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
                   - !Join ["/", [ !Ref UserFilesBucketArn, "protected", "${cognito-identity.amazonaws.com:sub}", "*"]]
                   - !Join ["/", [ !Ref UserFilesBucketArn, "private", "${cognito-identity.amazonaws.com:sub}", "*"]]
-              - Effect: "Allow"
-                Action:
-                  - "appsync:GraphQL"
-                Resource: "*"
               # - Effect: "Allow"
               #   Action:
               #     - "appsync:GraphQL"
-              #   Resource:
-              #     - !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*"
+              #   Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "appsync:GraphQL"
+                Resource:
+                  - !Sub "arn:aws:appsync:${AWS::Region}:*:apis/*"
 
   IdentityPoolRoleMapping:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
