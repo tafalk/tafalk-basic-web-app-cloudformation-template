@@ -34,6 +34,8 @@ Parameters:
     Type: String
   EmptyContentCleanserFunctionRepositoryName:
     Type: String
+  StreamTableIsSealedStartTimeIndex:
+    Type: String
   # Token Resolver
   RecaptchaTokenResolverFunctionName:
     Type: String
@@ -643,6 +645,7 @@ Resources:
                   {
                     "FunctionName": "${EmptyContentCleanserFunctionName}",
                     "StreamTableName": "${StreamTable}",
+                    "StreamTableIsSealedStartTimeIndex": "${StreamTableIsSealedStartTimeIndex}",
                     "Environment": "${EnvironmentName}",
                     "Application": "${ProjectIdentifierName}"
                   }

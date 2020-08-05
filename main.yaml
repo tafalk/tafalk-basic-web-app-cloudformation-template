@@ -317,6 +317,8 @@ Resources:
         # EmptyContentCleanser
         EmptyContentCleanserFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-empty-content-cleanser"
         EmptyContentCleanserFunctionRepositoryName: !Ref EmptyContentCleanserFunctionRepositoryName
+        StreamTableIsSealedStartTimeIndex:
+            Fn::GetAtt: [Data, Outputs.StreamTableIsSealedStartTimeIndex]
         # Token Resolver
         RecaptchaTokenResolverFunctionName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-token-resolver"
         RecaptchaTokenResolverFunctionRepositoryName: !Ref TokenResolverFunctionRepositoryName

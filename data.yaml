@@ -27,9 +27,11 @@ Mappings:
     UserTable: 
       UserNameIndex: username-index
     CantoTable: 
-      Name: Value02
+      IsPausedLastUpdateTimeIndex: isPaused-lastUpdateTime-index
     StreamTable: 
-      Name: Value03
+      UserIdIndex: userId-index
+      IsSealedSealTimeIndex: isSealed-sealTime-index
+      IsSealedStartTimeIndex: isSealed-startTime-index
 
 Resources:
   # DynamoDb
@@ -84,7 +86,7 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: isPaused-lastUpdateTime-index
+        - IndexName: !FindInMap [SecondaryIndexMap, CantoTable, IsPausedLastUpdateTimeIndex]
           KeySchema:
             - AttributeName: isPaused
               KeyType: HASH
@@ -127,7 +129,7 @@ Resources:
         - AttributeName: id
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: userId-index
+        - IndexName: !FindInMap [SecondaryIndexMap, StreamTable, UserIdIndex]
           KeySchema:
             - AttributeName: userId
               KeyType: HASH
@@ -136,7 +138,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: isSealed-sealTime-index
+        - IndexName: !FindInMap [SecondaryIndexMap, StreamTable, IsSealedSealTimeIndex]
           KeySchema:
             - AttributeName: isSealed
               KeyType: HASH
@@ -147,7 +149,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: isSealed-startTime-index
+        - IndexName: !FindInMap [SecondaryIndexMap, StreamTable, IsSealedStartTimeIndex]
           KeySchema:
             - AttributeName: isSealed
               KeyType: HASH
@@ -267,6 +269,9 @@ Outputs:
   StreamTableArn:
     Description: A reference to the created StreamTable ARN
     Value: !GetAtt StreamTable.Arn
+  StreamTableIsSealedStartTimeIndex:
+    Description: A reference to the created StreamTable Secondary Index is-sealed-start-time-index
+    Value: !FindInMap [SecondaryIndexMap, StreamTable, IsSealedStartTimeIndex]
 
   # Relational
   ApprovalDbCluster:
