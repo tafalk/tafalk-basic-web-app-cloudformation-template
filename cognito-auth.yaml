@@ -172,10 +172,6 @@ Resources:
                   - "s3:DeleteObject"
                 Resource:
                   - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
-              # - Effect: "Allow"
-              #   Action:
-              #     - "appsync:GraphQL"
-              #   Resource: "*"
               - Effect: "Allow"
                 Action:
                   - "appsync:GraphQL"
@@ -240,10 +236,6 @@ Resources:
                   - !Join ["/", [ !Ref UserFilesBucketArn, "public", "*"]]
                   - !Join ["/", [ !Ref UserFilesBucketArn, "protected", "${cognito-identity.amazonaws.com:sub}", "*"]]
                   - !Join ["/", [ !Ref UserFilesBucketArn, "private", "${cognito-identity.amazonaws.com:sub}", "*"]]
-              # - Effect: "Allow"
-              #   Action:
-              #     - "appsync:GraphQL"
-              #   Resource: "*"
               - Effect: "Allow"
                 Action:
                   - "appsync:GraphQL"
