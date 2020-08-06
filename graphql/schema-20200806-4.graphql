@@ -424,7 +424,7 @@ type UserInteraction @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-d
   lastChangeTime: String!
 }
 
-type ContentInteraction implements CommunityReaction {
+type ContentInteraction implements CommunityReaction @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   userId: String!
   user: User
@@ -435,7 +435,7 @@ type ContentInteraction implements CommunityReaction {
   time: String
 }
 
-type Comment implements CommunityReaction {
+type Comment implements CommunityReaction @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   userId: String!
   user: User
