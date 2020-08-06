@@ -53,6 +53,7 @@ Resources:
                 Action:
                   - "cloudformation:*"
                   - "iam:*"
+                  - "events:*"
                   - "lambda:*"
                 Resource: "*"
       ManagedPolicyArns:
