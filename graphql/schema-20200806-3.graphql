@@ -117,7 +117,7 @@ type Query @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"
 }
 
 # M U T A T I O N S
-type Mutation @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])  {
+type Mutation @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   # User
   updateUser(input: UpdateUserInput!): User
   deleteUser(input: DeleteUserInput!): User
@@ -162,12 +162,13 @@ type Mutation @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"])  {
   ): UncloggerPrompt
   updateUncloggerPromptReview(
     input: UpdateUncloggerPromptReviewInput!
-  ): UncloggerPrompt @aws_cognito_user_pools(cognito_groups: ["tafalk-admin-ug"])
+  ): UncloggerPrompt
+    @aws_cognito_user_pools(cognito_groups: ["tafalk-admin-ug"])
   deleteUncloggerPrompt(input: DeleteUncloggerPromptInput!): UncloggerPrompt
 }
 
 # S U B S C R I P T I O N S
-type Subscription {
+type Subscription @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   onUpdateStream(id: ID!): Stream @aws_subscribe(mutations: ["updateStream"])
   onUpdateCanto(id: ID!): Canto @aws_subscribe(mutations: ["updateCanto"])
   onCreateOrDeleteContentInteraction(contentId: String): ContentInteraction
@@ -193,7 +194,7 @@ interface CommunityReaction {
 union SearchResult = Stream | Canto | User
 
 # I N P U T S
-input UpdateUserInput {
+input UpdateUserInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   accountStatus: String
   allowDirectMessages: Boolean
   bio: String
@@ -213,11 +214,11 @@ input UpdateUserInput {
   username: String
 }
 
-input DeleteUserInput {
+input DeleteUserInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
 }
 
-input CreateStreamInput {
+input CreateStreamInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   body: String
   isSealed: Int
@@ -231,7 +232,7 @@ input CreateStreamInput {
   userId: String!
 }
 
-input UpdateStreamInput {
+input UpdateStreamInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   body: String
   isSealed: Int
@@ -245,7 +246,7 @@ input UpdateStreamInput {
   trackId: String
 }
 
-input CreateCantoInput {
+input CreateCantoInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   body: String
   isPaused: Int
@@ -253,24 +254,24 @@ input CreateCantoInput {
   lastUpdateTime: String
 }
 
-input UpdateCantoInput {
+input UpdateCantoInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   body: String
   isPaused: Int
   lastUpdateTime: String!
 }
 
-input CreateUserInteractionInput {
+input CreateUserInteractionInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   actorUserId: String!
   interactionType: UserInteractionType
   targetUserId: String!
 }
 
-input DeleteUserInteractionInput {
+input DeleteUserInteractionInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
 }
 
-input CreateContentInteractionInput {
+input CreateContentInteractionInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   userId: String!
   interactionType: ContentInteractionType!
   contentType: ContentType!
@@ -278,23 +279,23 @@ input CreateContentInteractionInput {
   indices: String
 }
 
-input UpdateContentInteractionInput {
+input UpdateContentInteractionInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   indices: String!
 }
 
-input CreateCommentInput {
+input CreateCommentInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   userId: String!
   body: String!
   contentType: ContentType!
   contentId: String!
 }
 
-input DeleteContentInteractionInput {
+input DeleteContentInteractionInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
 }
 
-input CreateFlagInput {
+input CreateFlagInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   contentType: ContentType!
   contentId: String
   parentContentId: String
@@ -304,51 +305,51 @@ input CreateFlagInput {
   detail: String
 }
 
-input UpdateFlagContentInput {
+input UpdateFlagContentInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   category: String
   type: String
   detail: String
 }
 
-input UpdateFlagReviewInput {
+input UpdateFlagReviewInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   reviewerUserId: String
   status: FlagApprovalStatus
   reviewNote: String
 }
 
-input DeleteFlagInput {
+input DeleteFlagInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
 }
 
-input CreateUncloggerPromptInput {
+input CreateUncloggerPromptInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   category: UncloggerPromptCategory!
   body: String!
   language: Language
   creatorUserId: String
 }
 
-input UpdateUncloggerPromptContentInput {
+input UpdateUncloggerPromptContentInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   category: UncloggerPromptCategory
   body: String
   language: Language
 }
 
-input UpdateUncloggerPromptReviewInput {
+input UpdateUncloggerPromptReviewInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   reviewerUserId: String
   status: UncloggerPromptApprovalStatus
   reviewNote: String
 }
 
-input DeleteUncloggerPromptInput {
+input DeleteUncloggerPromptInput @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
 }
 
 # T Y P E S
-type User {
+type User @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   username: String!
   email: String
@@ -377,7 +378,7 @@ type User {
   bookmarkedCantos: [Canto]
 }
 
-type Stream {
+type Stream @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   title: String
   body: String!
@@ -400,7 +401,7 @@ type Stream {
   flags: [Flag]
 }
 
-type Canto {
+type Canto @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   body: String!
   user: User
@@ -413,7 +414,7 @@ type Canto {
   flags: [Flag]
 }
 
-type UserInteraction {
+type UserInteraction @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   actorUserId: String!
   actorUser: User
@@ -446,7 +447,7 @@ type Comment implements CommunityReaction {
   time: String
 }
 
-type Flag {
+type Flag @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   contentType: ContentType!
   contentId: String
@@ -465,14 +466,14 @@ type Flag {
   lastUpdateTime: String
 }
 
-type RecaptchaV3Result {
+type RecaptchaV3Result @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   challengeTimestamp: String
   errorCodes: [String]
   hostname: String
   success: Boolean
 }
 
-type UncloggerPrompt {
+type UncloggerPrompt @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   id: ID!
   category: UncloggerPromptCategory!
   body: String!
@@ -487,17 +488,17 @@ type UncloggerPrompt {
   reviewTime: String
 }
 
-type ResultCount {
+type ResultCount @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   count: Int
 }
 
 # C O N N E C T I O N   T Y P E S
-type StreamConnection {
+type StreamConnection @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   items: [Stream]
   nextToken: String
 }
 
-type CantoConnection {
+type CantoConnection @aws_iam @aws_cognito_user_pools(cognito_groups: ["tafalk-default-ug"]) {
   items: [Canto]
   nextToken: String
 }
