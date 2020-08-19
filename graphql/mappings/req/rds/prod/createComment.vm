@@ -7,8 +7,3 @@
     "Select * From Comments Where id='$id'"
   ]
 }
-
-userId
-body
-contentType
-contentId
