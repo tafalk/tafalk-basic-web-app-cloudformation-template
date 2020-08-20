@@ -3,7 +3,7 @@
 {
   "version": "2018-05-29",
   "statements": [
-    "Insert Into Flags (id, contentType, contentId, flaggerUserId, category, type, detail, createTime, status) Values ('$id', '$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
+    "Insert Into Flags (id, contentType, contentId, parentContentId, flaggerUserId, category, type, detail, createTime, status) Values ('$id', '$ctx.args.input.contentType', '$ctx.args.input.contentId', '$ctx.args.input.parentContentId', '$ctx.args.input.flaggerUserId', '$ctx.args.input.category', '$ctx.args.input.type', '$ctx.args.input.detail', '$nowTime', 'Pending')",
     "Select * From Flags Where id='$id'"
   ]
 }
