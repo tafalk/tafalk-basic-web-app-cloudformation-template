@@ -11,26 +11,6 @@ Parameters:
     Type: String
 
 Resources:
-  SNSRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "cognito-idp.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      Policies:
-        - PolicyName: !Sub "${ProjectIdentifierName}-${EnvironmentName}-cognito-sns-policy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action: "sns:publish"
-                Resource: "*"
 
   LambdaManagerCloudFormationRole:
     Type: AWS::IAM::Role
@@ -259,9 +239,6 @@ Resources:
                 Resource: "*"
 
 Outputs:
-  SNSRole:
-    Description: A reference to the created SNS Role
-    Value: !Ref SNSRole
   LambdaManagerCloudFormationRole:
     Description: A reference to the created Lambda Managing CloudFormation Role
     Value: !Ref LambdaManagerCloudFormationRole
@@ -283,9 +260,6 @@ Outputs:
   AppSyncResourceLambdaRole:
     Description: A reference to the created AppSync Lambda Role
     Value: !Ref AppSyncResourceLambdaRole
-  SNSRoleArn:
-    Description: A reference to the created SNS Role ARN
-    Value: !GetAtt SNSRole.Arn
   LambdaManagerCloudFormationRoleArn:
     Description: A reference to the created Lambda managing CloudFormation Role ARN
     Value: !GetAtt LambdaManagerCloudFormationRole.Arn

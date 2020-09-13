@@ -7,8 +7,6 @@ Parameters:
     Type: String
   CognitoUserExporterFunctionName:
     Type: String
-  SNSRoleArn:
-    Type: String
   DefaultUserGroupName:
     Type: String
   AdminUserGroupName:
@@ -39,12 +37,6 @@ Resources:
           RequireNumbers: true
           RequireSymbols: true
           RequireUppercase: true
-
-      # SMS
-      SmsVerificationMessage: Your verification code is {####}
-      SmsConfiguration:
-        ExternalId: !Sub "${ProjectIdentifierName}-external-id"
-        SnsCallerArn: !Ref SNSRoleArn
 
       # Email
       EmailVerificationMessage: Your verification code is {####}
