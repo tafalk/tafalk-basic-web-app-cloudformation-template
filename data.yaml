@@ -205,13 +205,13 @@ Resources:
       MasterUsername: !Ref AuroraMysqlMasterUsername
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: !Ref ApprovalDbClusterIdentifier
-      BackupRetentionPeriod: 35
+      BackupRetentionPeriod: 7
       DeletionProtection: false
       EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
-        MaxCapacity: 8
-        MinCapacity: 2
+        MaxCapacity: 2
+        MinCapacity: 1
         SecondsUntilAutoPause: 300
       DBSubnetGroupName: !Ref ApprovalDBSubnetGroup
       Tags:
@@ -232,13 +232,13 @@ Resources:
       MasterUsername: !Ref AuroraMysqlMasterUsername
       MasterUserPassword: !Ref AuroraMysqlMasterUserPassword
       DBClusterIdentifier: !Ref InteractionDbClusterIdentifier
-      BackupRetentionPeriod: 35
+      BackupRetentionPeriod: 7
       DeletionProtection: false
       EnableHttpEndpoint: true
       ScalingConfiguration:
         AutoPause: true
-        MaxCapacity: 8
-        MinCapacity: 2
+        MaxCapacity: 2
+        MinCapacity: 1
         SecondsUntilAutoPause: 300
       DBSubnetGroupName: !Ref InteractionDBSubnetGroup
       Tags:
