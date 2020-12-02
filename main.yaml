@@ -132,9 +132,9 @@ Parameters:
     Type: String
     Default: empty-content-cleanser-function
   RepositoryBranchName:
-    Description: CodeCommit branch name for having builds
+    Description: Repo branch name for having builds
     Type: String
-    Default: master
+    Default: main
   # Recaptcha
   RecaptchaSecret:
     Description: The Recaptcha V3 Secret of the application
